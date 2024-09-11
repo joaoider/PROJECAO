@@ -1,0 +1,6 @@
+DATA,MARCA_SIGLA,CODIGO_FILIAL,CANAL_ORIGEM,LINHA,GRUPO,TIPO_VENDA,STATUS_PRODUTO,CIDADE,UF,GRIFFE,VLF,QLF
+2013-01-12,John John,5417,Loja,Cinto,Cinto,Liquidação,Liquidacao,Porto Alegre,RS,John John Fem,403.80,7
+2013-01-22,John John,5057,Loja,Cinto,Cinto,Liquidação,Liquidacao,Salvador,BA,John John Fem,100.80,2
+2013-01-27,John John,5165,Loja,Acessorio,Pulseira,Liquidação,Liquidacao,Sao Paulo,SP,John John Fem,349.20,18
+2013-01-08,John John,5273,Loja,Bolsa,Bolsa,Liquidação,Liquidacao,Florianopolis,SC,John John Fem,449.40,6
+2013-01-11,John John,5498,Loja,Bolsa,Bolsa,Liquidação,Liquidacao,Niteroi,RJ,John John Fem,365.40,6

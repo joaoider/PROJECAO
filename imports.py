@@ -14,20 +14,6 @@ import matplotlib as mpl
 
 from datetime import datetime, timedelta
 
-#from sklearn.metrics import mean_squared_error
-from statsmodels.tsa.seasonal import seasonal_decompose
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.stattools import acf
-from statsmodels.tsa.stattools import pacf
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-from scipy.stats import boxcox
-
-#from sklearn.model_selection import train_test_split 
-#from sklearn.linear_model import LinearRegression
-#from sklearn import metrics
-#from sklearn.preprocessing import MinMaxScaler
-
 import seaborn as sns
 sns.set_style('white')
 

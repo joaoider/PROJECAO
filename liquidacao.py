@@ -1,17 +1,17 @@
 import pandas as pd
-from query_liquidacao import path_liqui
+from query_liquidacao import path_liqui, data_liqui
 
-dfliquidacao = pd.read_csv(path_liqui)
+#dfliquidacao = pd.read_csv(path_liqui)
 
-dfliquidacao['DATA_INICIO_LIQUIDACAO'] = pd.to_datetime(dfliquidacao['DATA_INICIO_LIQUIDACAO'])
+data_liqui['DATA_INICIO_LIQUIDACAO'] = pd.to_datetime(data_liqui['DATA_INICIO_LIQUIDACAO'])
 
 # Ordenar o DataFrame pela coluna 'date_column'
-dfliquidacao = dfliquidacao.sort_values(by='DATA_INICIO_LIQUIDACAO')
+data_liqui = data_liqui.sort_values(by='DATA_INICIO_LIQUIDACAO')
 
 # Resetar o índice após a ordenação
-dfliquidacao = dfliquidacao.reset_index(drop=True)
+data_liqui = data_liqui.reset_index(drop=True)
 
-liqui_datas = dfliquidacao['DATA_INICIO_LIQUIDACAO'].tolist()
+liqui_datas = data_liqui['DATA_INICIO_LIQUIDACAO'].tolist()
 liqui_datas
 
 def process_liquidacao(df, liqui_datas):

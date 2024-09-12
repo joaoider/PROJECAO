@@ -2,7 +2,7 @@ from imports import *
 from base import data_neural, futr_df #, static_df
 from configuracoes import horizon, freq
 
-max_steps=1000
+max_steps=1
 
 model = [LSTM(
             max_steps=max_steps, #padrão = 1000

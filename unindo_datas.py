@@ -20,7 +20,7 @@ from datas.carnaval import process_carnaval
 from datas.diadasemana import process_dia_da_semana
 from datas.mesdoano import process_mes_do_ano
 from datas.covid import process_covid
-from datas.liquidacao import process_liquidacao, liqui_datas
+from liquidacao import process_liquidacao, liqui_datas
 
 
 # Definir o intervalo de datas

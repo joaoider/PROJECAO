@@ -12,6 +12,8 @@ from matplotlib import colors
 import matplotlib as mpl
 #%matplotlib inline
 
+import time
+
 from datetime import datetime, timedelta
 
 import seaborn as sns

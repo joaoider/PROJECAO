@@ -1,6 +1,5 @@
 # MÓDULO PRINCIPAL
 
-import time
 from imports import *
 from base import data_neural
 from model import data_neural_hat

@@ -1,28 +1,34 @@
-# Databricks notebook source
+from pyspark.sql import SparkSession
 from configuracoes import marca
 
-# COMMAND ----------
+# Inicializar a sessão Spark
+spark = SparkSession.builder \
+    .appName("Consulta de Liquidacao") \
+    .getOrCreate()
 
 print(marca)
-
-# COMMAND ----------
+data_inicio_liqui = '2012-01-01'
 
 if marca == 'JJ':
-  data = sql(""" select * from gold.dim_colecoes_liquidacao where marca = 'JJ' and DATA_INICIO_LIQUIDACAO >= '2012-01-01' """).toPandas()
-  # Salvar o DataFrame como um arquivo CSV na mesma pasta
-  data.to_csv('base_liqui_JJ.csv', index=False)
   path_liqui = 'base_liqui_JJ.csv'
+  query = f""" 
+  select * from gold.dim_colecoes_liquidacao where marca = '{marca}' and DATA_INICIO_LIQUIDACAO >= '{data_inicio_liqui}' """
+  data_liqui = spark.sql(query).toPandas()
+  # Salvar o DataFrame como um arquivo CSV na mesma pasta
+  data_liqui.to_csv('base_liqui_JJ.csv', index=False)
+  
 if marca == 'DD':
-  data = sql(""" select * from gold.dim_colecoes_liquidacao where marca = 'DD' and DATA_INICIO_LIQUIDACAO >= '2012-01-01' """).toPandas()
-  # Salvar o DataFrame como um arquivo CSV na mesma pasta
-  data.to_csv('base_liqui_DD.csv', index=False)
   path_liqui = 'base_liqui_DD.csv'
-if marca == 'LL':
-  data = sql(""" select * from gold.dim_colecoes_liquidacao where marca = 'LL' and DATA_INICIO_LIQUIDACAO >= '2012-01-01' """).toPandas()
+  query = f""" 
+    select * from gold.dim_colecoes_liquidacao where marca = '{marca}' and DATA_INICIO_LIQUIDACAO >= '{data_inicio_liqui}' """
+  data_liqui = spark.sql(query).toPandas()
   # Salvar o DataFrame como um arquivo CSV na mesma pasta
-  data.to_csv('base_liqui_LL.csv', index=False)
+  data_liqui.to_csv('base_liqui_DD.csv', index=False)
+  
+if marca == 'LL':
   path_liqui = 'base_liqui_LL.csv'
-
-# COMMAND ----------
-
-
+  query = f""" 
+    select * from gold.dim_colecoes_liquidacao where marca = '{marca}' and DATA_INICIO_LIQUIDACAO >= '{data_inicio_liqui}' """
+  # Salvar o DataFrame como um arquivo CSV na mesma pasta
+  data_liqui = spark.sql(query).toPandas()
+  data_liqui.to_csv('base_liqui_LL.csv', index=False)

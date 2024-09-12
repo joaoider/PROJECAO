@@ -6,7 +6,7 @@ from configuracoes import marca, horizon, freq
 from query_base import data, path, data_inicio_base
 
 # depois retirar esse comando pois puxarei direto a base em pandas.
-data = pd.read_csv(path)
+#data = pd.read_csv(path)
 
 data = data.drop(columns=['MARCA_SIGLA'])
 #data.rename(columns={'MARCA_SIGLA': 'unique_id'}, inplace=True)

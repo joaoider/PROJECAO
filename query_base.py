@@ -10,7 +10,7 @@ print(marca)
 
 if marca == 'JJ':
   marca_sigla = 'John John' 
-  griffe = ['John John Masc', 'John John Fem']
+  griffe = ['John John Fem', 'John John Masc']
   data_inicio_base = '2013-01-01'
   path = 'base_JJ.csv'
 if marca == 'DD':

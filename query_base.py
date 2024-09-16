@@ -59,7 +59,7 @@ if marca == 'DD':
     """
   data = spark.sql(query).toPandas()
   # Salvar o DataFrame como um arquivo CSV na mesma pasta
-  data.to_csv('base_DD.csv', index=False)
+  data.head().to_csv('base_DD.csv', index=False)
 
 if marca == 'LL':
   query = f""" 
@@ -76,7 +76,7 @@ if marca == 'LL':
     """
   data = spark.sql(query).toPandas()
   # Salvar o DataFrame como um arquivo CSV na mesma pasta
-  data.to_csv('base_LL.csv', index=False)
+  data.head().to_csv('base_LL.csv', index=False)
 
 data.head(1)
 

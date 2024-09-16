@@ -1,6 +1,6 @@
 DATA,MARCA_SIGLA,CODIGO_FILIAL,CANAL_ORIGEM,LINHA,GRUPO,TIPO_VENDA,STATUS_PRODUTO,CIDADE,UF,GRIFFE,VLF,QLF
-2013-01-24,John John,5354,Loja,Cinto,Cinto,Liquidação,Liquidacao,Uberlandia,MG,John John Masc,256.80,7
-2013-01-23,John John,5354,Loja,Sarja,Shorts,Liquidação,Liquidacao,Uberlandia,MG,John John Fem,175.80,2
-2013-01-19,John John,5498,Loja,Couro,Shorts,Liquidação,Liquidacao,Niteroi,RJ,John John Fem,146.40,1
-2013-01-12,John John,5030,Loja,Couro,Shorts,Liquidação,Liquidacao,Sao Paulo,SP,John John Fem,146.40,1
-2013-01-08,John John,5030,Loja,Malha,T Shirt Estampa,Liquidação,Liquidacao,Sao Paulo,SP,John John Masc,1720.20,38
+2013-01-13,John John,5480,Loja,Malha,T Shirt Mc,Liquidação,Liquidacao,Sao Paulo,SP,John John Fem,1749.60,39
+2013-01-15,John John,5102,Loja,Malha,T Shirt Ml,Liquidação,Liquidacao,Recife,PE,John John Fem,1108.80,22
+2013-01-21,John John,1232,Loja,Tecido Plano,Saias,Liquidação,Liquidacao,Rio De Janeiro,RJ,John John Fem,267.60,4
+2013-01-12,John John,5174,Loja,Tecido Plano,Saias,Liquidação,Liquidacao,Rio De Janeiro,RJ,John John Fem,1540.80,22
+2013-01-24,John John,5219,Loja,Tecido Plano,Saias,Liquidação,Liquidacao,Salvador,BA,John John Fem,831.60,9

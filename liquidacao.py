@@ -1,5 +1,5 @@
 import pandas as pd
-from query_liquidacao import path_liqui, data_liqui
+from querys.query_liquidacao import path_liqui, data_liqui
 
 #dfliquidacao = pd.read_csv(path_liqui)
 

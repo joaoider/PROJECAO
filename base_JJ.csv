@@ -1,6 +1,0 @@
-DATA,MARCA_SIGLA,CODIGO_FILIAL,CANAL_ORIGEM,LINHA,GRUPO,TIPO_VENDA,STATUS_PRODUTO,CIDADE,UF,GRIFFE,VLF,QLF
-2013-01-13,John John,5480,Loja,Malha,T Shirt Mc,Liquidação,Liquidacao,Sao Paulo,SP,John John Fem,1749.60,39
-2013-01-15,John John,5102,Loja,Malha,T Shirt Ml,Liquidação,Liquidacao,Recife,PE,John John Fem,1108.80,22
-2013-01-21,John John,1232,Loja,Tecido Plano,Saias,Liquidação,Liquidacao,Rio De Janeiro,RJ,John John Fem,267.60,4
-2013-01-12,John John,5174,Loja,Tecido Plano,Saias,Liquidação,Liquidacao,Rio De Janeiro,RJ,John John Fem,1540.80,22
-2013-01-24,John John,5219,Loja,Tecido Plano,Saias,Liquidação,Liquidacao,Salvador,BA,John John Fem,831.60,9

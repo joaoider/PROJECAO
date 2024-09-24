@@ -1,8 +1,5 @@
-print('unindo_datas.py iniciado')
-
+# Databricks notebook source
 import pandas as pd
-
-from configuracoes import variaveis_futuras
 
 from datas.diadasmaes import process_dia_das_maes
 from datas.diadospais import process_dia_dos_pais
@@ -26,7 +23,6 @@ from datas.mesdoano import process_mes_do_ano
 from datas.covid import process_covid
 from liquidacao import process_liquidacao, liqui_datas
 
-
 # Definir o intervalo de datas
 start_date = '2013-01-01'
 end_date = '2025-12-31'
@@ -35,7 +31,6 @@ date_range = pd.date_range(start=start_date, end=end_date)
 df = pd.DataFrame(date_range, columns=['ds'])
 # Inicializar a coluna 'value' com 0
 df['value'] = 0
-
 
 # Chamar as funções para processar os dados de cada evento
 diadasemana = process_dia_da_semana(df)
@@ -81,17 +76,13 @@ datas = pd.merge(datas, carnaval, left_on='ds', right_on='ds')
 datas = pd.merge(datas, covid, left_on='ds', right_on='ds')
 datas = pd.merge(datas, liquidacao, left_on='ds', right_on='ds')
 
-
 #datas['MARCA_SIGLA'] = 'JJ'
 datas['ds'] = pd.to_datetime(datas['ds'])
 #datas['unique_id'] = 'JJ'
 #datas['unique_id'] = datas['unique_id'].astype(object)
-datas_dv = ['ds'] + variaveis_futuras
-datas = datas[datas_dv]
+datas = datas[['ds', 'dayofweek', 'monthofyear', 'dia_das_maes', 'dia_dos_pais', 'dia_dos_namorados', 'halloween', 'black_friday', 'natal', 'copa_do_mundo', 'eleicoes', 'dia_do_trabalhador', 'dia_de_finados', 'confraternizacao_universal', 'independencia_do_brasil', 'nossa_senhora_aparecida', 'proclamacao_da_republica', 'sexta_feira_santa', 'pascoa', 'carnaval', 'covid', 'liquidacao']]
 #datas
 
 #print(datas.head())
 
 #print(datas.tail())
-
-print('unindo_datas.py finalizado')

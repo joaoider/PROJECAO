@@ -1,84 +1,76 @@
 # MÓDULO BASE
+print('base.py iniciado')
 
 from imports import *
 from unindo_datas import datas
 from configuracoes import marca, horizon, freq
-from query_base import data, path, data_inicio_base
+from querys.query_base import dataframes  # Agora importa o dicionário com os DataFrames
 
-# depois retirar esse comando pois puxarei direto a base em pandas.
-#data = pd.read_csv(path)
+# Garantir que a variável marca seja uma lista
+if isinstance(marca, str):
+    marca = [marca]  # Se for string, transformar em lista
 
-data = data.drop(columns=['MARCA_SIGLA'])
-#data.rename(columns={'MARCA_SIGLA': 'unique_id'}, inplace=True)
-data = data.drop(columns=['GRIFFE'])
-#data.rename(columns={'GRIFFE': 'unique_id'}, inplace=True)
-data = data.drop(columns=['CODIGO_FILIAL'])
-data = data.drop(columns=['CANAL_ORIGEM'])
-data = data.drop(columns=['CIDADE'])
-data = data.drop(columns=['UF'])
-data = data.drop(columns=['STATUS_PRODUTO'])
-data = data.drop(columns=['TIPO_VENDA'])
-data = data.drop(columns=['LINHA'])
-data = data.drop(columns=['GRUPO'])
+# Dicionário para armazenar os DataFrames finais
+data_neural_dfs = {}
+futr_df_dfs = {}
 
-data['DATA'] = pd.to_datetime(data['DATA'])
-data = data.loc[data['DATA'] >= data_inicio_base]
+# Iterar sobre as marcas
+for m in marca:
+    # Pegar o DataFrame correspondente da marca no dicionário
+    data = dataframes.get(f'data_{m}')
 
-# Definir a coluna 'DATA_DTTIME' como índice
-#data.set_index('DATA', inplace=True)
-data['VLF'] = data['VLF'].astype(float)
-data['QLF'] = data['QLF'].astype(float)
+    if data is not None:
+        # Processar o DataFrame como no código original
+        data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO'])
 
-# Agrupando por data e somando as colunas VLF e QLF
-data = data.groupby('DATA').agg({'VLF': 'sum', 'QLF': 'sum'}).reset_index()
-# Ordenando o DataFrame por data em ordem crescente
-data = data.sort_values(by='DATA').reset_index(drop=True)
+        data['DATA'] = pd.to_datetime(data['DATA'])
+        data = data.loc[data['DATA'] >= data_inicio_base]
 
-data['unique_id'] = marca
-data['unique_id'] = data['unique_id'].astype(object)
+        data['VLF'] = data['VLF'].astype(float)
+        data['QLF'] = data['QLF'].astype(float)
 
-# Pegando o último valor do índice DATA_DTTIME
-ultimo_valor = data.index[-1]
+        # Agrupando por data e somando as colunas VLF e QLF
+        data = data.groupby('DATA').agg({'VLF': 'sum', 'QLF': 'sum'}).reset_index()
+        data = data.sort_values(by='DATA').reset_index(drop=True)
 
-# Gerando os próximos 365 dias a partir do último valor
-proximos_365_dias = pd.date_range(start=ultimo_valor, periods=horizon, freq=freq)[1:]
+        data['unique_id'] = m  # Usar a marca atual
+        data['unique_id'] = data['unique_id'].astype(object)
 
-# Criando um novo dataframe com esses 365 valores
-data_previsao = pd.DataFrame(proximos_365_dias, columns=['DATA_VENDA'])
+        # Gerar os próximos 365 dias
+        ultimo_valor = data.index[-1]
+        proximos_365_dias = pd.date_range(start=ultimo_valor, periods=horizon, freq=freq)[1:]
 
-# Resetando o índice
-data_previsao.reset_index(drop=True, inplace=True)
+        data_previsao = pd.DataFrame(proximos_365_dias, columns=['DATA_VENDA'])
+        data_previsao.reset_index(drop=True, inplace=True)
 
+        # Criar o DataFrame `data_neural_marca`
+        data_neural = data.copy().reset_index()
+        data_neural.rename(columns={'DATA': 'ds', 'VLF': 'y'}, inplace=True)
+        data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF']]
+        data_neural = pd.merge(data_neural, datas, on=['ds'])
 
-#print(data_previsao)
+        # Calcular a data limite
+        data_inicio = datetime.now()
+        data_limite = datetime.now() + timedelta(days=horizon)
 
-data_neural = data.copy().reset_index()
-data_neural.rename(columns={'DATA': 'ds', 'VLF': 'y'}, inplace=True)
-#data_neural = data_neural.drop(columns=['Média_Móvel_30'])
-#data_neural['unique_id'] = 'JJ'
-#data_neural['unique_id'] = data_neural['unique_id'].astype(object)
-data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF']] #, 'CANAL_ORIGEM', 'LINHA', 'GRUPO', 'TIPO_VENDA', 'STATUS_PRODUTO', 'CIDADE', 'UF', 'GRIFFE']]
-#data_neural
+        data_inicio = data_inicio.strftime('%Y-%m-%d')
+        data_limite = data_limite.strftime('%Y-%m-%d')
 
-data_neural = pd.merge(data_neural, datas, on=['ds'])
+        # Filtrar o DataFrame para as datas futuras
+        futr_df = datas[(datas['ds'] >= data_inicio) & (datas['ds'] <= data_limite)]
+        futr_df['unique_id'] = m  # Usar a marca atual
+        futr_df['unique_id'] = futr_df['unique_id'].astype(object)
 
-# Calcular a data limite
-data_inicio = datetime.now()
-data_limite = datetime.now() + timedelta(days=horizon)
+        # Armazenar os DataFrames no dicionário
+        data_neural_dfs[f'data_neural_{m}'] = data_neural
+        futr_df_dfs[f'futr_df_{m}'] = futr_df
 
-# Formatar as datas no formato 'yyyy-mm-dd'
-data_inicio = data_inicio.strftime('%Y-%m-%d')
-print('data_inicio', data_inicio)
-data_limite = data_limite.strftime('%Y-%m-%d')
-print('data_limite', data_limite)
+        # Exibir as primeiras linhas dos DataFrames criados
+        print(f"\nDataFrame data_neural_{m}:")
+        print(data_neural.head(1))
+        print(f"\nDataFrame futr_df_{m}:")
+        print(futr_df.head(1))
 
-#data_inicio, data_limite
+# Agora você tem os DataFrames `data_neural_marca` e `futr_df_marca` armazenados nos dicionários `data_neural_dfs` e `futr_df_dfs`.
 
-# Filtrar o DataFrame para manter apenas as datas a partir da data limite
-futr_df = datas[(datas['ds'] >= data_inicio) & (datas['ds'] <= data_limite)]
-
-futr_df['unique_id'] = marca
-futr_df['unique_id'] = futr_df['unique_id'].astype(object)
-
-#print('futr_df')
-#print(futr_df)
+print('base.py finalizado')

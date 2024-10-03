@@ -1,101 +1,113 @@
-# MÓDULO PRINCIPAL
-
-print('main.py iniciado')
-
-import importlib
-from imports import *
-from base import data_neural
-from configuracoes import marca, modelo
-
-print('marca: ', marca)
-print('modelos utilizados: ', modelo)
-print('###############################')
-
-# Dicionário que mapeia o nome do modelo para o módulo correspondente
-modelos_disponiveis = {
-    'LSTM': 'models.model_LSTM',
-    'NHITS': 'models.model_NHITS',
-    'BiTCN': 'models.model_BiTCN',
-    'GRU': 'models.model_GRU',
-    'NBEATSx': 'models.model_NBEATSx'
-}
-
-# Inicializa a variável para armazenar o dataframe final
-data_neural_hat_final = None
-
-# Itera pelos modelos definidos na variável 'modelo'
-for modelo_escolhido in modelo:
-    if modelo_escolhido in modelos_disponiveis:
-        # Carrega o módulo dinamicamente
-        modulo_modelo = importlib.import_module(modelos_disponiveis[modelo_escolhido])
-        
-        # Acessa o dataframe específico dentro do módulo carregado
-        data_neural_hat = getattr(modulo_modelo, 'data_neural_hat')
-        
-        # Renomeia a coluna de previsões com o nome do modelo escolhido
-        #data_neural_hat.rename(columns={'previsao': modelo_escolhido}, inplace=True)  # Supondo que a coluna de previsões se chame 'previsao'
-        
-        # Se for o primeiro dataframe, ele se torna o dataframe final
-        if data_neural_hat_final is None:
-            data_neural_hat_final = data_neural_hat
-        else:
-            # Faz o merge dos dataframes com base nas colunas 'unique_id' e 'ds'
-            data_neural_hat_final = data_neural_hat_final.merge(data_neural_hat, on=['unique_id', 'ds'], how='inner')
-    else:
-        print(f"O modelo '{modelo_escolhido}' não está disponível.")
-
-# Ao final, o dataframe data_neural_hat_final terá as colunas 'unique_id', 'ds' e as previsões de cada modelo
-
-print('dataframe modelo')
-print(data_neural_hat_final.head())
-
-#print(data_neural_hat.head(1))
-
-# Começar a contagem do tempo
+import time
+# Marcação de início de execução
 start_time = time.time()
 
-plot_df = data_neural.copy().reset_index()
-#plot_df = data_neural[data_neural['unique_id']=='JJ'].reset_index(drop=True)
-#plot_df['unique_id'] = plot_df['unique_id'].astype(object)
-#plot_df = data_neural.reset_index(drop=True)
+import subprocess
+import pandas as pd
+import os
+from datetime import datetime
 
-data_neural_hat_final = data_neural_hat_final.reset_index(drop=False)
-#data_neural_hat = data_neural_hat[data_neural_hat['unique_id']=='JJ']
-#data_neural_hat['unique_id'] = data_neural_hat['unique_id'].astype(object)
+def executar_script(script_name):
+    try:
+        # Executa o script Python e espera que ele finalize
+        result = subprocess.run(['python', script_name], check=True, capture_output=True, text=True)
+        # Exibe a saída do script
+        print(f"Saída do {script_name}:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Erro ao executar {script_name}:")
+        print(e.stderr)
 
-#print(data_neural_hat)
+def encontrar_melhor_modelo():
+    # Obter a data atual
+    data_hoje = datetime.now().strftime('%Y-%m-%d')
 
-plot_df = pd.concat([plot_df, data_neural_hat_final]).set_index('ds') # Concatenate the train and forecast dataframes
+    # Criar o diretório 'outputs/data_hoje' se não existir
+    pasta_saida = f'outputs/{data_hoje}'
+    if not os.path.exists(pasta_saida):
+        os.makedirs(pasta_saida)
 
-# Supondo que a coluna 'ds' esteja como string, primeiro convertemos para datetime
-data_neural_hat_final['ds'] = pd.to_datetime(data_neural_hat_final['ds'])
-# Criar uma nova coluna 'year_month' que contém o ano e o mês
-data_neural_hat_final['year_month'] = data_neural_hat_final['ds'].dt.to_period('M')
-# Agrupar por 'year_month' e somar os valores da coluna 'LSTM'
-# Faz o groupby usando a variável modelo
-data_neural_hat2 = data_neural_hat_final.groupby('year_month')[modelo].sum().reset_index()
-#data_neural_hat2 = data_neural_hat.groupby('year_month')[['LSTM', 'GRU', 'NHITS', 'BiTCN', 'NBEATSx']].sum().reset_index()
-# Se você quiser salvar o resultado em um arquivo CSV
-data_neural_hat2.to_csv('outputs/forecast.csv', index=True)
+    # Caminho para os arquivos CSV dentro da pasta com a data de hoje
+    caminho_lstm = os.path.join(pasta_saida, 'forecast_with_metrics_LSTM.csv')
+    caminho_nhits = os.path.join(pasta_saida, 'forecast_with_metrics_NHITS.csv')
+    caminho_gru = os.path.join(pasta_saida, 'forecast_with_metrics_GRU.csv')
 
-#print(plot_df)
-# Salvar o DataFrame plot_df como CSV
-plot_df.to_csv('outputs/plot_df.csv', index=True)
+    # Ler os arquivos CSV para cada modelo a partir da pasta com a data de hoje
+    lstm_df = pd.read_csv(caminho_lstm)
+    nhits_df = pd.read_csv(caminho_nhits)
+    gru_df = pd.read_csv(caminho_gru)
 
-# Adiciona 'y' à lista de colunas que você quer plotar
-colunas_para_plotar = ['y'] + modelo
-plot_df[colunas_para_plotar].plot(linewidth=2)
-#plot_df[['y', 'LSTM', 'GRU', 'NHITS', 'BiTCN', 'NBEATSx']].plot(linewidth=2)
-plt.ylabel('VLF', fontsize=12)
-plt.xlabel('Date', fontsize=12)
-plt.grid()
-#Salvar o gráfico como uma imagem
-plt.savefig('outputs/plot_image.png')
-#plt.show()
+    # Encontrar a linha com os menores valores de MAE, MSE, RMSE e MAPE em cada dataframe
+    melhor_lstm = lstm_df.loc[lstm_df[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]
+    melhor_nhits = nhits_df.loc[nhits_df[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]
+    melhor_gru = gru_df.loc[gru_df[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]
 
+    # Criar um DataFrame com os melhores de cada modelo
+    todos_melhores = pd.DataFrame({
+        'Modelo': ['LSTM', 'NHITS', 'GRU'],
+        'MAE': [melhor_lstm['MAE'], melhor_nhits['MAE'], melhor_gru['MAE']],
+        'MSE': [melhor_lstm['MSE'], melhor_nhits['MSE'], melhor_gru['MSE']],
+        'RMSE': [melhor_lstm['RMSE'], melhor_nhits['RMSE'], melhor_gru['RMSE']],
+        'MAPE': [melhor_lstm['MAPE'], melhor_nhits['MAPE'], melhor_gru['MAPE']],
+    })
+
+    # Encontrar o melhor modelo baseado na soma de MAE, MSE, RMSE e MAPE
+    melhor_modelo = todos_melhores.loc[todos_melhores[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]
+
+    # Exibir o melhor modelo e seus parâmetros
+    print(f"O melhor modelo é o {melhor_modelo['Modelo']} com os seguintes parâmetros:")
+
+    # Inicializar uma variável para armazenar os parâmetros do melhor modelo
+    parametros_melhor_modelo = None
+
+    # Exibir e salvar os parâmetros do melhor modelo
+    if melhor_modelo['Modelo'] == 'LSTM':
+        print(melhor_lstm)
+        parametros_melhor_modelo = melhor_lstm
+    elif melhor_modelo['Modelo'] == 'NHITS':
+        print(melhor_nhits)
+        parametros_melhor_modelo = melhor_nhits
+    else:
+        print(melhor_gru)
+        parametros_melhor_modelo = melhor_gru
+
+    # Criar um DataFrame com os parâmetros do melhor modelo
+    df_parametros_melhor_modelo = pd.DataFrame([parametros_melhor_modelo])
+
+    # Salvar o DataFrame com os parâmetros em um arquivo CSV dentro da pasta com a data de hoje
+    arquivo_csv = f'{pasta_saida}/melhor_modelo_parametros_{melhor_modelo["Modelo"]}.csv'
+    df_parametros_melhor_modelo.to_csv(arquivo_csv, index=False)
+
+    print(f"Parâmetros do melhor modelo ({melhor_modelo['Modelo']}) salvos com sucesso em {arquivo_csv}.")
+
+
+    
+if __name__ == "__main__":
+    # Executar main_LSTM.py
+    print("Executando LSTM...")
+    executar_script('main_LSTM.py')
+
+    # Executar main_NHITS.py
+    print("Executando NHITS...")
+    executar_script('main_NHITS.py')
+
+        # Executar main_NHITS.py
+    #print("Executando NBEATSx...")
+    #executar_script('main_NBEATSx.py')
+
+        # Executar main_NHITS.py
+    print("Executando GRU...")
+    executar_script('main_GRU.py')
+
+        # Executar main_NHITS.py
+    #print("Executando BiTCN...")
+    #executar_script('main_BiTCN.py')
+
+    encontrar_melhor_modelo()
+    
 # Exibir o tempo total de execução
 end_time = time.time()
 execution_time = end_time - start_time
-print(f"Tempo de execução: {execution_time:.2f} segundos")
-
-print('main.py finalizado')
+# Exibir o tempo total de execução em minutos
+execution_time_minutes = execution_time / 60
+print(f"Tempo de execução total: {execution_time_minutes:.2f} minutos")

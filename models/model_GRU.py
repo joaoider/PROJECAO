@@ -1,49 +1,62 @@
 print('model_GRU.py iniciado')
 
-from imports import *
-from base import data_neural, futr_df #, static_df
-from configuracoes import horizon, freq, max_steps, learning_rate, batch_size, variaveis_futuras, variaveis_historicas
+from itertools import product
+from configuracoes.imports import *
+from base import data_neural_train, futr_df_test
+from configuracoes.configuracoes_GRU import horizon, freq, variaveis_futuras, variaveis_historicas
 
-model = [GRU(
-            max_steps=max_steps, #:int=1000
-            h = horizon, #:int
-            input_size=-1, #:int=-1,
-            encoder_n_layers=2, #:int=2
-            decoder_layers=2, #:int=2
-            encoder_hidden_size=200, #:int=200
-            decoder_hidden_size=200, #:int=200
-            encoder_activation='tanh', #:str='tanh'
-            context_size=10, #:int=10
-            loss=MAE(),
-            valid_loss=MAE(),
-            futr_exog_list = variaveis_futuras,
-            hist_exog_list = variaveis_historicas,
-            learning_rate = learning_rate, #:float=0.001
-            batch_size = batch_size,
-            scaler_type='robust', #:str='robust'
-            random_seed=1,
-        )]
+# Função para treinar o modelo GRU
+def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 
+                encoder_n_layers, decoder_layers, context_size, encoder_activation, 
+                encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, 
+                val_check_steps, scaler_type, random_seed, num_workers_loader, 
+                drop_last_loader, optimizer, lr_scheduler):
+    
+    print(f'treinar_GRU iniciado com max_steps={max_steps}, learning_rate={learning_rate}, batch_size={batch_size}, '
+          f'encoder_hidden_size={encoder_hidden_size}, decoder_hidden_size={decoder_hidden_size}, '
+          f'encoder_n_layers={encoder_n_layers}, decoder_layers={decoder_layers}, context_size={context_size}, '
+          f'encoder_activation={encoder_activation}, encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, '
+          f'num_lr_decays={num_lr_decays}, early_stop_patience_steps={early_stop_patience_steps}, '
+          f'val_check_steps={val_check_steps}, scaler_type={scaler_type}, random_seed={random_seed}, '
+          f'num_workers_loader={num_workers_loader}, drop_last_loader={drop_last_loader}, optimizer={optimizer}, '
+          f'lr_scheduler={lr_scheduler}')
+    
+    # Definir o modelo GRU com os parâmetros variáveis
+    model = [GRU(
+                max_steps=max_steps,  # Número máximo de iterações
+                h=horizon,  # Horizonte de previsão
+                input_size=-1,  # Tamanho do input
+                encoder_n_layers=encoder_n_layers,  # Camadas do codificador
+                decoder_layers=decoder_layers,  # Camadas do decodificador
+                encoder_hidden_size=encoder_hidden_size,  # Tamanho da camada oculta do codificador
+                decoder_hidden_size=decoder_hidden_size,  # Tamanho da camada oculta do decodificador
+                encoder_activation=encoder_activation,  # Função de ativação do codificador
+                encoder_bias=encoder_bias,  # Bias no encoder
+                encoder_dropout=encoder_dropout,  # Dropout no encoder
+                context_size=context_size,  # Tamanho do contexto
+                loss=MAE(),  # Função de perda
+                valid_loss=MAE(),  # Função de perda para validação
+                futr_exog_list=variaveis_futuras,  # Variáveis exógenas futuras
+                hist_exog_list=variaveis_historicas,  # Variáveis exógenas históricas
+                learning_rate=learning_rate,  # Taxa de aprendizado
+                batch_size=batch_size,  # Tamanho do batch
+                num_lr_decays=num_lr_decays,  # Número de decaimentos da taxa de aprendizado
+                early_stop_patience_steps=early_stop_patience_steps,  # Paciência para early stopping
+                val_check_steps=val_check_steps,  # Verificação de validação a cada N passos
+                scaler_type=scaler_type,  # Tipo de normalização dos dados
+                random_seed=random_seed,  # Semente aleatória
+                num_workers_loader=num_workers_loader,  # Número de workers para o loader
+                drop_last_loader=drop_last_loader,  # Descartar o último batch incompleto
+                optimizer=optimizer,  # Otimizador
+                lr_scheduler=lr_scheduler  # Scheduler para a taxa de aprendizado
+            )]
 
-nf = NeuralForecast(models = model, freq = freq)
-nf.fit(df = data_neural) #, static_df = static_df)
+    # Instanciar e treinar o modelo
+    nf = NeuralForecast(models=model, freq=freq)
+    nf.fit(df=data_neural_train)
 
-# Código para mostrar o dataframe com datas e Id esperadas 
-#expected_future = nf.make_future_dataframe()
-#print('expected_future')
-#print(expected_future)
+    # Gerar previsões
+    data_neural_hat = nf.predict(futr_df=futr_df_test)
 
-#Código para verificar valores faltantes no meu dataframe futuro
-#missing_future = nf.get_missing_future(futr_df = futr_df)
-#print('missing_future')
-#print(missing_future)
-
-# Duplicando as linhas
-#futr_df_complete = pd.concat([futr_df.copy(), futr_df.copy()], ignore_index=True)
-# Criando a nova coluna unique_id
-#futr_df_complete['unique_id'] = ['Dudalina Masc'] * len(futr_df) + ['Dudalina Fem'] * len(futr_df)
-
-data_neural_hat = nf.predict(futr_df = futr_df) #.reset_index()
-#print('data_neural_hat')
-#print(data_neural_hat)
-
-print('model_GRU.py finalizado')
+    print('treinar_GRU finalizado')
+    return data_neural_hat

@@ -1,43 +1,51 @@
 print('model_NHITS.py iniciado')
 
-from imports import *
-from base import data_neural, futr_df #, static_df
-from configuracoes import horizon, freq, max_steps, activation, learning_rate, batch_size, variaveis_futuras, variaveis_historicas
+from configuracoes.imports import *
+from base import data_neural_train, futr_df_test
+from configuracoes.configuracoes_NHITS import horizon, freq, variaveis_futuras, variaveis_historicas
 
-model = [NHITS(
-            max_steps = max_steps, #int=1000,
-            h = horizon,
-            input_size = 5*horizon,
-            futr_exog_list = variaveis_futuras,
-            hist_exog_list = variaveis_historicas,
-            scaler_type = 'robust',
-            learning_rate = learning_rate, #float=0.001
-            batch_size = batch_size, #int=32
-            loss = MAE(),
-            valid_loss = MAE(),
-            activation = activation # str, activation from [‘ReLU’, ‘Softplus’, ‘Tanh’, ‘SELU’, ‘LeakyReLU’, ‘PReLU’, ‘Sigmoid’].
+# Função para treinar o modelo NHITS
+def treinar_NHITS(max_steps, learning_rate, batch_size, activation, n_blocks, mlp_units, 
+                  n_pool_kernel_size, n_freq_downsample, pooling_mode, dropout_prob_theta, 
+                  scaler_type, windows_batch_size, step_size, random_seed):
+    
+    print(f'model_NHITS.py iniciado com max_steps={max_steps}, learning_rate={learning_rate}, '
+          f'batch_size={batch_size}, activation={activation}, n_blocks={n_blocks}, '
+          f'mlp_units={mlp_units}, n_pool_kernel_size={n_pool_kernel_size}, '
+          f'n_freq_downsample={n_freq_downsample}, pooling_mode={pooling_mode}, '
+          f'dropout_prob_theta={dropout_prob_theta}, scaler_type={scaler_type}, '
+          f'windows_batch_size={windows_batch_size}, step_size={step_size}, random_seed={random_seed}')
+    
+    # Definir o modelo NHITS com os parâmetros variáveis
+    model = [NHITS(
+                max_steps=max_steps, 
+                h=horizon,
+                input_size=5 * horizon,  # Pode ajustar conforme necessário
+                futr_exog_list=variaveis_futuras,
+                hist_exog_list=variaveis_historicas,
+                n_blocks=n_blocks, 
+                mlp_units=mlp_units, 
+                n_pool_kernel_size=n_pool_kernel_size, 
+                n_freq_downsample=n_freq_downsample, 
+                pooling_mode=pooling_mode,
+                dropout_prob_theta=dropout_prob_theta,
+                scaler_type=scaler_type,
+                learning_rate=learning_rate, 
+                batch_size=batch_size, 
+                windows_batch_size=windows_batch_size,
+                step_size=step_size,
+                random_seed=random_seed,
+                loss=MAE(),
+                valid_loss=MAE(),
+                activation=activation
             )]
 
-nf = NeuralForecast(models = model, freq = freq)
-nf.fit(df = data_neural) #, static_df = static_df)
+    # Instanciar e treinar o modelo
+    nf = NeuralForecast(models=model, freq=freq)
+    nf.fit(df=data_neural_train)
 
-# Código para mostrar o dataframe com datas e Id esperadas 
-#expected_future = nf.make_future_dataframe()
-#print('expected_future')
-#print(expected_future)
+    # Gerar previsões
+    data_neural_hat = nf.predict(futr_df=futr_df_test)
 
-#Código para verificar valores faltantes no meu dataframe futuro
-#missing_future = nf.get_missing_future(futr_df = futr_df)
-#print('missing_future')
-#print(missing_future)
-
-# Duplicando as linhas
-#futr_df_complete = pd.concat([futr_df.copy(), futr_df.copy()], ignore_index=True)
-# Criando a nova coluna unique_id
-#futr_df_complete['unique_id'] = ['Dudalina Masc'] * len(futr_df) + ['Dudalina Fem'] * len(futr_df)
-
-data_neural_hat = nf.predict(futr_df = futr_df) #.reset_index()
-#print('data_neural_hat')
-#print(data_neural_hat)
-
-print('model_NHITS.py finalizado')
+    print('model_NHITS.py finalizado')
+    return data_neural_hat

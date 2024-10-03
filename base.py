@@ -1,76 +1,87 @@
 # MÓDULO BASE
 print('base.py iniciado')
 
-from imports import *
+from configuracoes.imports import *
 from unindo_datas import datas
-from configuracoes import marca, horizon, freq
-from querys.query_base import dataframes  # Agora importa o dicionário com os DataFrames
+from configuracoes.configuracoes_LSTM import marca, horizon, freq, data_inicio_base
 
-# Garantir que a variável marca seja uma lista
-if isinstance(marca, str):
-    marca = [marca]  # Se for string, transformar em lista
+path = 'bases/base_LL.csv'
+data = pd.read_csv(path)
 
-# Dicionário para armazenar os DataFrames finais
-data_neural_dfs = {}
-futr_df_dfs = {}
+# Processar o DataFrame como no código original
+data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO'])
 
-# Iterar sobre as marcas
-for m in marca:
-    # Pegar o DataFrame correspondente da marca no dicionário
-    data = dataframes.get(f'data_{m}')
+data['DATA'] = pd.to_datetime(data['DATA'])
+data = data.loc[data['DATA'] >= data_inicio_base]
 
-    if data is not None:
-        # Processar o DataFrame como no código original
-        data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO'])
+data['VLF'] = data['VLF'].astype(float)
+data['QLF'] = data['QLF'].astype(float)
 
-        data['DATA'] = pd.to_datetime(data['DATA'])
-        data = data.loc[data['DATA'] >= data_inicio_base]
+# Agrupando por data e somando as colunas VLF e QLF
+data = data.groupby('DATA').agg({'VLF': 'sum', 'QLF': 'sum'}).reset_index()
+data = data.sort_values(by='DATA').reset_index(drop=True)
 
-        data['VLF'] = data['VLF'].astype(float)
-        data['QLF'] = data['QLF'].astype(float)
+data['unique_id'] = marca  # Usar a marca atual
+data['unique_id'] = data['unique_id'].astype(object)
 
-        # Agrupando por data e somando as colunas VLF e QLF
-        data = data.groupby('DATA').agg({'VLF': 'sum', 'QLF': 'sum'}).reset_index()
-        data = data.sort_values(by='DATA').reset_index(drop=True)
+# Gerar os próximos 365 dias
+ultimo_valor = data.index[-1]
+proximos_365_dias = pd.date_range(start=ultimo_valor, periods=horizon, freq=freq)[1:]
 
-        data['unique_id'] = m  # Usar a marca atual
-        data['unique_id'] = data['unique_id'].astype(object)
+data_previsao = pd.DataFrame(proximos_365_dias, columns=['DATA_VENDA'])
+data_previsao.reset_index(drop=True, inplace=True)
 
-        # Gerar os próximos 365 dias
-        ultimo_valor = data.index[-1]
-        proximos_365_dias = pd.date_range(start=ultimo_valor, periods=horizon, freq=freq)[1:]
+# Criar o DataFrame data_neural_marca
+data_neural = data.copy().reset_index()
+data_neural.rename(columns={'DATA': 'ds', 'VLF': 'y'}, inplace=True)
+data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF']]
+data_neural = pd.merge(data_neural, datas, on=['ds'])
 
-        data_previsao = pd.DataFrame(proximos_365_dias, columns=['DATA_VENDA'])
-        data_previsao.reset_index(drop=True, inplace=True)
+data_neural['ds'].max()
 
-        # Criar o DataFrame `data_neural_marca`
-        data_neural = data.copy().reset_index()
-        data_neural.rename(columns={'DATA': 'ds', 'VLF': 'y'}, inplace=True)
-        data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF']]
-        data_neural = pd.merge(data_neural, datas, on=['ds'])
+# Plot the graph
+plt.plot(data_neural['ds'], data_neural['y'])
+plt.xlabel('DATA')
+plt.ylabel('VLF')
+plt.title('VLF by DATA')
+plt.savefig('outputs/base.png')
 
-        # Calcular a data limite
-        data_inicio = datetime.now()
-        data_limite = datetime.now() + timedelta(days=horizon)
+# Calcular a data limite
+data_inicio = datetime.now()
+data_limite = datetime.now() + timedelta(days=horizon)
 
-        data_inicio = data_inicio.strftime('%Y-%m-%d')
-        data_limite = data_limite.strftime('%Y-%m-%d')
+data_inicio = data_inicio.strftime('%Y-%m-%d')
+data_limite = data_limite.strftime('%Y-%m-%d')
 
-        # Filtrar o DataFrame para as datas futuras
-        futr_df = datas[(datas['ds'] >= data_inicio) & (datas['ds'] <= data_limite)]
-        futr_df['unique_id'] = m  # Usar a marca atual
-        futr_df['unique_id'] = futr_df['unique_id'].astype(object)
+data_inicio_back = datetime.now() - timedelta(days=horizon+1)
+data_limite_back = datetime.now()
+data_inicio_back = data_inicio_back.strftime('%Y-%m-%d')
+data_limite_back = data_limite_back.strftime('%Y-%m-%d')
 
-        # Armazenar os DataFrames no dicionário
-        data_neural_dfs[f'data_neural_{m}'] = data_neural
-        futr_df_dfs[f'futr_df_{m}'] = futr_df
+# Para fazer validação vou limitar a base de dados até 1 ano atrás, essa será a base de treino
+data_neural_train = data_neural[data_neural['ds'] < data_inicio_back]
 
-        # Exibir as primeiras linhas dos DataFrames criados
-        print(f"\nDataFrame data_neural_{m}:")
-        print(data_neural.head(1))
-        print(f"\nDataFrame futr_df_{m}:")
-        print(futr_df.head(1))
+data_neural_test = data_neural[(data_neural['ds'] >= data_inicio_back) & (data_neural['ds'] < data_inicio)]
 
-# Agora você tem os DataFrames `data_neural_marca` e `futr_df_marca` armazenados nos dicionários `data_neural_dfs` e `futr_df_dfs`.
+
+#ajuste
+data_inicio_ajuste = datetime.now() - timedelta(days=1)
+data_inicio_ajuste = data_inicio_ajuste.strftime('%Y-%m-%d')
+## Filtrar o DataFrame para as datas futuras
+futr_df = datas[(datas['ds'] >= data_inicio_ajuste) & (datas['ds'] < data_limite)]
+futr_df['unique_id'] = marca  # Usar a marca atual
+futr_df['unique_id'] = futr_df['unique_id'].astype(object)
+
+# Filtrar o DataFrame para as datas futuras
+# base de teste
+futr_df_test = datas[(datas['ds'] >= data_inicio_back) & (datas['ds'] < data_inicio)]
+futr_df_test['unique_id'] = marca  # Usar a marca atual
+futr_df_test['unique_id'] = futr_df_test['unique_id'].astype(object)
+
+print('data geral', data_neural['ds'].max())
+print('futr geral', futr_df['ds'].min(), futr_df['ds'].max())
+
+print('data train', data_neural_train['ds'].max())
+print('futr geral test', futr_df_test['ds'].min(), futr_df_test['ds'].max())
 
 print('base.py finalizado')

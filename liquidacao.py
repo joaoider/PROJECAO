@@ -1,7 +1,7 @@
 import pandas as pd
-from querys.query_liquidacao import path_liqui, data_liqui
+path_liqui = 'bases/base_liqui_LL.csv'
 
-#dfliquidacao = pd.read_csv(path_liqui)
+data_liqui = pd.read_csv(path_liqui)
 
 data_liqui['DATA_INICIO_LIQUIDACAO'] = pd.to_datetime(data_liqui['DATA_INICIO_LIQUIDACAO'])
 

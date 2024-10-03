@@ -2,6 +2,7 @@ import time
 # Marcação de início de execução
 start_time = time.time()
 
+import time
 import subprocess
 import pandas as pd
 import os
@@ -27,16 +28,27 @@ def encontrar_melhor_modelo():
     if not os.path.exists(pasta_saida):
         os.makedirs(pasta_saida)
 
-    # Caminho para os arquivos CSV dentro da pasta com a data de hoje
-    caminho_lstm = os.path.join(pasta_saida, 'forecast_with_metrics_LSTM.csv')
-    caminho_nhits = os.path.join(pasta_saida, 'forecast_with_metrics_NHITS.csv')
-    caminho_gru = os.path.join(pasta_saida, 'forecast_with_metrics_GRU.csv')
+    # Ler os nomes dos arquivos CSV salvos
+    try:
+        with open(f'{pasta_saida}/nome_arquivo_csv_lstm.txt', 'r') as f:
+            nome_arquivo_csv_lstm = f.read().strip()
+        with open(f'{pasta_saida}/nome_arquivo_csv_nhits.txt', 'r') as f:
+            nome_arquivo_csv_nhits = f.read().strip()
+        with open(f'{pasta_saida}/nome_arquivo_csv_gru.txt', 'r') as f:
+            nome_arquivo_csv_gru = f.read().strip()
+    except FileNotFoundError:
+        print("Erro: Um dos arquivos de nome CSV não foi encontrado.")
+        return
+
+    # Caminho para os arquivos CSV, lidos dos arquivos de nome
+    caminho_lstm = os.path.join(pasta_saida, nome_arquivo_csv_lstm)
+    caminho_nhits = os.path.join(pasta_saida, nome_arquivo_csv_nhits)
+    caminho_gru = os.path.join(pasta_saida, nome_arquivo_csv_gru)
 
     # Ler os arquivos CSV para cada modelo a partir da pasta com a data de hoje
     lstm_df = pd.read_csv(caminho_lstm)
     nhits_df = pd.read_csv(caminho_nhits)
     gru_df = pd.read_csv(caminho_gru)
-
     # Encontrar a linha com os menores valores de MAE, MSE, RMSE e MAPE em cada dataframe
     melhor_lstm = lstm_df.loc[lstm_df[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]
     melhor_nhits = nhits_df.loc[nhits_df[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]
@@ -81,7 +93,6 @@ def encontrar_melhor_modelo():
     print(f"Parâmetros do melhor modelo ({melhor_modelo['Modelo']}) salvos com sucesso em {arquivo_csv}.")
 
 
-    
 if __name__ == "__main__":
     # Executar main_LSTM.py
     print("Executando LSTM...")
@@ -91,20 +102,12 @@ if __name__ == "__main__":
     print("Executando NHITS...")
     executar_script('main_NHITS.py')
 
-        # Executar main_NHITS.py
-    #print("Executando NBEATSx...")
-    #executar_script('main_NBEATSx.py')
-
-        # Executar main_NHITS.py
+    # Executar main_GRU.py
     print("Executando GRU...")
     executar_script('main_GRU.py')
 
-        # Executar main_NHITS.py
-    #print("Executando BiTCN...")
-    #executar_script('main_BiTCN.py')
-
     encontrar_melhor_modelo()
-    
+
 # Exibir o tempo total de execução
 end_time = time.time()
 execution_time = end_time - start_time

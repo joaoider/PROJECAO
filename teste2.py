@@ -6,22 +6,39 @@ from datetime import datetime
 def encontrar_melhor_modelo():
     # Obter a data atual
     data_hoje = datetime.now().strftime('%Y-%m-%d')
-
+    print('ok')
     # Criar o diretório 'outputs/data_hoje' se não existir
     pasta_saida = f'outputs/{data_hoje}'
+    print('ok')
     if not os.path.exists(pasta_saida):
         os.makedirs(pasta_saida)
 
-    # Caminho para os arquivos CSV dentro da pasta com a data de hoje
-    caminho_lstm = os.path.join(pasta_saida, 'forecast_with_metrics_LSTM.csv').replace("\\", "/")
-    caminho_nhits = os.path.join(pasta_saida, 'forecast_with_metrics_NHITS.csv').replace("\\", "/")
-    caminho_gru = os.path.join(pasta_saida, 'forecast_with_metrics_GRU.csv').replace("\\", "/")
+    # Ler os nomes dos arquivos CSV salvos
+    try:
+        with open(f'{pasta_saida}/nome_arquivo_csv_lstm.txt', 'r') as f:
+            nome_arquivo_csv_lstm = f.read().strip()
+            print('lstm ok')
+    except FileNotFoundError:
+        print("Erro: LSTM CSV não foi encontrado.")
+        return
+    try:        
+        with open(f'{pasta_saida}/nome_arquivo_csv_nhits.txt', 'r') as f:
+            nome_arquivo_csv_nhits = f.read().strip()
+        with open(f'{pasta_saida}/nome_arquivo_csv_gru.txt', 'r') as f:
+            nome_arquivo_csv_gru = f.read().strip()
+    except FileNotFoundError:
+        print("Erro: Um dos arquivos de nome CSV não foi encontrado.")
+        return
+
+    # Caminho para os arquivos CSV, lidos dos arquivos de nome
+    caminho_lstm = os.path.join(pasta_saida, nome_arquivo_csv_lstm)
+    caminho_nhits = os.path.join(pasta_saida, nome_arquivo_csv_nhits)
+    caminho_gru = os.path.join(pasta_saida, nome_arquivo_csv_gru)
 
     # Ler os arquivos CSV para cada modelo a partir da pasta com a data de hoje
     lstm_df = pd.read_csv(caminho_lstm)
     nhits_df = pd.read_csv(caminho_nhits)
     gru_df = pd.read_csv(caminho_gru)
-
     # Encontrar a linha com os menores valores de MAE, MSE, RMSE e MAPE em cada dataframe
     melhor_lstm = lstm_df.loc[lstm_df[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]
     melhor_nhits = nhits_df.loc[nhits_df[['MAE', 'MSE', 'RMSE', 'MAPE']].sum(axis=1).idxmin()]

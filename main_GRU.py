@@ -148,9 +148,18 @@ for params in param_combinations:
 
 # Após o loop, salvar o resultado final e métricas
 if not metricas_df_final.empty:
-    csv_file_path = f'{output_dir}/forecast_with_metrics_GRU_{horario_atual}.csv'
+    # Gerar o nome do arquivo CSV com base no horário atual
+    horario_csv_salvo_gru = datetime.now().strftime('%H-%M-%S')
+    csv_file_path = f'{output_dir}/forecast_with_metrics_GRU_{horario_csv_salvo_gru}.csv'
     metricas_df_final.to_csv(csv_file_path, index=False)
-    print(f"Resultado final salvo com sucesso: {csv_file_path}")
+
+    # Exibir a mensagem de sucesso com o nome do arquivo e horário
+    print(f"Resultado final salvo com sucesso: {csv_file_path} às {horario_csv_salvo_gru}")
+    
+    # Salvar o nome do arquivo CSV em um arquivo texto para ser utilizado posteriormente
+    with open(f'{output_dir}/nome_arquivo_csv_gru.txt', 'w') as f:
+        f.write(csv_file_path)  # Escrever o caminho completo do arquivo CSV
+    print(f"Nome do arquivo CSV salvo com sucesso em {output_dir}/nome_arquivo_csv_gru.txt")
 else:
     print("Nenhuma métrica foi calculada.")
 

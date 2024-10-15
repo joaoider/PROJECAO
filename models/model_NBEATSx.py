@@ -1,9 +1,8 @@
 print('model_NBEATSx.py iniciado')
 
-from itertools import product
-from configuracoes.imports import *
+from configuracoes_modelos.imports import *
 from base import data_neural_train, futr_df_test
-from configuracoes.configuracoes_NBEATSx import horizon, freq
+from configuracoes import horizon, freq
 
 # Função para treinar o modelo NBEATSx
 def treinar_NBEATSx(max_steps, learning_rate, batch_size, activation):
@@ -26,11 +25,11 @@ def treinar_NBEATSx(max_steps, learning_rate, batch_size, activation):
             )]
 
     # Instanciar e treinar o modelo
-    nf = NeuralForecast(models=model, freq=freq)
-    nf.fit(df=data_neural_train)
+    nf = NeuralForecast(models = model, freq = freq)
+    nf.fit(df = data_neural_train)
 
     # Gerar previsões
-    data_neural_hat = nf.predict(futr_df=futr_df_test)
+    data_neural_hat = nf.predict(futr_df = futr_df_test)
 
     print('model_NBEATSx.py finalizado')
     return data_neural_hat

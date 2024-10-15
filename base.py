@@ -1,24 +1,26 @@
 # MÓDULO BASE
-print('base.py iniciado')
+print('base_categoria.py iniciado')
 
-from configuracoes.imports import *
+from configuracoes_modelos.imports import *
 from unindo_datas import datas
-from configuracoes.configuracoes_LSTM import marca, horizon, freq, data_inicio_base
+from configuracoes import marca, horizon, freq, data_inicio_base
 
 path = 'bases/base_LL.csv'
 data = pd.read_csv(path)
 
 # Processar o DataFrame como no código original
-data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO'])
+data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO', 'MEDIA_VLF', 'MEDIA_QLF', 'MEDIA_ROL', 'MEDIA_CPV'])
 
 data['DATA'] = pd.to_datetime(data['DATA'])
 data = data.loc[data['DATA'] >= data_inicio_base]
 
 data['VLF'] = data['VLF'].astype(float)
 data['QLF'] = data['QLF'].astype(float)
+data['ROL'] = data['ROL'].astype(float)
+data['CPV'] = data['CPV'].astype(float)
 
-# Agrupando por data e somando as colunas VLF e QLF
-data = data.groupby('DATA').agg({'VLF': 'sum', 'QLF': 'sum'}).reset_index()
+## Agrupando por data e somando as colunas VLF e QLF
+data = data.groupby('DATA').agg({'VLF': 'sum', 'QLF': 'sum', 'ROL': 'sum', 'CPV': 'sum'}).reset_index()
 data = data.sort_values(by='DATA').reset_index(drop=True)
 
 data['unique_id'] = marca  # Usar a marca atual
@@ -34,7 +36,7 @@ data_previsao.reset_index(drop=True, inplace=True)
 # Criar o DataFrame data_neural_marca
 data_neural = data.copy().reset_index()
 data_neural.rename(columns={'DATA': 'ds', 'VLF': 'y'}, inplace=True)
-data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF']]
+data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF', 'ROL', 'CPV']]
 data_neural = pd.merge(data_neural, datas, on=['ds'])
 
 data_neural['ds'].max()
@@ -44,8 +46,22 @@ plt.plot(data_neural['ds'], data_neural['y'])
 plt.xlabel('DATA')
 plt.ylabel('VLF')
 plt.title('VLF by DATA')
-plt.savefig('outputs/base.png')
+plt.savefig(f'outputs/base_{marca}.png')
 
+
+# Fixando tudo para referencia de fim de setembro 2024!
+data_neural = data_neural[data_neural['ds'] <= '2024-09-30']
+data_neural_train = data_neural[data_neural['ds'] <= '2023-09-30']
+data_neural_test = data_neural[(data_neural['ds'] >= '2023-10-01') & (data_neural['ds'] <= '2024-09-30')]
+futr_df = datas[(datas['ds'] >= '2024-10-01') & (datas['ds'] < '2025-10-01')]
+futr_df['unique_id'] = marca  # Usar a marca atual
+futr_df['unique_id'] = futr_df['unique_id'].astype(object)
+futr_df_test = datas[(datas['ds'] >= '2023-10-01') & (datas['ds'] < '2024-09-30')]
+futr_df_test['unique_id'] = marca  # Usar a marca atual
+futr_df_test['unique_id'] = futr_df_test['unique_id'].astype(object)
+
+
+"""
 # Calcular a data limite
 data_inicio = datetime.now()
 data_limite = datetime.now() + timedelta(days=horizon)
@@ -63,7 +79,6 @@ data_neural_train = data_neural[data_neural['ds'] < data_inicio_back]
 
 data_neural_test = data_neural[(data_neural['ds'] >= data_inicio_back) & (data_neural['ds'] < data_inicio)]
 
-
 #ajuste
 data_inicio_ajuste = datetime.now() - timedelta(days=1)
 data_inicio_ajuste = data_inicio_ajuste.strftime('%Y-%m-%d')
@@ -77,6 +92,9 @@ futr_df['unique_id'] = futr_df['unique_id'].astype(object)
 futr_df_test = datas[(datas['ds'] >= data_inicio_back) & (datas['ds'] < data_inicio)]
 futr_df_test['unique_id'] = marca  # Usar a marca atual
 futr_df_test['unique_id'] = futr_df_test['unique_id'].astype(object)
+"""
+
+
 
 print('data geral', data_neural['ds'].max())
 print('futr geral', futr_df['ds'].min(), futr_df['ds'].max())
@@ -84,4 +102,4 @@ print('futr geral', futr_df['ds'].min(), futr_df['ds'].max())
 print('data train', data_neural_train['ds'].max())
 print('futr geral test', futr_df_test['ds'].min(), futr_df_test['ds'].max())
 
-print('base.py finalizado')
+print('base_categoria.py finalizado')

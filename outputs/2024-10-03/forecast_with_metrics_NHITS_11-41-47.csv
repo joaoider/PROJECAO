@@ -1,2 +1,0 @@
-max_steps,learning_rate,batch_size,activation,n_blocks,mlp_units,n_pool_kernel_size,n_freq_downsample,pooling_mode,dropout_prob_theta,scaler_type,windows_batch_size,step_size,random_seed,MAE,MSE,RMSE,MAPE
-1,0.001,32,ReLU,"[1, 1, 1]","[[512, 512], [512, 512], [512, 512]]","[2, 2, 1]","[4, 2, 1]",MaxPool1d,0.0,identity,1024,1,1,562976.5842445055,658589140738.6709,811535.0520702546,245.71304849842272

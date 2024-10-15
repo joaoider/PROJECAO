@@ -1,25 +1,21 @@
 print('model_GRU_final.py iniciado')
 
-from itertools import product
-from configuracoes.imports import *
+from configuracoes_modelos.imports import *
 from base import data_neural, futr_df
-from configuracoes.configuracoes_GRU import horizon, freq, variaveis_futuras, variaveis_historicas
+from configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 # Função para treinar o modelo GRU
 def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 
                 encoder_n_layers, decoder_layers, context_size, encoder_activation, 
                 encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, 
-                val_check_steps, scaler_type, random_seed, num_workers_loader, 
-                drop_last_loader, optimizer, lr_scheduler):
+                val_check_steps, scaler_type, random_seed):
     
     print(f'treinar_GRU iniciado com max_steps={max_steps}, learning_rate={learning_rate}, batch_size={batch_size}, '
           f'encoder_hidden_size={encoder_hidden_size}, decoder_hidden_size={decoder_hidden_size}, '
           f'encoder_n_layers={encoder_n_layers}, decoder_layers={decoder_layers}, context_size={context_size}, '
           f'encoder_activation={encoder_activation}, encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, '
           f'num_lr_decays={num_lr_decays}, early_stop_patience_steps={early_stop_patience_steps}, '
-          f'val_check_steps={val_check_steps}, scaler_type={scaler_type}, random_seed={random_seed}, '
-          f'num_workers_loader={num_workers_loader}, drop_last_loader={drop_last_loader}, optimizer={optimizer}, '
-          f'lr_scheduler={lr_scheduler}')
+          f'val_check_steps={val_check_steps}, scaler_type={scaler_type}, random_seed={random_seed} ')
     
     # Definir o modelo GRU com os parâmetros variáveis
     model = [GRU(
@@ -44,11 +40,7 @@ def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decod
                 early_stop_patience_steps=early_stop_patience_steps,  # Paciência para early stopping
                 val_check_steps=val_check_steps,  # Verificação de validação a cada N passos
                 scaler_type=scaler_type,  # Tipo de normalização dos dados
-                random_seed=random_seed,  # Semente aleatória
-                num_workers_loader=num_workers_loader,  # Número de workers para o loader
-                drop_last_loader=drop_last_loader,  # Descartar o último batch incompleto
-                optimizer=optimizer,  # Otimizador
-                lr_scheduler=lr_scheduler  # Scheduler para a taxa de aprendizado
+                random_seed=random_seed  # Semente aleatória
             )]
 
     # Instanciar e treinar o modelo

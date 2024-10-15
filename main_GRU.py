@@ -6,8 +6,9 @@ start_time = time.time()
 print('main_GRU.py iniciado')
 
 # Importar módulos e dataframes necessários
-from configuracoes.imports import *
-from configuracoes.configuracoes_GRU import marca, gerar_combinacoes_parametros
+from configuracoes_modelos.imports import *
+from configuracoes import marca
+from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
 from base import data_neural_train, data_neural_test  # Certifique-se de que 'data_neural_test' tenha a coluna 'y'
 
 print('Marca: ', marca)
@@ -16,7 +17,7 @@ print('###############################')
 # Criar a pasta com a data do dia, se não existir
 data_atual = datetime.now().strftime('%Y-%m-%d')
 horario_atual = datetime.now().strftime('%H-%M-%S')
-output_dir = f'outputs/{data_atual}'
+output_dir = 'outputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
@@ -42,7 +43,7 @@ metricas_df_final = pd.DataFrame(columns=[
     'encoder_n_layers', 'decoder_layers', 'context_size',
     'encoder_activation', 'encoder_bias', 'encoder_dropout', 
     'num_lr_decays', 'early_stop_patience_steps', 'val_check_steps',
-    'scaler_type', 'random_seed', 'MAE', 'MSE', 'RMSE', 'MAPE'
+    'scaler_type', 'random_seed', 'MAE', 'RMSE', 'MAPE'
 ])
 
 # Iterar sobre as combinações de parâmetros
@@ -50,8 +51,7 @@ for params in param_combinations:
     (max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 
      encoder_n_layers, decoder_layers, context_size, encoder_activation, 
      encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, 
-     val_check_steps, scaler_type, random_seed, num_workers_loader, 
-     drop_last_loader, optimizer, lr_scheduler) = params
+     val_check_steps, scaler_type, random_seed) = params
 
     col_name = (f'GRU_steps{max_steps}_lr{learning_rate}_batch{batch_size}_'
                 f'encoder{encoder_hidden_size}_decoder{decoder_hidden_size}_'
@@ -66,8 +66,7 @@ for params in param_combinations:
           f'decoder_layers={decoder_layers}, context_size={context_size}, encoder_activation={encoder_activation}, '
           f'encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, num_lr_decays={num_lr_decays}, '
           f'early_stop_patience_steps={early_stop_patience_steps}, val_check_steps={val_check_steps}, '
-          f'scaler_type={scaler_type}, random_seed={random_seed}, num_workers_loader={num_workers_loader}, '
-          f'drop_last_loader={drop_last_loader}, optimizer={optimizer}, lr_scheduler={lr_scheduler}')
+          f'scaler_type={scaler_type}, random_seed={random_seed}')
     
     # Treinar o modelo com os parâmetros atuais
     data_neural_hat = funcao_treinar(max_steps, learning_rate, batch_size, 
@@ -75,9 +74,7 @@ for params in param_combinations:
                                      encoder_n_layers, decoder_layers, context_size, 
                                      encoder_activation, encoder_bias, encoder_dropout, 
                                      num_lr_decays, early_stop_patience_steps, 
-                                     val_check_steps, scaler_type, random_seed, 
-                                     num_workers_loader, drop_last_loader, 
-                                     optimizer, lr_scheduler)
+                                     val_check_steps, scaler_type, random_seed)
 
     # Verificar se a previsão foi gerada corretamente
     if data_neural_hat is not None:
@@ -115,8 +112,7 @@ for params in param_combinations:
 
         # Calcular as métricas para todos os dados (sem agrupar por dia)
         mae = mean_absolute_error(data_neural_hat_final_plot['y'], data_neural_hat_final_plot[col_name])
-        mse = mean_squared_error(data_neural_hat_final_plot['y'], data_neural_hat_final_plot[col_name])
-        rmse = np.sqrt(mse)
+        rmse = root_mean_squared_error(data_neural_hat_final_plot['y'], data_neural_hat_final_plot[col_name])
         mape = np.mean(np.abs((data_neural_hat_final_plot['y'] - data_neural_hat_final_plot[col_name]) / data_neural_hat_final_plot['y'])) * 100
 
         # Adicionar as métricas ao DataFrame final
@@ -138,7 +134,6 @@ for params in param_combinations:
             'scaler_type': [scaler_type],
             'random_seed': [random_seed],
             'MAE': [mae],
-            'MSE': [mse],
             'RMSE': [rmse],
             'MAPE': [mape]
         })
@@ -148,42 +143,39 @@ for params in param_combinations:
 
 # Após o loop, salvar o resultado final e métricas
 if not metricas_df_final.empty:
-    # Gerar o nome do arquivo CSV com base no horário atual
-    horario_csv_salvo_gru = datetime.now().strftime('%H-%M-%S')
-    csv_file_path = f'{output_dir}/forecast_with_metrics_GRU_{horario_csv_salvo_gru}.csv'
+    # Definir o nome fixo para o arquivo CSV
+    csv_file_path = f'{output_dir}/forecast_with_metrics_GRU_{marca}.csv'
     metricas_df_final.to_csv(csv_file_path, index=False)
 
-    # Exibir a mensagem de sucesso com o nome do arquivo e horário
-    print(f"Resultado final salvo com sucesso: {csv_file_path} às {horario_csv_salvo_gru}")
-    
-    # Salvar o nome do arquivo CSV em um arquivo texto para ser utilizado posteriormente
-    with open(f'{output_dir}/nome_arquivo_csv_gru.txt', 'w') as f:
-        f.write(csv_file_path)  # Escrever o caminho completo do arquivo CSV
-    print(f"Nome do arquivo CSV salvo com sucesso em {output_dir}/nome_arquivo_csv_gru.txt")
+    # Exibir a mensagem de sucesso com o nome do arquivo
+    print(f"Resultado final salvo com sucesso: {csv_file_path}")
 else:
     print("Nenhuma métrica foi calculada.")
 
 # Plotar os valores reais e as previsões dos modelos
-if 'y' in data_neural_hat_final_plot.columns:
+if 'data_neural_hat_final_plot' in locals() and 'y' in data_neural_hat_final_plot.columns:
     # Verificar quais colunas estão disponíveis para plotagem
     colunas_para_plotar = ['y', col_name]  # 'y' e a coluna da previsão gerada
     colunas_existentes = [col for col in colunas_para_plotar if col in data_neural_hat_final_plot.columns]
     
-    # Plotar os valores reais e as previsões
-    data_neural_hat_final_plot.set_index('ds')[colunas_existentes].plot(linewidth=2)
+    if colunas_existentes:  # Certifique-se de que existem colunas para plotar
+        # Plotar os valores reais e as previsões
+        data_neural_hat_final_plot.set_index('ds')[colunas_existentes].plot(linewidth=2)
 
-    # Configurações de rótulos e título do gráfico
-    plt.ylabel('VLF', fontsize=12)
-    plt.xlabel('Date', fontsize=12)
-    plt.title(f'Valores Reais vs Previsões ({col_name})', fontsize=14)
-    plt.grid()
+        # Configurações de rótulos e título do gráfico
+        plt.ylabel('VLF', fontsize=12)
+        plt.xlabel('Date', fontsize=12)
+        plt.title(f'Valores Reais vs Previsões ({col_name})', fontsize=14)
+        plt.grid()
 
-    # Salvar o gráfico como imagem
-    plot_file_path = f'{output_dir}/plot_image_GRU_{horario_atual}.png'
-    plt.savefig(plot_file_path)
-    print(f"Gráfico salvo com sucesso: {plot_file_path}")
+        # Salvar o gráfico como imagem
+        plot_file_path = f'{output_dir}/plot_image_GRU_{marca}.png'
+        plt.savefig(plot_file_path)
+        print(f"Gráfico salvo com sucesso: {plot_file_path}")
+    else:
+        print("Erro: Não há colunas disponíveis para plotar.")
 else:
-    print("Erro: Não foi possível plotar os dados porque a coluna 'y' não está presente.")
+    print("Erro: Não foi possível plotar os dados porque 'data_neural_hat_final_plot' não foi gerado corretamente ou a coluna 'y' está ausente.")
 
 # Exibir o tempo total de execução
 end_time = time.time()

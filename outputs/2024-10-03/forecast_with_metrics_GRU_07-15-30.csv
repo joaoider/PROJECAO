@@ -1,2 +1,0 @@
-max_steps,learning_rate,batch_size,encoder_hidden_size,decoder_hidden_size,encoder_n_layers,decoder_layers,context_size,MAE,MSE,RMSE,MAPE
-1,0.001,32,200,200,2,2,10,574537.1983585164,630835808076.7031,794251.728406494,193.7373778188109

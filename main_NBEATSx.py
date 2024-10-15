@@ -6,9 +6,10 @@ start_time = time.time()
 print('main_NBEATSx.py iniciado')
 
 # Importar módulos e dataframes necessários
-from configuracoes.imports import *
-from configuracoes.configuracoes_NBEATSx import marca, gerar_combinacoes_parametros
-from base import data_neural_train, data_neural_test  # Certifique-se de que 'data_neural_test' tenha a coluna 'y'
+from configuracoes_modelos.imports import *
+from configuracoes import marca
+from configuracoes_modelos.configuracoes_NBEATSx import gerar_combinacoes_parametros
+from base import data_neural_train, data_neural_test 
 
 print('Marca: ', marca)
 print('###############################')
@@ -16,7 +17,7 @@ print('###############################')
 # Criar a pasta com a data do dia, se não existir
 data_atual = datetime.now().strftime('%Y-%m-%d')
 horario_atual = datetime.now().strftime('%H-%M-%S')
-output_dir = f'outputs/{data_atual}'
+output_dir = 'outputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
@@ -36,7 +37,7 @@ funcao_treinar = getattr(modulo_modelo, 'treinar_NBEATSx')  # Função específi
 param_combinations = gerar_combinacoes_parametros('NBEATSx')
 
 # Inicializar DataFrame de métricas para armazenar todas as combinações
-metricas_df_final = pd.DataFrame(columns=['max_steps', 'learning_rate', 'batch_size', 'activation', 'MAE', 'MSE', 'RMSE'])
+metricas_df_final = pd.DataFrame(columns=['max_steps', 'learning_rate', 'batch_size', 'activation', 'MAE', 'RMSE'])
 
 # Iterar sobre as combinações de parâmetros
 for params in param_combinations:
@@ -87,8 +88,7 @@ for params in param_combinations:
 
         # Calcular as métricas para todos os dados (sem agrupar por dia)
         mae = mean_absolute_error(data_neural_hat_final_plot['y'], data_neural_hat_final_plot[col_name])
-        mse = mean_squared_error(data_neural_hat_final_plot['y'], data_neural_hat_final_plot[col_name])
-        rmse = np.sqrt(mse)
+        rmse = root_mean_squared_error(data_neural_hat_final_plot['y'], data_neural_hat_final_plot[col_name])
         mape = np.mean(np.abs((data_neural_hat_final_plot['y'] - data_neural_hat_final_plot[col_name]) / data_neural_hat_final_plot['y'])) * 100
 
         # Adicionar as métricas ao DataFrame final
@@ -98,7 +98,6 @@ for params in param_combinations:
             'batch_size': [batch_size],
             'activation': [activation],
             'MAE': [mae],
-            'MSE': [mse],
             'RMSE': [rmse],
             'MAPE': [mape]
         })
@@ -108,7 +107,7 @@ for params in param_combinations:
 
 # Após o loop, salvar o resultado final e métricas
 if not metricas_df_final.empty:
-    csv_file_path = f'{output_dir}/forecast_with_metrics_NBEATSx_{horario_atual}.csv'
+    csv_file_path = f'{output_dir}/forecast_with_metrics_NBEATSx_{marca}.csv'
     metricas_df_final.to_csv(csv_file_path, index=False)
     print(f"Resultado final salvo com sucesso: {csv_file_path}")
 else:
@@ -130,7 +129,7 @@ if 'y' in data_neural_hat_final_plot.columns:
     plt.grid()
 
 # Salvar o gráfico como imagem
-    plot_file_path = f'{output_dir}/plot_image_NBEATSx_{horario_atual}.png'
+    plot_file_path = f'{output_dir}/plot_image_NBEATSx_{marca}.png'
     plt.savefig(plot_file_path)
     print(f"Gráfico salvo com sucesso: {plot_file_path}")
 else:

@@ -4,6 +4,7 @@ print('base_categoria.py iniciado')
 from configuracoes_modelos.imports import *
 from unindo_datas import datas
 from configuracoes import marca, horizon, freq, data_inicio_base
+from funcoes import verificar_e_completar_datas_faltantes_sem_unique_id
 
 path = 'bases/base_LL.csv'
 data = pd.read_csv(path)
@@ -27,19 +28,33 @@ data['unique_id'] = marca  # Usar a marca atual
 data['unique_id'] = data['unique_id'].astype(object)
 
 # Gerar os próximos 365 dias
-ultimo_valor = data.index[-1]
-proximos_365_dias = pd.date_range(start=ultimo_valor, periods=horizon, freq=freq)[1:]
+#ultimo_valor = data.index[-1]
+#proximos_365_dias = pd.date_range(start=ultimo_valor, periods=horizon, freq=freq)[1:]
 
-data_previsao = pd.DataFrame(proximos_365_dias, columns=['DATA_VENDA'])
-data_previsao.reset_index(drop=True, inplace=True)
+#data_previsao = pd.DataFrame(proximos_365_dias, columns=['DATA_VENDA'])
+#data_previsao.reset_index(drop=True, inplace=True)
 
 # Criar o DataFrame data_neural_marca
 data_neural = data.copy().reset_index()
 data_neural.rename(columns={'DATA': 'ds', 'VLF': 'y'}, inplace=True)
 data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF', 'ROL', 'CPV']]
+
+
+##################################################### Verificando datas faltantes
+# Verificar datas faltantes
+data_neural = verificar_e_completar_datas_faltantes_sem_unique_id(data_neural)
+
+data_neural['ds'] = pd.to_datetime(data_neural['ds'])
+data_neural['y'] = data_neural['y'].astype(float)
+data_neural['QLF'] = data_neural['QLF'].astype(float)
+data_neural['ROL'] = data_neural['ROL'].astype(float)
+data_neural['CPV'] = data_neural['CPV'].astype(float)
+data_neural['unique_id'] = data_neural['unique_id'].astype(object)
+
+
+########################################## Fazendo merge
 data_neural = pd.merge(data_neural, datas, on=['ds'])
 
-data_neural['ds'].max()
 
 # Plot the graph
 plt.plot(data_neural['ds'], data_neural['y'])
@@ -53,6 +68,8 @@ plt.savefig(f'outputs/base_{marca}.png')
 data_neural = data_neural[data_neural['ds'] <= '2024-09-30']
 data_neural_train = data_neural[data_neural['ds'] <= '2023-09-30']
 data_neural_test = data_neural[(data_neural['ds'] >= '2023-10-01') & (data_neural['ds'] <= '2024-09-30')]
+#print('columns', data_neural_test.columns)
+#print(data_neural_test['QLF'])
 futr_df = datas[(datas['ds'] >= '2024-10-01') & (datas['ds'] < '2025-10-01')]
 futr_df['unique_id'] = marca  # Usar a marca atual
 futr_df['unique_id'] = futr_df['unique_id'].astype(object)
@@ -96,10 +113,10 @@ futr_df_test['unique_id'] = futr_df_test['unique_id'].astype(object)
 
 
 
-print('data geral', data_neural['ds'].max())
-print('futr geral', futr_df['ds'].min(), futr_df['ds'].max())
+#print('data geral', data_neural['ds'].max())
+#print('futr geral', futr_df['ds'].min(), futr_df['ds'].max())
 
-print('data train', data_neural_train['ds'].max())
-print('futr geral test', futr_df_test['ds'].min(), futr_df_test['ds'].max())
+#print('data train', data_neural_train['ds'].max())
+#print('futr geral test', futr_df_test['ds'].min(), futr_df_test['ds'].max())
 
 print('base_categoria.py finalizado')

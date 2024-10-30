@@ -9,7 +9,7 @@ print('main_GRU_categoria.py iniciado')
 from configuracoes_modelos.imports import *
 from configuracoes import marca, horizon
 from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
-from base_categoria import data_neural, futr_df, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
+from base_categoria import data_neural_train, data_neural_test, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
 
 print('Iniciando previsões com GRU')
 print('###############################')
@@ -29,12 +29,21 @@ funcao_treinar = getattr(modulo_modelo, 'treinar_GRU')  # Função específica p
 # Gerar as combinações de parâmetros para o GRU
 param_combinations = gerar_combinacoes_parametros('GRU')
 
+
+
+
+# Inicializar um DataFrame para armazenar o MAPE de cada unique_id
+df_mape_resultados = pd.DataFrame(columns=['unique_id', 'MAPE'])
+
+
+
+
 # Iterar sobre as combinações de parâmetros (apenas rodar o modelo)
 for params in param_combinations:
     (max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 
      encoder_n_layers, decoder_layers, context_size, encoder_activation, 
      encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, 
-     val_check_steps, scaler_type, random_seed) = params
+     val_check_steps, scaler_type, random_seed, loss) = params
 
     print(f'Testando parâmetros: max_steps={max_steps}, learning_rate={learning_rate}, '
           f'batch_size={batch_size}, encoder_hidden_size={encoder_hidden_size}, '
@@ -42,7 +51,7 @@ for params in param_combinations:
           f'decoder_layers={decoder_layers}, context_size={context_size}, encoder_activation={encoder_activation}, '
           f'encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, num_lr_decays={num_lr_decays}, '
           f'early_stop_patience_steps={early_stop_patience_steps}, val_check_steps={val_check_steps}, '
-          f'scaler_type={scaler_type}, random_seed={random_seed}')
+          f'scaler_type={scaler_type}, random_seed={random_seed}, loss={loss}')
 
     # Treinar o modelo com os parâmetros atuais
     data_neural_hat = funcao_treinar(max_steps, learning_rate, batch_size, 
@@ -50,7 +59,7 @@ for params in param_combinations:
                                      encoder_n_layers, decoder_layers, context_size, 
                                      encoder_activation, encoder_bias, encoder_dropout, 
                                      num_lr_decays, early_stop_patience_steps, 
-                                     val_check_steps, scaler_type, random_seed)
+                                     val_check_steps, scaler_type, random_seed, loss)
 
     # Verificar se a previsão foi gerada corretamente
     if data_neural_hat is not None:
@@ -94,10 +103,39 @@ for params in param_combinations:
         # Agrupar os dados por 'unique_id' e 'mes_ano' e somar os valores de 'GRU'
         df_grouped = data_neural_hat_mes.groupby(['unique_id', 'mes_ano'])['GRU'].sum().unstack()
 
-        # Salvar o novo DataFrame agrupado
+        # Adicionar a linha 'Total' com a soma dos valores de cada coluna
+        df_grouped.loc['Total'] = df_grouped.sum()
+
+        # Salvar o novo DataFrame agrupado com a linha de soma
         csv_grouped_file_path = os.path.join(output_dir, f'forecast_grouped_GRU_{marca}_categoria.csv')
         df_grouped.to_csv(csv_grouped_file_path)
         print(f"DataFrame agrupado por mês/ano salvo com sucesso em: {csv_grouped_file_path}")
+
+        # Agora calcular o MAPE para cada unique_id
+        for unique_id in unique_ids:
+            # Filtrar previsões e dados reais para o unique_id atual
+            previsoes = data_neural_hat[data_neural_hat['unique_id'] == unique_id]
+            dados_reais = data_neural_test[data_neural_test['unique_id'] == unique_id]
+            
+            # Fazer o merge das previsões com os dados reais para o cálculo do MAPE
+            merged_data = pd.merge(previsoes[['ds', 'GRU']], dados_reais[['ds', 'y']], on='ds', how='left')
+
+            # Verificar se há valores NaN e removê-los
+            merged_data.dropna(subset=['GRU', 'y'], inplace=True)
+
+            if not merged_data.empty:
+                # Calcular o MAPE
+                mape = mean_absolute_percentage_error(merged_data['y'], merged_data['GRU'])
+
+                # Adicionar o MAPE calculado ao DataFrame final
+                df_mape_resultados = df_mape_resultados.append({
+                    'unique_id': unique_id,
+                    'MAPE': mape
+                }, ignore_index=True)
+            # Após o loop, salvar os resultados de MAPE em um arquivo CSV
+            csv_mape_file_path = os.path.join(output_dir, f'resultado_MAPE_GRU_{marca}.csv')
+            df_mape_resultados.to_csv(csv_mape_file_path, index=False)
+            print(f"DataFrame resultado MAPE salvo com sucesso em: {csv_mape_file_path}")
 
 # Exibir o tempo total de execução
 end_time = time.time()

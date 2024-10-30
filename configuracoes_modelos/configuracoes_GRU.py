@@ -8,9 +8,9 @@ modelo = 'GRU'
 # Parâmetros do modelo GRU
 parametros_modelos = {
     'GRU': {
-        'max_steps': [50],  # Número máximo de iterações
+        'max_steps': [1000],  # Número máximo de iterações
         'learning_rate': [0.001],  # 0.001 Taxa de aprendizado
-        'batch_size': [32],  # 32 Tamanho do batch
+        'batch_size': [64],  # 32 Tamanho do batch
         'encoder_hidden_size': [50],  # 200 Tamanho da camada oculta do encoder
         'decoder_hidden_size': [50],  # 200 Tamanho da camada oculta do decoder
         'encoder_n_layers': [2],  # 2 Camadas do encoder
@@ -22,8 +22,9 @@ parametros_modelos = {
         'num_lr_decays': [-1],  # Número de decaimentos da taxa de aprendizado
         'early_stop_patience_steps': [-1],  # Paciência para early stopping
         'val_check_steps': [100],#, 200],  # 100 Verificação de validação a cada N passos
-        'scaler_type': ['identity'], #robust  # Tipo de normalização dos dados
+        'scaler_type': ['robust'], #  identity # Tipo de normalização dos dados
         'random_seed': [1],  # Semente aleatória para reprodutibilidade
+        'loss': [MAE()] # (), MAE, MSE, RMSE, MAPE, DistributionLoss
     }
 }
 
@@ -47,6 +48,7 @@ def gerar_combinacoes_parametros(modelo):
         params['val_check_steps'],
         params['scaler_type'],
         params['random_seed'],
+        params['loss']
     ))
 
 print('configuracoes_GRU.py finalizado')

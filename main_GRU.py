@@ -43,7 +43,7 @@ metricas_df_final = pd.DataFrame(columns=[
     'encoder_n_layers', 'decoder_layers', 'context_size',
     'encoder_activation', 'encoder_bias', 'encoder_dropout', 
     'num_lr_decays', 'early_stop_patience_steps', 'val_check_steps',
-    'scaler_type', 'random_seed', 'MAE', 'RMSE', 'MAPE'
+    'scaler_type', 'random_seed', 'loss', 'MAE', 'RMSE', 'MAPE'
 ])
 
 # Iterar sobre as combinações de parâmetros
@@ -51,14 +51,14 @@ for params in param_combinations:
     (max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 
      encoder_n_layers, decoder_layers, context_size, encoder_activation, 
      encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, 
-     val_check_steps, scaler_type, random_seed) = params
+     val_check_steps, scaler_type, random_seed, loss) = params
 
     col_name = (f'GRU_steps{max_steps}_lr{learning_rate}_batch{batch_size}_'
                 f'encoder{encoder_hidden_size}_decoder{decoder_hidden_size}_'
                 f'enc_layers{encoder_n_layers}_dec_layers{decoder_layers}_context{context_size}_'
                 f'activation{encoder_activation}_bias{encoder_bias}_dropout{encoder_dropout}_'
                 f'lr_decays{num_lr_decays}_early_stop{early_stop_patience_steps}_'
-                f'val_check{val_check_steps}_scaler{scaler_type}_seed{random_seed}')
+                f'val_check{val_check_steps}_scaler{scaler_type}_seed{random_seed}_loss{loss}')
 
     print(f'Testando parâmetros: max_steps={max_steps}, learning_rate={learning_rate}, '
           f'batch_size={batch_size}, encoder_hidden_size={encoder_hidden_size}, '
@@ -66,7 +66,7 @@ for params in param_combinations:
           f'decoder_layers={decoder_layers}, context_size={context_size}, encoder_activation={encoder_activation}, '
           f'encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, num_lr_decays={num_lr_decays}, '
           f'early_stop_patience_steps={early_stop_patience_steps}, val_check_steps={val_check_steps}, '
-          f'scaler_type={scaler_type}, random_seed={random_seed}')
+          f'scaler_type={scaler_type}, random_seed={random_seed}, loss={loss}')
     
     # Treinar o modelo com os parâmetros atuais
     data_neural_hat = funcao_treinar(max_steps, learning_rate, batch_size, 
@@ -74,7 +74,7 @@ for params in param_combinations:
                                      encoder_n_layers, decoder_layers, context_size, 
                                      encoder_activation, encoder_bias, encoder_dropout, 
                                      num_lr_decays, early_stop_patience_steps, 
-                                     val_check_steps, scaler_type, random_seed)
+                                     val_check_steps, scaler_type, random_seed, loss)
 
     # Verificar se a previsão foi gerada corretamente
     if data_neural_hat is not None:
@@ -133,6 +133,7 @@ for params in param_combinations:
             'val_check_steps': [val_check_steps],
             'scaler_type': [scaler_type],
             'random_seed': [random_seed],
+            'loss': [loss],
             'MAE': [mae],
             'RMSE': [rmse],
             'MAPE': [mape]

@@ -12,8 +12,8 @@ parametros_modelos = {
         'max_steps': [1], #, 2],
         'learning_rate': [0.001],# 0.0001], # padrão 0.001
         'batch_size': [32],# 64], # padrão 32
-        'encoder_hidden_size': [200],# 300], # padrão 200
-        'decoder_hidden_size': [200],# 300], # padrão 200
+        'encoder_hidden_size': [1],# 300], # padrão 200
+        'decoder_hidden_size': [1],# 300], # padrão 200
         'encoder_n_layers': [2],# 3], # padrão 2
         'decoder_layers': [2],# 3], # padrão 2
         'context_size': [10],# 20], # padrão 10

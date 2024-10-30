@@ -26,7 +26,7 @@ from IPython.display import display, Markdown
 from neuralforecast import NeuralForecast
 from neuralforecast.models import NBEATSx, NHITS, LSTM, BiTCN, GRU
 from neuralforecast.utils import AirPassengersDF, AirPassengersPanel, AirPassengersStatic
-from neuralforecast.losses.pytorch import DistributionLoss, MAE
+from neuralforecast.losses.pytorch import DistributionLoss, MAE, MSE, MAPE, RMSE
 from neuralforecast.auto import AutoLSTM
 from ray import tune
 

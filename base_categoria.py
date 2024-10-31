@@ -5,9 +5,10 @@ from configuracoes_modelos.imports import *
 from unindo_datas import datas
 from configuracoes import marca, horizon, freq, data_inicio_base
 from funcoes import verificar_e_completar_datas_faltantes
+from querys.query_databricks import data
 
-path = 'bases/base_LL.csv'
-data = pd.read_csv(path)
+#path = 'bases/base_LL.csv'
+#data = pd.read_csv(path)
 
 # Processar o DataFrame como no código original
 data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO', 'MEDIA_VLF', 'MEDIA_QLF', 'MEDIA_ROL', 'MEDIA_CPV'])

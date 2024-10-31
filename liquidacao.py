@@ -1,7 +1,8 @@
 import pandas as pd
-path_liqui = 'bases/base_liqui_LL.csv'
+#path_liqui = 'bases/base_liqui_LL.csv'
+#data_liqui = pd.read_csv(path_liqui)
 
-data_liqui = pd.read_csv(path_liqui)
+from querys.query_databricks import data_liqui
 
 data_liqui['DATA_INICIO_LIQUIDACAO'] = pd.to_datetime(data_liqui['DATA_INICIO_LIQUIDACAO'])
 

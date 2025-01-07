@@ -69,10 +69,10 @@ plt.savefig(f'outputs/base_{marca}.png')
 
 
 # Fixando tudo para referencia de fim de setembro 2024!
-data_neural = data_neural[data_neural['ds'] <= '2024-09-30']
+data_neural = data_neural[data_neural['ds'] <= '2024-12-31']
 #data_neural_filtered = data_neural[data_neural['ds'] <= '2024-09-30']
-data_neural_train = data_neural[data_neural['ds'] <= '2023-09-30']
-data_neural_test = data_neural[(data_neural['ds'] >= '2023-10-01') & (data_neural['ds'] <= '2024-09-30')]
+data_neural_train = data_neural[data_neural['ds'] <= '2023-12-31']
+data_neural_test = data_neural[(data_neural['ds'] >= '2024-01-01') & (data_neural['ds'] <= '2024-12-31')]
 
 #data_neural = data_neural[data_neural['ds'] <= '2024-09-30']
 #data_neural_train = data_neural[data_neural['ds'] <= '2023-09-30']
@@ -85,10 +85,10 @@ print('columns', data_neural_test.columns)
 #print(data_neural_test['QLF'])
 
 
-futr_df = datas[(datas['ds'] >= '2024-10-01') & (datas['ds'] < '2025-10-01')]
+futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] < '2025-12-31')]
 futr_df['unique_id'] = marca  # Usar a marca atual
 futr_df['unique_id'] = futr_df['unique_id'].astype(object)
-futr_df_test = datas[(datas['ds'] >= '2023-10-01') & (datas['ds'] < '2024-09-30')]
+futr_df_test = datas[(datas['ds'] >= '2024-01-01') & (datas['ds'] < '2024-12-31')]
 futr_df_test['unique_id'] = marca  # Usar a marca atual
 futr_df_test['unique_id'] = futr_df_test['unique_id'].astype(object)
 

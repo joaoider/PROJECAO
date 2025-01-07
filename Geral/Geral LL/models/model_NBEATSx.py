@@ -1,8 +1,8 @@
 print('model_NBEATSx.py iniciado')
 
 from configuracoes_modelos.imports import *
-from base import data_neural_train, futr_df_test
-from configuracoes import horizon, freq
+from LL_base import data_neural_train, futr_df_test
+from LL_configuracoes import horizon, freq
 
 # Função para treinar o modelo NBEATSx
 def treinar_NBEATSx(max_steps, learning_rate, batch_size, activation):

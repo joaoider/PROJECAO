@@ -1,8 +1,8 @@
 print('model_NHITS.py iniciado')
 
 from configuracoes_modelos.imports import *
-from base import data_neural_train, futr_df_test
-from configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
+from LL_base import data_neural_train, futr_df_test
+from LL_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 # Função para treinar o modelo NHITS
 def treinar_NHITS(max_steps, learning_rate, batch_size, activation, n_blocks, mlp_units, 

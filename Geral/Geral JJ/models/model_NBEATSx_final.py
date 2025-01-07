@@ -1,8 +1,8 @@
 print('model_NBEATSx_final.py iniciado')
 
 from configuracoes_modelos.imports import *
-from base import data_neural, futr_df
-from configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
+from JJ_base import data_neural, futr_df
+from JJ_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 def treinar_LSTM(max_steps, learning_rate, batch_size, activation):
     print(f'treinar_LSTM iniciado com max_steps={max_steps}, learning_rate={learning_rate}, batch_size={batch_size}, '

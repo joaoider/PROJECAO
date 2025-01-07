@@ -1,8 +1,8 @@
 print('model_LSTM.py iniciado')
 
 from configuracoes_modelos.imports import *
-from base import data_neural_train, futr_df_test
-from configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
+from DD_base import data_neural_train, futr_df_test
+from DD_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 def treinar_LSTM(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, encoder_n_layers, decoder_layers, context_size, encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, val_check_steps, random_seed, num_workers_loader, drop_last_loader):
     print(f'treinar_LSTM iniciado com max_steps={max_steps}, learning_rate={learning_rate}, batch_size={batch_size}, '

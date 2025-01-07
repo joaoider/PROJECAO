@@ -45,7 +45,7 @@ def get_sales_data(marca, griffe_list, data_inicio, data_fim):
     df = spark.sql(query).toPandas()
     return df
 
-data = get_sales_data('DD', ['Dudalina Masc', 'Dudalina Fem'], '2018-01-01', '2024-09-30')
+data = get_sales_data('DD', ['Dudalina Masc', 'Dudalina Fem'], '2018-01-01', '2024-12-31')
 
 print(len(data))
 print('data', data.head())

@@ -1,7 +1,7 @@
 import pandas as pd
-from JJ_configuracoes import marca
+from DD_configuracoes import marca
 import os
-from JJ_configuracoes import data_inicio_base
+from DD_configuracoes import data_inicio_base
 import subprocess
 
 # Função para excluir arquivos antigos que começam com "melhor_modelo"

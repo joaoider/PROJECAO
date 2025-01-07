@@ -2,7 +2,7 @@ print('unindo_datas.py iniciado')
 
 import pandas as pd
 
-from configuracoes import variaveis_futuras
+from DD_configuracoes import variaveis_futuras
 
 from datas.diadasmaes import process_dia_das_maes
 from datas.diadospais import process_dia_dos_pais
@@ -24,7 +24,7 @@ from datas.carnaval import process_carnaval
 from datas.diadasemana import process_dia_da_semana
 from datas.mesdoano import process_mes_do_ano
 from datas.covid import process_covid
-from liquidacao import process_liquidacao, liqui_datas
+from DD_liquidacao import process_liquidacao, liqui_datas
 
 
 # Definir o intervalo de datas

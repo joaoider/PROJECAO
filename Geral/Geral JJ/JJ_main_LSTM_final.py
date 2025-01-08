@@ -44,7 +44,6 @@ num_lr_decays = parametros['num_lr_decays']
 early_stop_patience_steps = parametros['early_stop_patience_steps']
 val_check_steps = parametros['val_check_steps']
 random_seed = parametros['random_seed']
-num_workers_loader = parametros['num_workers_loader']
 drop_last_loader = parametros['drop_last_loader']
 
 # Exibir os parâmetros selecionados
@@ -55,7 +54,7 @@ print(f'Parâmetros selecionados: max_steps={max_steps}, learning_rate={learning
       f'encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, '
       f'num_lr_decays={num_lr_decays}, early_stop_patience_steps={early_stop_patience_steps}, '
       f'val_check_steps={val_check_steps}, random_seed={random_seed}, '
-      f'num_workers_loader={num_workers_loader}, drop_last_loader={drop_last_loader}')
+      f'drop_last_loader={drop_last_loader}')
 
 # Inicializa a variável para armazenar o dataframe final de previsões
 data_neural_hat_final = None
@@ -78,7 +77,7 @@ data_neural_hat = funcao_treinar(max_steps, learning_rate, batch_size,
                                  encoder_n_layers, decoder_layers, context_size,
                                  encoder_bias, encoder_dropout, num_lr_decays,
                                  early_stop_patience_steps, val_check_steps,
-                                 random_seed, num_workers_loader, drop_last_loader)
+                                 random_seed, drop_last_loader)
 
 # Verificar se a previsão foi gerada corretamente
 if data_neural_hat is not None:

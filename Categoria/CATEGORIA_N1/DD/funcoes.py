@@ -1,7 +1,7 @@
 import pandas as pd
-from configuracoes import marca
+from DD_configuracoes import marca
 import os
-from configuracoes import data_inicio_base
+from DD_configuracoes import data_inicio_base
 import subprocess
 
 # Função que verifica as datas faltantes e preenche no dataframe original
@@ -70,8 +70,7 @@ def verificar_e_completar_datas_faltantes(df):
 
 
 
-import pandas as pd
-from configuracoes import marca
+
 
 # Função que verifica as datas faltantes e preenche no dataframe original
 def verificar_e_completar_datas_faltantes_sem_unique_id(df):

@@ -1,5 +1,5 @@
 #base
-from DD_configuracoes import marca
+from DD_configuracoes_categoria import marca
 
 
 #from pyspark.sql import SparkSession
@@ -63,7 +63,6 @@ def get_liquidacao_data(marca, data_inicio):
     return df
 
 data_liqui = get_liquidacao_data('DD', '2012-01-01')
-
 
 print(len(data_liqui))
 print('data_liqui', data_liqui.head())

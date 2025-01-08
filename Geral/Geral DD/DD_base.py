@@ -85,7 +85,7 @@ print('columns', data_neural_test.columns)
 #print(data_neural_test['QLF'])
 
 
-futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] < '2025-12-31')]
+futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] <= '2025-12-31')]
 futr_df['unique_id'] = marca  # Usar a marca atual
 futr_df['unique_id'] = futr_df['unique_id'].astype(object)
 futr_df_test = datas[(datas['ds'] >= '2024-01-01') & (datas['ds'] < '2024-12-31')]

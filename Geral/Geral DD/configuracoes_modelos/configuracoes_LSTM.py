@@ -23,7 +23,6 @@ parametros_modelos = {
         'early_stop_patience_steps': [-1],  # Número de etapas antes de parar precocemente
         'val_check_steps': [100],# 200],  # Número de etapas entre as verificações de validação # padrão 100
         'random_seed': [1],  # Semente aleatória
-        'num_workers_loader': [0],  # Número de trabalhadores para carregar os dados
         'drop_last_loader': [False]  # Descartar o último lote incompleto
     }
 }
@@ -47,7 +46,6 @@ def gerar_combinacoes_parametros(modelo):
         params['early_stop_patience_steps'],
         params['val_check_steps'],
         params['random_seed'],
-        params['num_workers_loader'],
         params['drop_last_loader']
     ))
 

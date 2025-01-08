@@ -35,6 +35,8 @@ funcao_treinar = getattr(modulo_modelo, 'treinar_LSTM')  # Função específica 
 
 # Gerar as combinações de parâmetros para o LSTM
 param_combinations = gerar_combinacoes_parametros('LSTM')
+for params in param_combinations:
+    print(f"Parameters: {params}, Length: {len(params)}")
 
 # Inicializar DataFrame de métricas para armazenar todas as combinações
 metricas_df_final = pd.DataFrame(columns=[
@@ -43,7 +45,7 @@ metricas_df_final = pd.DataFrame(columns=[
     'encoder_n_layers', 'decoder_layers', 'context_size', 
     'encoder_bias', 'encoder_dropout', 'num_lr_decays', 
     'early_stop_patience_steps', 'val_check_steps', 
-    'random_seed', 'num_workers_loader', 'drop_last_loader',
+    'random_seed', 'drop_last_loader',
     'MAE', 'RMSE', 'MAPE'])
 
 # Iterar sobre as combinações de parâmetros
@@ -53,7 +55,7 @@ for params in param_combinations:
      encoder_n_layers, decoder_layers, context_size, 
      encoder_bias, encoder_dropout, num_lr_decays, 
      early_stop_patience_steps, val_check_steps, 
-     random_seed, num_workers_loader, drop_last_loader) = params
+     random_seed, drop_last_loader) = params
 
     col_name = (f'LSTM_steps{max_steps}_lr{learning_rate}_batch{batch_size}_'
                 f'encoder{encoder_hidden_size}_decoder{decoder_hidden_size}_'
@@ -67,7 +69,7 @@ for params in param_combinations:
           f'encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, '
           f'num_lr_decays={num_lr_decays}, early_stop_patience_steps={early_stop_patience_steps}, '
           f'val_check_steps={val_check_steps}, random_seed={random_seed}, '
-          f'num_workers_loader={num_workers_loader}, drop_last_loader={drop_last_loader}')
+          f'drop_last_loader={drop_last_loader}')
     
     # Treinar o modelo com os parâmetros atuais
     data_neural_hat = funcao_treinar(max_steps, learning_rate, batch_size, 
@@ -75,7 +77,7 @@ for params in param_combinations:
                                      encoder_n_layers, decoder_layers, context_size, 
                                      encoder_bias, encoder_dropout, num_lr_decays, 
                                      early_stop_patience_steps, val_check_steps, 
-                                     random_seed, num_workers_loader, drop_last_loader)
+                                     random_seed, drop_last_loader)
 
     # Verificar se a previsão foi gerada corretamente
     if data_neural_hat is not None:
@@ -134,7 +136,6 @@ for params in param_combinations:
             'early_stop_patience_steps': [early_stop_patience_steps],
             'val_check_steps': [val_check_steps],
             'random_seed': [random_seed],
-            'num_workers_loader': [num_workers_loader],
             'drop_last_loader': [drop_last_loader],
             'MAE': [mae],
             'RMSE': [rmse],

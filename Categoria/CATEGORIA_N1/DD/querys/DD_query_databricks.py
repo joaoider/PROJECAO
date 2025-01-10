@@ -1,5 +1,5 @@
 #base
-from DD_configuracoes_categoria import marca
+from DD_configuracoes import marca
 
 
 #from pyspark.sql import SparkSession
@@ -11,6 +11,8 @@ import os
 from pyspark.sql import SparkSession
 # Verifique se está em um ambiente Databricks
 # Inicializar a sessão Spark de forma condicional
+
+
 if "DATABRICKS_RUNTIME_VERSION" in os.environ:
     spark = SparkSession.getActiveSession()
     if spark is None:

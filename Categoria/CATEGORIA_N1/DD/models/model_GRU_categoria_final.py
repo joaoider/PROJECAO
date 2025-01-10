@@ -2,7 +2,7 @@ print('model_GRU_categoria_final.py iniciado')
 
 from configuracoes_modelos.imports import *
 from DD_base_categoria import data_neural, futr_df, static_df
-from DD_configuracoes_categoria import horizon, freq, variaveis_futuras, variaveis_historicas
+from DD_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 # Função para treinar o modelo GRU
 def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 
@@ -26,7 +26,7 @@ def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decod
                 #valid_loss=MAE(),  # Função de perda para validação
                 futr_exog_list=variaveis_futuras,  # Variáveis exógenas futuras
                 hist_exog_list=variaveis_historicas,  # Variáveis exógenas históricas
-                stat_exog_list = ['market_0', 'market_1', 'market_2', 'market_3'],# 'market_4', 'market_5', 'market_6', 'market_7'], # <- Static exogenous variables
+                #stat_exog_list = ['market_0'],#, 'market_1', 'market_2', 'market_3'],# 'market_4', 'market_5', 'market_6', 'market_7'], # <- Static exogenous variables
                 encoder_n_layers=encoder_n_layers,  # Camadas do codificador
                 decoder_layers=decoder_layers,  # Camadas do decodificador
                 encoder_hidden_size=encoder_hidden_size,  # Tamanho da camada oculta do codificador

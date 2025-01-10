@@ -5,32 +5,42 @@ from pyspark.sql import SparkSession
 # COMMAND ----------
 
 # Caminhos dos arquivos CSV
-path_LL = 'outputs/LL/melhor_modelo_forecast_GRU_mensal_LL.csv'
-path_LLc = 'outputs/forecast_transposed_GRU_DD_categoria_final.csv'
-path_DD = 'outputs/DD/melhor_modelo_forecast_LSTM_mensal_DD.csv'
-path_DDc = 'outputs/forecast_transposed_GRU_DD_categoria_final.csv'
-path_JJ = 'outputs/JJ/melhor_modelo_forecast_LSTM_mensal_JJ.csv'
-path_JJc = 'outputs/forecast_transposed_GRU_DD_categoria_final.csv'
+path_LL = 'Geral/Geral LL/outputs/melhor_modelo_forecast_LSTM_mensal_LL.csv'
+path_DD = 'Geral/Geral DD/outputs/melhor_modelo_forecast_LSTM_mensal_DD.csv'
+path_JJ = 'Geral/Geral JJ/outputs/melhor_modelo_forecast_LSTM_mensal_JJ.csv'
+
+#categoria
+#path_LLc = 'Geral/Geral LL/outputs/forecast_transposed_GRU_DD_categoria_final.csv'
+#path_DDc = 'Geral/Geral DD/outputs/forecast_transposed_GRU_DD_categoria_final.csv'
+#path_JJc = 'Geral/Geral JJ/outputs/forecast_transposed_GRU_DD_categoria_final.csv'
 
 # COMMAND ----------
 
+#geral
 data_LL = pd.read_csv(path_LL)
-data_LLc = pd.read_csv(path_LLc)
 data_DD = pd.read_csv(path_DD)
-data_DDc = pd.read_csv(path_DDc)
 data_JJ = pd.read_csv(path_JJ)
-data_JJc = pd.read_csv(path_JJc)
+
+#categoria
+#data_LLc = pd.read_csv(path_LLc)
+#data_DDc = pd.read_csv(path_DDc)
+#data_JJc = pd.read_csv(path_JJc)
 
 # COMMAND ----------
 
-data_JJc.head(1)
+#data_JJc.head(1)
 
 # COMMAND ----------
 
+#geral
 # Renomear as colunas
 data_LL = data_LL.rename(columns={data_LL.columns[0]: 'mes_ano', data_LL.columns[1]: 'LL'})
 data_DD = data_DD.rename(columns={data_DD.columns[0]: 'mes_ano', data_DD.columns[1]: 'DD'})
 data_JJ = data_JJ.rename(columns={data_JJ.columns[0]: 'mes_ano', data_JJ.columns[1]: 'JJ'})
+
+# COMMAND ----------
+
+#categoria
 
 # Adicionar "LL_" às colunas, exceto 'mes_ano'
 data_LLc.columns = ['mes_ano' if col == 'mes_ano' else f'LL_{col}' for col in data_LLc.columns]
@@ -48,6 +58,12 @@ data_DDc.rename(columns={'DD_Total': 'DD_Total_Linhas'}, inplace=True)
 data_JJc.rename(columns={'JJ_Jeans e Sarja': 'JJ_Jeans_e_Sarja'}, inplace=True)
 data_JJc.rename(columns={'JJ_Tecido Plano': 'JJ_Tecido_Plano'}, inplace=True)
 data_JJc.rename(columns={'JJ_Total': 'JJ_Total_Linhas'}, inplace=True)
+
+# COMMAND ----------
+
+# Combinar os DataFrames
+#merged_data = data_LL.merge(data_DD, on='mes_ano').merge(data_JJ, on='mes_ano')
+#merged_data
 
 # COMMAND ----------
 

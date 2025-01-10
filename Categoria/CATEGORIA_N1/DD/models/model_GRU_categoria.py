@@ -2,7 +2,7 @@ print('model_GRU_categoria.py iniciado')
 
 from configuracoes_modelos.imports import *
 from DD_base_categoria import data_neural_train, data_neural_test, static_df
-from DD_configuracoes_categoria import horizon, freq, variaveis_futuras, variaveis_historicas
+from DD_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 # Função para treinar o modelo GRU
 def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 

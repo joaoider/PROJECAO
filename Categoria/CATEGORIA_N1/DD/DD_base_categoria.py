@@ -3,9 +3,10 @@ print('base_categoria.py iniciado')
 
 from configuracoes_modelos.imports import *
 from unindo_datas import datas
-from DD_configuracoes_categoria import marca, horizon, freq, data_inicio_base
+from DD_configuracoes import marca, horizon, freq, data_inicio_base
 from funcoes import verificar_e_completar_datas_faltantes
 from querys.DD_query_databricks import data
+
 print(data.head())
 #path = 'bases/base_LL.csv'
 #data = pd.read_csv(path)
@@ -65,12 +66,15 @@ unique_ids = data_neural['unique_id'].unique()
 print(unique_ids)
 # Criando um DataFrame de zeros para o número de mercados
 num_markets = len(unique_ids)  # Defina quantos mercados você quer
+print(num_markets)
 # Criar a matriz identidade com NumPy
 identity_matrix = np.eye(num_markets, dtype=int)
 # Criar o DataFrame com a matriz identidade
 static_df = pd.DataFrame(identity_matrix, index=unique_ids, columns=[f'market_{i}' for i in range(num_markets)])
+print(static_df)
 # Adicionar a coluna 'unique_id' como índice
 static_df.index.name = 'unique_id'
+print(static_df)
 """
 static_df = pd.DataFrame(0, index=range(len(unique_ids)), columns=['unique_id'] + [f'market_{i}' for i in range(num_markets)])
 # Preenchendo a coluna 'unique_id' com os valores únicos
@@ -98,7 +102,8 @@ data_neural = pd.merge(data_neural, datas, on=['ds'])
 # Fixando tudo para referencia de fim de setembro 2024!
 data_neural = data_neural[data_neural['ds'] <= '2024-12-31'] # a base só está indo até essa data, é só pra confirmar
 #print(len(data_neural))
-futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] < '2025-12-31')]
+
+futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] <= '2025-12-31')]
 #print(data_neural.head())
 #print(futr_df.head())
 #print('len(futr_df) antes do merge:', len(futr_df))

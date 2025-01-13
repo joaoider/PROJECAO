@@ -3,16 +3,16 @@ print('base_categoria.py iniciado')
 
 from configuracoes_modelos.imports import *
 from unindo_datas import datas
-from DD_configuracoes import marca, horizon, freq, data_inicio_base
+from JJ_configuracoes import marca, horizon, freq, data_inicio_base
 from funcoes import verificar_e_completar_datas_faltantes
-from querys.DD_query_databricks import data
+from querys.JJ_query_databricks import data
 
 print(data.head())
 #path = 'bases/base_LL.csv'
 #data = pd.read_csv(path)
 
 # Processar o DataFrame como no código original
-data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO', 'MEDIA_VLF', 'MEDIA_QLF', 'MEDIA_ROL', 'MEDIA_CPV'])
+data = data.drop(columns=['MARCA_SIGLA', 'CATEGORIA_N1', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO', 'MEDIA_VLF', 'MEDIA_QLF', 'MEDIA_ROL', 'MEDIA_CPV'])
 
 data['DATA'] = pd.to_datetime(data['DATA'])
 data = data.loc[data['DATA'] >= data_inicio_base]
@@ -57,7 +57,7 @@ plt.plot(data_neural['ds'], data_neural['y'])
 plt.xlabel('DATA')
 plt.ylabel('VLF')
 plt.title('VLF by DATA')
-plt.savefig(f'outputs/base_{marca}_categoria.png')
+plt.savefig(f'outputs/base_{marca}_griffe.png')
 
 
 ############################################################################# Criando Static_df

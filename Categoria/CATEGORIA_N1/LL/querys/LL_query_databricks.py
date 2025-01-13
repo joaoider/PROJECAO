@@ -1,5 +1,5 @@
 #base
-from DD_configuracoes import marca
+from LL_configuracoes import marca
 
 
 #from pyspark.sql import SparkSession

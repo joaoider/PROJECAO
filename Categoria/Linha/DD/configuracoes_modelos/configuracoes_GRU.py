@@ -9,11 +9,11 @@ modelo = 'GRU'
 # Parâmetros do modelo GRU
 parametros_modelos = {
     'GRU': {
-        'max_steps': [1],  # Número máximo de iterações
+        'max_steps': [1000],  # Número máximo de iterações
         'learning_rate': [0.001],  # 0.001 Taxa de aprendizado
         'batch_size': [64],  # 32 Tamanho do batch
-        'encoder_hidden_size': [50],  # 200 Tamanho da camada oculta do encoder
-        'decoder_hidden_size': [50],  # 200 Tamanho da camada oculta do decoder
+        'encoder_hidden_size': [20],  # 200 Tamanho da camada oculta do encoder
+        'decoder_hidden_size': [20],  # 200 Tamanho da camada oculta do decoder
         'encoder_n_layers': [2],  # 2 Camadas do encoder
         'decoder_layers': [2],  # 2 Camadas do decoder
         'context_size': [10],  # 10 Tamanho do contexto

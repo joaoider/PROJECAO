@@ -9,7 +9,7 @@ modelo = 'NHITS'
 # Parâmetros do modelo NHITS
 parametros_modelos = {
     'NHITS': {
-        'max_steps': [1], # Número máximo de iterações
+        'max_steps': [1000], # Número máximo de iterações
         'learning_rate': [0.001],# 0.0001],  # 0.001 Taxa de aprendizado
         'batch_size': [32], #, 64],  # 32 Tamanho do batch
         'activation': ['ReLU'],# 'Softplus'],  # Funções de ativação

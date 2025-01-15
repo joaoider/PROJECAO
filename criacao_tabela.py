@@ -1,18 +1,87 @@
 # Databricks notebook source
 import pandas as pd
 from pyspark.sql import SparkSession
+import os
 
 # COMMAND ----------
 
-# Caminhos dos arquivos CSV
-path_LL = 'Geral/Geral LL/outputs/melhor_modelo_forecast_LSTM_mensal_LL.csv'
-path_DD = 'Geral/Geral DD/outputs/melhor_modelo_forecast_LSTM_mensal_DD.csv'
-path_JJ = 'Geral/Geral JJ/outputs/melhor_modelo_forecast_LSTM_mensal_JJ.csv'
+# MAGIC %md
+# MAGIC # GERAL
 
-#categoria
-#path_LLc = 'Geral/Geral LL/outputs/forecast_transposed_GRU_DD_categoria_final.csv'
-#path_DDc = 'Geral/Geral DD/outputs/forecast_transposed_GRU_DD_categoria_final.csv'
-#path_JJc = 'Geral/Geral JJ/outputs/forecast_transposed_GRU_DD_categoria_final.csv'
+# COMMAND ----------
+
+# DD
+
+# Lista de caminhos possíveis
+paths_DD = [
+    'Geral/Geral DD/outputs/melhor_modelo_forecast_LSTM_mensal_DD.csv',
+    'Geral/Geral DD/outputs/melhor_modelo_forecast_GRU_mensal_DD.csv',
+    'Geral/Geral DD/outputs/melhor_modelo_forecast_NHITS_mensal_DD.csv',
+    'Geral/Geral DD/outputs/melhor_modelo_forecast_NBEATSx_mensal_DD.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_DD:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+# LL
+
+# Lista de caminhos possíveis
+paths_LL = [
+    'Geral/Geral LL/outputs/melhor_modelo_forecast_LSTM_mensal_LL.csv',
+    'Geral/Geral LL/outputs/melhor_modelo_forecast_GRU_mensal_LL.csv',
+    'Geral/Geral LL/outputs/melhor_modelo_forecast_NHITS_mensal_LL.csv',
+    'Geral/Geral LL/outputs/melhor_modelo_forecast_NBEATSx_mensal_LL.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_LL:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+# JJ
+
+# Lista de caminhos possíveis
+paths_JJ = [
+    'Geral/Geral JJ/outputs/melhor_modelo_forecast_LSTM_mensal_JJ.csv',
+    'Geral/Geral JJ/outputs/melhor_modelo_forecast_GRU_mensal_JJ.csv',
+    'Geral/Geral JJ/outputs/melhor_modelo_forecast_NHITS_mensal_JJ.csv',
+    'Geral/Geral JJ/outputs/melhor_modelo_forecast_NBEATSx_mensal_JJ.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_JJ:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
 
 # COMMAND ----------
 
@@ -21,18 +90,10 @@ data_LL = pd.read_csv(path_LL)
 data_DD = pd.read_csv(path_DD)
 data_JJ = pd.read_csv(path_JJ)
 
-#categoria
-#data_LLc = pd.read_csv(path_LLc)
-#data_DDc = pd.read_csv(path_DDc)
-#data_JJc = pd.read_csv(path_JJc)
-
-# COMMAND ----------
-
-#data_JJc.head(1)
-
 # COMMAND ----------
 
 #geral
+
 # Renomear as colunas
 data_LL = data_LL.rename(columns={data_LL.columns[0]: 'mes_ano', data_LL.columns[1]: 'LL'})
 data_DD = data_DD.rename(columns={data_DD.columns[0]: 'mes_ano', data_DD.columns[1]: 'DD'})
@@ -40,36 +101,215 @@ data_JJ = data_JJ.rename(columns={data_JJ.columns[0]: 'mes_ano', data_JJ.columns
 
 # COMMAND ----------
 
+# Combinar os DataFrames
+merged_data = data_LL.merge(data_DD, on='mes_ano').merge(data_JJ, on='mes_ano').merge(data_LL, on='mes_ano')
+merged_data
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # CATEGORIA_N1
+
+# COMMAND ----------
+
+# DD
+
+# Lista de caminhos possíveis
+paths_DD_categorian1 = [
+    'Categoria/CATEGORIA_N1/DD/outputs/forecast_transposed_GRU_DD_categoria_final.csv.csv',
+    'Categoria/CATEGORIA_N1/DD/outputs/forecast_transposed_LSTM_DD_categoria_final.csv.csv',
+    'Categoria/CATEGORIA_N1/DD/outputs/forecast_transposed_NHITS_DD_categoria_final.csv.csv',
+    'Categoria/CATEGORIA_N1/DD/outputs/forecast_transposed_NBEATSx_DD_categoria_final.csv.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_DD_categorian1:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+# JJ
+
+# Lista de caminhos possíveis
+paths_JJ_categorian1 = [
+    'Geral/Geral JJ/outputs/forecast_transposed_GRU_JJ_categoria_final.csv.csv',
+    'Geral/Geral JJ/outputs/forecast_transposed_LSTM_JJ_categoria_final.csv.csv',
+    'Geral/Geral JJ/outputs/forecast_transposed_NHITS_JJ_categoria_final.csv.csv',
+    'Geral/Geral JJ/outputs/forecast_transposed_NBEATSx_JJ_categoria_final.csv.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_JJ_categorian1:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+# LL
+
+# Lista de caminhos possíveis
+paths_LL_categorian1 = [
+    'Geral/Geral LL/outputs/forecast_transposed_GRU_LL_categoria_final.csv.csv',
+    'Geral/Geral LL/outputs/forecast_transposed_LSTM_LL_categoria_final.csv.csv',
+    'Geral/Geral LL/outputs/forecast_transposed_NHITS_LL_categoria_final.csv.csv',
+    'Geral/Geral LL/outputs/forecast_transposed_NBEATSx_LL_categoria_final.csv.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_LL_categorian1:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+#geral
+data_LL_categoria = pd.read_csv(paths_LL_categorian1)
+data_DD_categoria = pd.read_csv(paths_DD_categorian1)
+data_JJ_categoria = pd.read_csv(paths_JJ_categorian1)
+
+# COMMAND ----------
+
 #categoria
 
 # Adicionar "LL_" às colunas, exceto 'mes_ano'
-data_LLc.columns = ['mes_ano' if col == 'mes_ano' else f'LL_{col}' for col in data_LLc.columns]
-data_DDc.columns = ['mes_ano' if col == 'mes_ano' else f'DD_{col}' for col in data_DDc.columns]
-data_JJc.columns = ['mes_ano' if col == 'mes_ano' else f'JJ_{col}' for col in data_JJc.columns]
+data_LL_categoria.columns = ['mes_ano' if col == 'mes_ano' else f'LL_{col}' for col in data_LL_categoria.columns]
+data_DD_categoria.columns = ['mes_ano' if col == 'mes_ano' else f'DD_{col}' for col in data_DD_categoria.columns]
+data_JJ_categoria.columns = ['mes_ano' if col == 'mes_ano' else f'JJ_{col}' for col in data_JJ_categoria.columns]
 
-data_LLc.rename(columns={'LL_Jeans e Sarja': 'LL_Jeans_e_Sarja'}, inplace=True)
-data_LLc.rename(columns={'LL_Tecido Plano': 'LL_Tecido_Plano'}, inplace=True)
-data_LLc.rename(columns={'LL_Total': 'LL_Total_Linhas'}, inplace=True)
+#data_LLc.rename(columns={'LL_Jeans e Sarja': 'LL_Jeans_e_Sarja'}, inplace=True)
+#data_LLc.rename(columns={'LL_Tecido Plano': 'LL_Tecido_Plano'}, inplace=True)
+#data_LLc.rename(columns={'LL_Total': 'LL_Total_Linhas'}, inplace=True)
 
-data_DDc.rename(columns={'DD_Jeans e Sarja': 'DD_Jeans_e_Sarja'}, inplace=True)
-data_DDc.rename(columns={'DD_Tecido Plano': 'DD_Tecido_Plano'}, inplace=True)
-data_DDc.rename(columns={'DD_Total': 'DD_Total_Linhas'}, inplace=True)
+#data_DDc.rename(columns={'DD_Jeans e Sarja': 'DD_Jeans_e_Sarja'}, inplace=True)
+#data_DDc.rename(columns={'DD_Tecido Plano': 'DD_Tecido_Plano'}, inplace=True)
+#data_DDc.rename(columns={'DD_Total': 'DD_Total_Linhas'}, inplace=True)
 
-data_JJc.rename(columns={'JJ_Jeans e Sarja': 'JJ_Jeans_e_Sarja'}, inplace=True)
-data_JJc.rename(columns={'JJ_Tecido Plano': 'JJ_Tecido_Plano'}, inplace=True)
-data_JJc.rename(columns={'JJ_Total': 'JJ_Total_Linhas'}, inplace=True)
-
-# COMMAND ----------
-
-# Combinar os DataFrames
-#merged_data = data_LL.merge(data_DD, on='mes_ano').merge(data_JJ, on='mes_ano')
-#merged_data
+#data_JJc.rename(columns={'JJ_Jeans e Sarja': 'JJ_Jeans_e_Sarja'}, inplace=True)
+#data_JJc.rename(columns={'JJ_Tecido Plano': 'JJ_Tecido_Plano'}, inplace=True)
+#data_JJc.rename(columns={'JJ_Total': 'JJ_Total_Linhas'}, inplace=True)
 
 # COMMAND ----------
 
 # Combinar os DataFrames
-merged_data = data_LL.merge(data_LLc, on='mes_ano').merge(data_DD, on='mes_ano').merge(data_DDc, on='mes_ano').merge(data_JJ, on='mes_ano').merge(data_JJc, on='mes_ano')
-merged_data
+merged_data2 = merged_data.merge(data_LL_categoria, on='mes_ano').merge(data_DD_categoria, on='mes_ano').merge(data_JJ_categoria, on='mes_ano')
+merged_data2
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # GRIFFE
+
+# COMMAND ----------
+
+# DD
+
+# Lista de caminhos possíveis
+paths_DD_griffe = [
+    'Categoria/Griffe/DD/outputs/forecast_transposed_GRU_DD_griffe_final.csv.csv',
+    'Categoria/Griffe/DD/outputs/forecast_transposed_LSTM_DD_categoria_final.csv.csv',
+    'Categoria/Griffe/DD/outputs/forecast_transposed_NHITS_DD_categoria_final.csv.csv',
+    'Categoria/Griffe/DD/outputs/forecast_transposed_NBEATSx_DD_categoria_final.csv.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_DD_griffe:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+# JJ
+
+# Lista de caminhos possíveis
+paths_JJ_griffe = [
+    'Categoria/Griffe/JJ/outputs/forecast_transposed_GRU_JJ_griffe_final.csv.csv',
+    'Categoria/Griffe/JJ/outputs/forecast_transposed_LSTM_JJ_categoria_final.csv.csv',
+    'Categoria/Griffe/JJ/outputs/forecast_transposed_NHITS_JJ_categoria_final.csv.csv',
+    'Categoria/Griffe/JJ/outputs/forecast_transposed_NBEATSx_JJ_categoria_final.csv.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_JJ_griffe:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+# LL
+
+# Lista de caminhos possíveis
+paths_LL_griffe = [
+    'Categoria/Griffe/LL/outputs/forecast_transposed_GRU_LL_griffe_final.csv.csv',
+    'Categoria/Griffe/LL/outputs/forecast_transposed_LSTM_LL_categoria_final.csv.csv',
+    'Categoria/Griffe/LL/outputs/forecast_transposed_NHITS_LL_categoria_final.csv.csv',
+    'Categoria/Griffe/LL/outputs/forecast_transposed_NBEATSx_LL_categoria_final.csv.csv'
+]
+
+# Variável para armazenar o caminho do arquivo encontrado
+found_path = None
+
+# Verificar se os arquivos existem
+for path in paths_LL_griffe:
+    if os.path.exists(path):
+        found_path = path
+        print(f"Arquivo encontrado: {found_path}")
+        break
+
+if not found_path:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+# COMMAND ----------
+
+#geral
+data_LL_griffe = pd.read_csv(paths_LL_griffe)
+data_DD_griffe = pd.read_csv(paths_DD_griffe)
+data_JJ_griffe = pd.read_csv(paths_JJ_griffe)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # CONVERTENDO SPARK E SALVANDO NA TABELA
 
 # COMMAND ----------
 

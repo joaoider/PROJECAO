@@ -9,6 +9,4 @@ variaveis_historicas = ['QLF', 'ROL', 'CPV']
 marca = 'DD'
 data_inicio_base = '2018-01-01'
 
-
-
 print('configuracoes.py finalizado')

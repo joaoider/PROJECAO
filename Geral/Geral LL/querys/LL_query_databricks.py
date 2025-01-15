@@ -46,7 +46,7 @@ def get_sales_data(marca, griffe_list, data_inicio, data_fim):
     return df
 
 
-data = get_sales_data('LL', ['Le Lis Blanc Deux', 'Le Lis Casa', 'Le Lis Beaute'], '2013-01-01', '2025-12-31')
+data = get_sales_data('LL', ['Le Lis Blanc Deux'], '2013-01-01', '2025-12-31')
 
 
 print(len(data))

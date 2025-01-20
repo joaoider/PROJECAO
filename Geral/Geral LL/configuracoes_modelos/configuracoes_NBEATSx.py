@@ -9,7 +9,7 @@ modelo = 'NBEATSx'
 # Configurações específicas de parâmetros para o NBEATSx
 parametros_modelos = {
     'NBEATSx': {
-        'max_steps': [1000], #, 2],  # ajustando para maior flexibilidade
+        'max_steps': [1], #, 2],  # ajustando para maior flexibilidade
         'learning_rate': [0.001], #, 0.01],  # várias opções de taxa de aprendizado
         'batch_size': [32], #, 64],  # diferentes tamanhos de lote
         'activation': ['ReLU'], #, 'Softplus']  # ativação específica para NBEATSx

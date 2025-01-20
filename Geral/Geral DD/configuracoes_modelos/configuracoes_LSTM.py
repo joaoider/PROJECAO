@@ -9,7 +9,7 @@ modelo = 'LSTM'
 # Parâmetros do modelo LSTM
 parametros_modelos = {
     'LSTM': {
-        'max_steps': [1000], #, 2],
+        'max_steps': [1], #, 2],
         'learning_rate': [0.001],# 0.0001], # padrão 0.001
         'batch_size': [32],# 64], # padrão 32
         'encoder_hidden_size': [200],# 300], # padrão 200

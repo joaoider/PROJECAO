@@ -1,8 +1,8 @@
 print('model_GRU_final.py iniciado')
 
 from configuracoes_modelos.imports import *
-from LL_base import data_neural, futr_df
-from LL_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
+from BB_base import data_neural, futr_df
+from BB_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 # Função para treinar o modelo GRU
 def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 

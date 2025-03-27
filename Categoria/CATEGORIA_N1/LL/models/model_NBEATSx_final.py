@@ -1,7 +1,7 @@
 print('model_NBEATSx_final.py iniciado')
 
 from configuracoes_modelos.imports import *
-from LL_ase import data_neural, futr_df
+from LL_base import data_neural, futr_df
 from LL_configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 
 def treinar_LSTM(max_steps, learning_rate, batch_size, activation):

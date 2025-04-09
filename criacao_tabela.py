@@ -176,8 +176,66 @@ df_JJ
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## BB
+
+# COMMAND ----------
+
+# BB
+
+# Lista de caminhos possíveis
+paths_BB = [
+    'Geral/Geral BB/outputs/melhor_modelo_forecast_LSTM_mensal_BB.csv',
+    'Geral/Geral BB/outputs/melhor_modelo_forecast_GRU_mensal_BB.csv',
+    'Geral/Geral BB/outputs/melhor_modelo_forecast_NHITS_mensal_BB.csv',
+    'Geral/Geral BB/outputs/melhor_modelo_forecast_NBEATSx_mensal_BB.csv'
+]
+
+# Variável para armazenar o caminho completo do arquivo encontrado
+found_path_BB = None
+
+# Verificar se os arquivos existem
+for path in paths_BB:
+    if os.path.exists(path):
+        found_path_BB = path  # Salva o caminho completo do arquivo
+        print(f"Arquivo encontrado: {found_path_BB}")
+        break
+
+if not found_path_BB:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+print(f"Caminho completo do arquivo encontrado: {found_path_BB}")
+
+###############
+#geral
+data_BB = pd.read_csv(found_path_BB)
+
+####################
+# Renomear as colunas
+data_BB = data_BB.rename(columns={data_BB.columns[0]: 'mes_ano', data_BB.columns[1]: 'BB'})
+
+# COMMAND ----------
+
+# Criar o novo DataFrame com os valores ajustados
+df_BB = pd.DataFrame({
+    'mes_ano': data_BB['mes_ano'],
+    'marca': 'BB',
+    'modelo': 'geral',
+    'categoria': 'total',
+    'venda': data_BB['BB']
+})
+
+df_BB
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC final
+
+# COMMAND ----------
+
 # Concatenar os DataFrames
-df_final = pd.concat([df_DD, df_LL, df_JJ], ignore_index=True)
+df_final = pd.concat([df_DD, df_LL, df_JJ, df_BB], ignore_index=True)
 
 df_final
 
@@ -350,8 +408,67 @@ df_LL_categoria['marca'] = 'LL'
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## BB
+
+# COMMAND ----------
+
+# LL
+
+# Lista de caminhos possíveis
+paths_BB_categorian1 = [
+    'Categoria/CATEGORIA_N1/BB/outputs/forecast_transposed_GRU_BB_categoria_final.csv',
+    'Categoria/CATEGORIA_N1/BB/outputs/forecast_transposed_LSTM_BB_categoria_final.csv',
+    'Categoria/CATEGORIA_N1/BB/outputs/forecast_transposed_NHITS_BB_categoria_final.csv',
+    'Categoria/CATEGORIA_N1/BB/outputs/forecast_transposed_NBEATSx_BB_categoria_final.csv'
+]
+
+# Variável para armazenar o caminho completo do arquivo encontrado
+found_path_BB_categoria = None
+
+# Verificar se os arquivos existem
+for path in paths_BB_categorian1:
+    if os.path.exists(path):
+        found_path_BB_categoria = path  # Salva o caminho completo do arquivo
+        print(f"Arquivo encontrado: {found_path_BB_categoria}")
+        break
+
+if not found_path_LL_categoria:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+print(f"Caminho completo do arquivo encontrado: {found_path_BB_categoria}")
+
+#################
+#geral
+data_BB_categoria = pd.read_csv(found_path_BB_categoria)
+
+# Adicionar "LL_" às colunas, exceto 'mes_ano'
+#data_DD_categoria.columns = ['mes_ano' if col == 'mes_ano' else f'DD_{col}' for col in data_DD_categoria.columns]
+
+####################
+# Renomear as colunas
+data_BB_categoria = data_BB_categoria.rename(columns={data_BB_categoria.columns[0]: 'mes_ano'})
+
+
+# Transformar o DataFrame
+df_BB_categoria = data_BB_categoria.melt(
+    id_vars=['mes_ano'],        # Coluna que será mantida fixa
+    var_name='categoria',     # Nova coluna que conterá os nomes das colunas originais
+    value_name='venda'     # Nova coluna que conterá os valores das colunas originais
+)
+
+df_BB_categoria['modelo'] = 'categoria geral'
+df_BB_categoria['marca'] = 'BB'
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC final
+
+# COMMAND ----------
+
 # Concatenar os DataFrames
-df_final_categoria = pd.concat([df_DD_categoria, df_LL_categoria, df_JJ_categoria], ignore_index=True)
+df_final_categoria = pd.concat([df_DD_categoria, df_LL_categoria, df_JJ_categoria, df_BB_categoria], ignore_index=True)
 
 df_final_categoria
 
@@ -637,6 +754,11 @@ df_DD_categoria_outros['marca'] = 'DD'
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC final
+
+# COMMAND ----------
+
 # Concatenar os DataFrames
 df_final_categoria_DD_unico = pd.concat([df_DD_categoria_alfaiataria, df_DD_categoria_jeans_sarja, df_DD_categoria_malha, df_DD_categoria_tecido_plano, df_DD_categoria_outros], ignore_index=True)
 
@@ -862,6 +984,11 @@ df_JJ_categoria_outros = data_JJ_categoria.melt(
 
 df_JJ_categoria_outros['modelo'] = 'categoria único'
 df_JJ_categoria_outros['marca'] = 'JJ'
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC final
 
 # COMMAND ----------
 
@@ -1261,6 +1388,201 @@ df_LL_categoria_seda = data_LL_categoria.melt(
 
 df_LL_categoria_seda['modelo'] = 'categoria único'
 df_LL_categoria_seda['marca'] = 'LL'
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC final
+
+# COMMAND ----------
+
+# Concatenar os DataFrames
+df_final_categoria_LL_unico = pd.concat([df_LL_categoria_acessorio, df_LL_categoria_alfaiataria, df_LL_categoria_casual_ville_tricot_moda, df_LL_categoria_couro, df_LL_categoria_jeans_sarja, df_LL_categoria_outros, df_LL_categoria_seda], ignore_index=True)
+
+df_final_categoria_LL_unico
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # BB
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Acessorio
+
+# COMMAND ----------
+
+# BB
+
+# Lista de caminhos possíveis
+paths_BB_categorian1 = [
+    'CATEGORIA_N1 - único/BB - Seda/outputs/forecast_transposed_GRU_BB_categoria_acessorio_final.csv'#,
+    #'Categoria/CATEGORIA_N1/LL/outputs/forecast_transposed_LSTM_LL_categoria_final.csv',
+    #'Categoria/CATEGORIA_N1/LL/outputs/forecast_transposed_NHITS_LL_categoria_final.csv',
+    #'Categoria/CATEGORIA_N1/LL/outputs/forecast_transposed_NBEATSx_LL_categoria_final.csv'
+]
+
+# Variável para armazenar o caminho completo do arquivo encontrado
+found_path_BB_categoria = None
+
+# Verificar se os arquivos existem
+for path in paths_BB_categorian1:
+    if os.path.exists(path):
+        found_path_BB_categoria = path  # Salva o caminho completo do arquivo
+        print(f"Arquivo encontrado: {found_path_BB_categoria}")
+        break
+
+if not found_path_BB_categoria:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+print(f"Caminho completo do arquivo encontrado: {found_path_BB_categoria}")
+
+#################
+#geral
+data_BB_categoria = pd.read_csv(found_path_BB_categoria)
+
+# Adicionar "LL_" às colunas, exceto 'mes_ano'
+#data_DD_categoria.columns = ['mes_ano' if col == 'mes_ano' else f'DD_{col}' for col in data_DD_categoria.columns]
+
+####################
+# Renomear as colunas
+data_BB_categoria = data_BB_categoria.rename(columns={data_BB_categoria.columns[0]: 'mes_ano'})
+
+
+# Transformar o DataFrame
+df_BB_categoria_seda = data_BB_categoria.melt(
+    id_vars=['mes_ano'],        # Coluna que será mantida fixa
+    var_name='categoria',     # Nova coluna que conterá os nomes das colunas originais
+    value_name='venda'     # Nova coluna que conterá os valores das colunas originais
+)
+
+df_BB_categoria_seda['modelo'] = 'categoria único'
+df_BB_categoria_seda['marca'] = 'BB'
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Agrup_01
+
+# COMMAND ----------
+
+# BB
+
+# Lista de caminhos possíveis
+paths_BB_categorian1 = [
+    'CATEGORIA_N1 - único/BB - Seda/outputs/forecast_transposed_GRU_BB_categoria_agrup01_final.csv'#,
+    #'Categoria/CATEGORIA_N1/LL/outputs/forecast_transposed_LSTM_LL_categoria_final.csv',
+    #'Categoria/CATEGORIA_N1/LL/outputs/forecast_transposed_NHITS_LL_categoria_final.csv',
+    #'Categoria/CATEGORIA_N1/LL/outputs/forecast_transposed_NBEATSx_LL_categoria_final.csv'
+]
+
+# Variável para armazenar o caminho completo do arquivo encontrado
+found_path_BB_categoria = None
+
+# Verificar se os arquivos existem
+for path in paths_BB_categorian1:
+    if os.path.exists(path):
+        found_path_BB_categoria = path  # Salva o caminho completo do arquivo
+        print(f"Arquivo encontrado: {found_path_BB_categoria}")
+        break
+
+if not found_path_BB_categoria:
+    print("Nenhum arquivo correspondente foi encontrado.")
+
+print(f"Caminho completo do arquivo encontrado: {found_path_BB_categoria}")
+
+#################
+#geral
+data_BB_categoria = pd.read_csv(found_path_BB_categoria)
+
+# Adicionar "LL_" às colunas, exceto 'mes_ano'
+#data_DD_categoria.columns = ['mes_ano' if col == 'mes_ano' else f'DD_{col}' for col in data_DD_categoria.columns]
+
+####################
+# Renomear as colunas
+data_BB_categoria = data_BB_categoria.rename(columns={data_BB_categoria.columns[0]: 'mes_ano'})
+
+
+# Transformar o DataFrame
+df_BB_categoria_seda = data_BB_categoria.melt(
+    id_vars=['mes_ano'],        # Coluna que será mantida fixa
+    var_name='categoria',     # Nova coluna que conterá os nomes das colunas originais
+    value_name='venda'     # Nova coluna que conterá os valores das colunas originais
+)
+
+df_BB_categoria_seda['modelo'] = 'categoria único'
+df_BB_categoria_seda['marca'] = 'BB'
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Agrup_02
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Alfaiataria
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Aroma
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Casual
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Casual Ville Moda Tricot
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Couro
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Jeans e Sarja
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Jeans Sarja
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Malha
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Malha e Moletom
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Moda
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Outros
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Seda
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC final
 
 # COMMAND ----------
 

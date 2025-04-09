@@ -75,7 +75,7 @@ for params in param_combinations:
         data_neural_hat['unique_id'] = ids_repeated
 
         # Salvar o DataFrame gerado diretamente em um arquivo CSV
-        csv_file_path = os.path.join(output_dir, f'forecast_GRU_{marca}_categoria_acessorio_final.csv')
+        csv_file_path = os.path.join(output_dir, f'forecast_GRU_{marca}_categoria_agrup01_final.csv')
         data_neural_hat.to_csv(csv_file_path, index=False)
         print(f"Previsões salvas com sucesso em: {csv_file_path}")
 
@@ -100,7 +100,7 @@ for params in param_combinations:
         df_grouped.loc['Total'] = df_grouped.sum()
 
         # Salvar o novo DataFrame agrupado com a linha de soma
-        csv_grouped_file_path = os.path.join(output_dir, f'forecast_grouped_GRU_{marca}_categoria_acessorio_final.csv')
+        csv_grouped_file_path = os.path.join(output_dir, f'forecast_grouped_GRU_{marca}_categoria_agrup01_final.csv')
         df_grouped.to_csv(csv_grouped_file_path)
         print(f"DataFrame agrupado por mês/ano salvo com sucesso em: {csv_grouped_file_path}")
 

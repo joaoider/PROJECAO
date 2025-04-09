@@ -115,7 +115,7 @@ for params in param_combinations:
         transposed_df.rename(columns={'index': 'Data'}, inplace=True)
 
         # Salvar o novo DataFrame transformado
-        csv_transposed_file_path = os.path.join(output_dir, f'forecast_transposed_GRU_{marca}_categoria_final.csv')
+        csv_transposed_file_path = os.path.join(output_dir, f'forecast_transposed_GRU_{marca}_categoria_agrup01__final.csv')
         transposed_df.to_csv(csv_transposed_file_path, index=False)
         print(f"DataFrame transposto salvo com sucesso em: {csv_transposed_file_path}")
 

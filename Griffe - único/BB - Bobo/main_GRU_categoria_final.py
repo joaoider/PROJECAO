@@ -9,7 +9,7 @@ print('main_GRU_categoria_final.py iniciado')
 from configuracoes_modelos.imports import *
 from BB_configuracoes import marca, horizon
 from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
-from B_base_categoria import data_neural, futr_df, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
+from BB_base_categoria import data_neural, futr_df, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
 
 print('Iniciando previsões com GRU')
 print('###############################')
@@ -21,7 +21,7 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # Carregar o módulo do modelo GRU dinamicamente
-modulo_modelo = importlib.import_module('models.model_GRU_categoria_bobo')
+modulo_modelo = importlib.import_module('models.model_GRU_categoria_final')
 
 # Ajustar para chamar a função correta, no caso do GRU
 funcao_treinar = getattr(modulo_modelo, 'treinar_GRU')  # Função específica para o GRU

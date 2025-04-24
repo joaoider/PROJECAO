@@ -17,14 +17,21 @@ json_parametros_path = f'{output_dir}/parametros_melhor_modelo_LSTM.json'
 print('Marca: ', marca)
 print('###############################')
 
-# Verificar se o arquivo JSON de parâmetros existe
-if not os.path.exists(json_parametros_path):
-    print(f"Erro: Arquivo de parâmetros {json_parametros_path} não encontrado.")
-    exit(0)
-
-# Carregar os parâmetros do modelo vencedor a partir do JSON
-with open(json_parametros_path, 'r') as f:
-    parametros = json.load(f)
+# Verificar e tentar carregar o arquivo JSON de parâmetros
+try:
+    if not os.path.exists(json_parametros_path):
+        raise FileNotFoundError
+    with open(json_parametros_path, 'r') as f:
+        parametros = json.load(f)
+except FileNotFoundError:
+    print(f"Arquivo de parâmetros {json_parametros_path} não encontrado. Pulando execução.")
+    print("main_LSTM_final.py finalizado com falha controlada.")
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print(f"Tempo de execução total: {execution_time:.2f} segundos")
+    # Encerrar sem erro
+    import sys
+    sys.exit(0)
 
 # Exibir os parâmetros carregados
 print(f"Parâmetros carregados: {parametros}")

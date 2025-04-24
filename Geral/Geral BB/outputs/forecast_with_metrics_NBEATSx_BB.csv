@@ -1,0 +1,2 @@
+max_steps,learning_rate,batch_size,activation,MAE,RMSE,MAPE
+1,0.001,32,ReLU,206171.1003947142,251151.66300845786,74.03223015793924

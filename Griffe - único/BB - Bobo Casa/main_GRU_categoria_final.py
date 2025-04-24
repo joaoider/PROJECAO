@@ -21,7 +21,7 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # Carregar o módulo do modelo GRU dinamicamente
-modulo_modelo = importlib.import_module('models.model_GRU_bobo_casa_final')
+modulo_modelo = importlib.import_module('models.model_GRU_categoria_final')
 
 # Ajustar para chamar a função correta, no caso do GRU
 funcao_treinar = getattr(modulo_modelo, 'treinar_GRU')  # Função específica para o GRU

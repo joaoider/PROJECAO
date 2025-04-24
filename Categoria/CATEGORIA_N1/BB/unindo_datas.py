@@ -2,7 +2,7 @@ print('unindo_datas.py iniciado')
 
 import pandas as pd
 
-from Categoria.CATEGORIA_N1.BB.BB_configuracoes import variaveis_futuras
+from BB_configuracoes import variaveis_futuras
 
 from datas.diadasmaes import process_dia_das_maes
 from datas.diadospais import process_dia_dos_pais

@@ -3,7 +3,8 @@ from pyspark.sql import SparkSession
 import pandas as pd
 import os
 from BB_configuracoes import marca
-from BB_rodar_modelo_vencedor import modelo_vencedor
+#from BB_rodar_modelo_vencedor import modelo_vencedor
+modelo_vencedor = 'LSTM'
 output_dir = "outputs"
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):
@@ -66,5 +67,5 @@ def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascie
 
 
 
-df_forecast = ler_forecast_csv(output_dir, marca)
+df_forecast = ler_forecast_csv(output_dir, marca, modelo_vencedor)
 salvar_em_parquet(df_forecast)

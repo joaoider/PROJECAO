@@ -3,13 +3,9 @@ from pyspark.sql import SparkSession
 import pandas as pd
 import os
 from BB_configuracoes import marca
-<<<<<<< HEAD
-from BB_rodar_modelo_vencedor import modelo_vencedor
-from BB_configuracoes import data_inicio_futr
-=======
 #from BB_rodar_modelo_vencedor import modelo_vencedor
+from BB_configuracoes import data_inicio_futr
 modelo_vencedor = 'LSTM'
->>>>>>> d0a520eaed3fdb80aaf861b94effe86d3ea6f3d2
 output_dir = "outputs"
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):
@@ -24,7 +20,7 @@ def ler_forecast_csv(output_dir, marca, modelo_vencedor):
 
 def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/"):
     spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
-
+    print('convertendo para spark.')
     sparkdf = spark.createDataFrame(df_pandas)
 
     # Salvar como Parquet
@@ -37,6 +33,7 @@ def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascie
     )
 
     # Nome desejado do arquivo final
+    print('salvando parquet.')
     nome_final = f"{marca}_{data_inicio_futr}.parquet"
 
     # Renomear arquivo Parquet gerado para o nome final desejado
@@ -48,13 +45,8 @@ def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascie
     for file in dbutils.fs.ls(blob_path):
         if file.name != nome_final:
             dbutils.fs.rm(f"{blob_path}/{file.name}")
-
-<<<<<<< HEAD
-df_forecast = ler_forecast_csv(output_dir, marca)
-salvar_em_parquet(df_forecast)
-=======
+    print('parquet salvo.')
 
 
 df_forecast = ler_forecast_csv(output_dir, marca, modelo_vencedor)
 salvar_em_parquet(df_forecast)
->>>>>>> d0a520eaed3fdb80aaf861b94effe86d3ea6f3d2

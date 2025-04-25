@@ -2,7 +2,7 @@ print('unindo_datas.py iniciado')
 
 import pandas as pd
 
-from JJ_configuracoes import variaveis_futuras
+from JJ_configuracoes import variaveis_futuras, start_date, end_date
 
 from datas.diadasmaes import process_dia_das_maes
 from datas.diadospais import process_dia_dos_pais
@@ -27,9 +27,6 @@ from datas.covid import process_covid
 from JJ_liquidacao import process_liquidacao, liqui_datas
 
 
-# Definir o intervalo de datas
-start_date = '2013-01-01'
-end_date = '2025-12-31'
 # Criar DataFrame com todos os dias no intervalo especificado
 date_range = pd.date_range(start=start_date, end=end_date)
 df = pd.DataFrame(date_range, columns=['ds'])

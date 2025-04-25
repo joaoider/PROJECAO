@@ -3,7 +3,7 @@ print('base.py iniciado')
 
 from configuracoes_modelos.imports import *
 from unindo_datas import datas
-from LL_configuracoes import marca, horizon, freq, data_inicio_base
+from LL_configuracoes import marca, horizon, freq, data_inicio_base, data_final_base, data_train, data_test, data_inicio_futr_test, data_final_futr_test, data_inicio_futr, data_final_futr
 from funcoes import verificar_e_completar_datas_faltantes_sem_unique_id
 from querys.LL_query_databricks import data
 
@@ -69,10 +69,10 @@ plt.savefig(f'outputs/base_{marca}.png')
 
 
 # Fixando tudo para referencia de fim de setembro 2024!
-data_neural = data_neural[data_neural['ds'] <= '2024-12-31']
+data_neural = data_neural[data_neural['ds'] <= data_final_base]
 #data_neural_filtered = data_neural[data_neural['ds'] <= '2024-09-30']
-data_neural_train = data_neural[data_neural['ds'] <= '2023-12-31']
-data_neural_test = data_neural[(data_neural['ds'] >= '2024-01-01') & (data_neural['ds'] <= '2024-12-31')]
+data_neural_train = data_neural[data_neural['ds'] <= data_train]
+data_neural_test = data_neural[(data_neural['ds'] >= data_test) & (data_neural['ds'] <= data_final_base)]
 
 #data_neural = data_neural[data_neural['ds'] <= '2024-09-30']
 #data_neural_train = data_neural[data_neural['ds'] <= '2023-09-30']
@@ -85,10 +85,10 @@ print('columns', data_neural_test.columns)
 #print(data_neural_test['QLF'])
 
 
-futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] <= '2025-12-31')]
+futr_df = datas[(datas['ds'] >= data_inicio_futr) & (datas['ds'] <= data_final_futr)]
 futr_df['unique_id'] = marca  # Usar a marca atual
 futr_df['unique_id'] = futr_df['unique_id'].astype(object)
-futr_df_test = datas[(datas['ds'] >= '2024-01-01') & (datas['ds'] < '2024-12-31')]
+futr_df_test = datas[(datas['ds'] >= data_inicio_futr_test) & (datas['ds'] < data_final_futr_test)]
 futr_df_test['unique_id'] = marca  # Usar a marca atual
 futr_df_test['unique_id'] = futr_df_test['unique_id'].astype(object)
 

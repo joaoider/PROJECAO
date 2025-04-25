@@ -79,6 +79,9 @@ for params in param_combinations:
         data_neural_hat.to_csv(csv_file_path, index=False)
         print(f"Previsões salvas com sucesso em: {csv_file_path}")
 
+        
+
+        """
         # -------------------- Parte 2: Criando o novo DataFrame agrupado --------------------
 
         data_neural_hat_mes = data_neural_hat.copy()
@@ -118,6 +121,7 @@ for params in param_combinations:
         csv_transposed_file_path = os.path.join(output_dir, f'forecast_transposed_GRU_{marca}_categoria_final.csv')
         transposed_df.to_csv(csv_transposed_file_path, index=False)
         print(f"DataFrame transposto salvo com sucesso em: {csv_transposed_file_path}")
+        """
 
 # Exibir o tempo total de execução
 end_time = time.time()

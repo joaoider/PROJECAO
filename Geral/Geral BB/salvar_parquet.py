@@ -4,21 +4,10 @@ import pandas as pd
 import os
 from BB_configuracoes import marca
 from BB_rodar_modelo_vencedor import modelo_vencedor
+from BB_configuracoes import data_inicio_futr
 output_dir = "outputs"
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):
-    """
-    Lê um arquivo CSV de previsão com base no modelo e marca fornecidos.
-
-    Parâmetros:
-    - output_dir: Caminho do diretório onde o CSV está salvo.
-    - marca: Nome da marca usado no nome do arquivo.
-    - modelo: Nome do modelo utilizado (padrão: 'GRU').
-    - sufixo: Sufixo usado no nome do arquivo (padrão: 'categoria_final').
-
-    Retorna:
-    - Um DataFrame pandas com os dados lidos.
-    """
     csv_file_path = os.path.join(output_dir, f'melhor_modelo_forecast_{modelo_vencedor}_final_{marca}.csv')
     
     if not os.path.exists(csv_file_path):
@@ -28,23 +17,12 @@ def ler_forecast_csv(output_dir, marca, modelo_vencedor):
     df = pd.read_csv(csv_file_path)
     return df
 
-def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/", nome_final="data.parquet"):
-    """
-    Converte um DataFrame pandas para Spark, salva como arquivo Parquet no Blob Storage
-    e renomeia o arquivo final.
+def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/"):
+    spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
 
-    Parâmetros:
-    - df_pandas: DataFrame do pandas a ser convertido.
-    - blob_path: Caminho no Blob Storage onde o arquivo será salvo.
-    - nome_final: Nome final do arquivo Parquet.
-    """
-    # Criar a SparkSession (caso não exista)
-    spark = SparkSession.builder.appName("pandas to spark").getOrCreate()
-
-    # Converter para Spark DataFrame
     sparkdf = spark.createDataFrame(df_pandas)
 
-    # Salvar como um único arquivo Parquet
+    # Salvar como Parquet
     (sparkdf
      .coalesce(1)
      .write
@@ -53,18 +31,18 @@ def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascie
      .save(blob_path)
     )
 
-    # Obter o nome do arquivo gerado
-    parquet_name = [x.name for x in dbutils.fs.ls(blob_path) if "part" in x.name][0]
+    # Nome desejado do arquivo final
+    nome_final = f"{marca}_{data_inicio_futr}.parquet"
 
-    # Renomear o arquivo para o nome final desejado
+    # Renomear arquivo Parquet gerado para o nome final desejado
+    parquet_name = [x.name for x in dbutils.fs.ls(blob_path) if x.name.startswith("part")][0]
+
     dbutils.fs.mv(f"{blob_path}/{parquet_name}", f"{blob_path}/{nome_final}")
 
-    # Remover arquivos extras
+    # Remover arquivos extras que não sejam o arquivo parquet final
     for file in dbutils.fs.ls(blob_path):
-        if "part" not in file.name and file.name != nome_final:
+        if file.name != nome_final:
             dbutils.fs.rm(f"{blob_path}/{file.name}")
-
-
 
 df_forecast = ler_forecast_csv(output_dir, marca)
 salvar_em_parquet(df_forecast)

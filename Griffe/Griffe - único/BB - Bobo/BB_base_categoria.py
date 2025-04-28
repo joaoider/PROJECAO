@@ -3,7 +3,7 @@ print('base_categoria.py iniciado')
 
 from configuracoes_modelos.imports import *
 from unindo_datas import datas
-from BB_configuracoes import marca, horizon, freq, data_inicio_base
+from BB_configuracoes import marca, horizon, freq, data_inicio_base, data_final_base, data_train, data_test, data_inicio_futr_test, data_final_futr_test, data_inicio_futr, data_final_futr
 from funcoes import verificar_e_completar_datas_faltantes
 from querys.BB_query_databricks import data
 
@@ -57,7 +57,7 @@ plt.plot(data_neural['ds'], data_neural['y'])
 plt.xlabel('DATA')
 plt.ylabel('VLF')
 plt.title('VLF by DATA')
-plt.savefig(f'outputs/base_{marca}_beaute.png')
+plt.savefig(f'outputs/base_{marca}_bobo.png')
 
 
 ############################################################################# Criando Static_df
@@ -100,10 +100,10 @@ data_neural = pd.merge(data_neural, datas, on=['ds'])
 
 ############################################ Criando base para previsão futura
 # Fixando tudo para referencia de fim de setembro 2024!
-data_neural = data_neural[data_neural['ds'] <= '2024-12-31'] # a base só está indo até essa data, é só pra confirmar
+data_neural = data_neural[data_neural['ds'] <= data_final_base] # a base só está indo até essa data, é só pra confirmar
 #print(len(data_neural))
 
-futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] <= '2025-12-31')]
+futr_df = datas[(datas['ds'] >= data_inicio_futr) & (datas['ds'] <= data_final_futr)]
 #print(data_neural.head())
 #print(futr_df.head())
 #print('len(futr_df) antes do merge:', len(futr_df))
@@ -116,9 +116,9 @@ futr_df = futr_df.sort_values(by=['unique_id', 'ds']).reset_index(drop=True)
 
 
 ######################################### Criando base para previsão de treino e teste
-data_neural_train = data_neural[data_neural['ds'] <= '2023-12-31']
+data_neural_train = data_neural[data_neural['ds'] <= data_train]
 #print(data_neural_train.head())
-data_neural_test = data_neural[(data_neural['ds'] >= '2024-01-01') & (data_neural['ds'] < '2024-12-31')]
+data_neural_test = data_neural[(data_neural['ds'] >= data_test) & (data_neural['ds'] <= data_final_base)]
 #print(data_neural_test.head())
 print('len(data_neural_test) antes do merge:', len(data_neural_test))
 # Criar um DataFrame com todas as combinações de 'ds' e 'unique_id'

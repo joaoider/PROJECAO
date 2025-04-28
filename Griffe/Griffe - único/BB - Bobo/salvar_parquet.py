@@ -10,7 +10,7 @@ griffe = 'bobo'
 output_dir = "outputs"
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):
-    csv_file_path = os.path.join(output_dir, f'forecast_{modelo}_{marca}_{griffe}.csv')
+    csv_file_path = os.path.join(output_dir, f'forecast_{modelo}_{marca}_{griffe}_final.csv')
     
     if not os.path.exists(csv_file_path):
         raise FileNotFoundError(f"Arquivo CSV não encontrado: {csv_file_path}")

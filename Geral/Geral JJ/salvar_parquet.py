@@ -2,10 +2,10 @@ from pyspark.sql import SparkSession
 
 import pandas as pd
 import os
-from DD_configuracoes import marca
+from JJ_configuracoes import marca
 #from BB_rodar_modelo_vencedor import modelo_vencedor
-from DD_configuracoes import data_inicio_futr
-modelo_vencedor = 'LSTM'
+from JJ_configuracoes import data_inicio_futr
+modelo_vencedor = 'GRU'
 output_dir = "outputs"
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):
@@ -20,33 +20,36 @@ def ler_forecast_csv(output_dir, marca, modelo_vencedor):
 
 def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/"):
     spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
-    print('convertendo para spark.')
+    print('Convertendo para Spark DataFrame.')
+    
     sparkdf = spark.createDataFrame(df_pandas)
 
-    # Salvar como Parquet
+    # Diretório temporário para cada execução
+    temp_blob_path = f"{blob_path}/temp_{marca}_{data_inicio_futr}"
+
+    # Salvar o arquivo parquet temporariamente
+    print('Salvando parquet em diretório temporário.')
     (sparkdf
      .coalesce(1)
      .write
      .mode('overwrite')
      .format('parquet')
-     .save(blob_path)
+     .save(temp_blob_path)
     )
 
     # Nome desejado do arquivo final
-    print('salvando parquet.')
     nome_final = f"{marca}_{data_inicio_futr}.parquet"
 
-    # Renomear arquivo Parquet gerado para o nome final desejado
-    parquet_name = [x.name for x in dbutils.fs.ls(blob_path) if x.name.startswith("part")][0]
+    # Obter o nome do arquivo Parquet gerado
+    parquet_name = [x.name for x in dbutils.fs.ls(temp_blob_path) if x.name.startswith("part")][0]
 
-    dbutils.fs.mv(f"{blob_path}/{parquet_name}", f"{blob_path}/{nome_final}")
+    # Mover o arquivo parquet gerado para o diretório definitivo com o nome desejado
+    dbutils.fs.mv(f"{temp_blob_path}/{parquet_name}", f"{blob_path}/{nome_final}")
 
-    # Remover arquivos extras que não sejam o arquivo parquet final
-    for file in dbutils.fs.ls(blob_path):
-        if file.name != nome_final:
-            dbutils.fs.rm(f"{blob_path}/{file.name}")
-    print('parquet salvo.')
+    # Remover o diretório temporário usado
+    dbutils.fs.rm(temp_blob_path, recurse=True)
 
+    print(f"Parquet salvo com sucesso: {blob_path}/{nome_final}")
 
 df_forecast = ler_forecast_csv(output_dir, marca, modelo_vencedor)
 salvar_em_parquet(df_forecast)

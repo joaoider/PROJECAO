@@ -97,13 +97,12 @@ data_neural = verificar_e_completar_datas_faltantes(data_neural)
 data_neural = pd.merge(data_neural, datas, on=['ds'])
 
 
-
 ############################################ Criando base para previsão futura
 # Fixando tudo para referencia de fim de setembro 2024!
-data_neural = data_neural[data_neural['ds'] <= '2024-12-31'] # a base só está indo até essa data, é só pra confirmar
+data_neural = data_neural[data_neural['ds'] <= data_final_base] # a base só está indo até essa data, é só pra confirmar
 #print(len(data_neural))
 
-futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] <= '2025-12-31')]
+futr_df = datas[(datas['ds'] >= data_inicio_futr) & (datas['ds'] <= data_final_futr)]
 #print(data_neural.head())
 #print(futr_df.head())
 #print('len(futr_df) antes do merge:', len(futr_df))
@@ -116,9 +115,9 @@ futr_df = futr_df.sort_values(by=['unique_id', 'ds']).reset_index(drop=True)
 
 
 ######################################### Criando base para previsão de treino e teste
-data_neural_train = data_neural[data_neural['ds'] <= '2023-12-31']
+data_neural_train = data_neural[data_neural['ds'] <= data_train]
 #print(data_neural_train.head())
-data_neural_test = data_neural[(data_neural['ds'] >= '2024-01-01') & (data_neural['ds'] < '2024-12-31')]
+data_neural_test = data_neural[(data_neural['ds'] >= data_test) & (data_neural['ds'] <= data_final_base)]
 #print(data_neural_test.head())
 print('len(data_neural_test) antes do merge:', len(data_neural_test))
 # Criar um DataFrame com todas as combinações de 'ds' e 'unique_id'

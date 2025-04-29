@@ -22,7 +22,7 @@ else:
 
 #print(marca)
 
-def get_sales_data(marca, griffe_list, data_inicio, data_fim):
+def get_sales_data(marca, griffe_list, data_inicio):
     griffe_condition = ', '.join(f"'{griffe}'" for griffe in griffe_list)
     
     query = f"""
@@ -37,7 +37,7 @@ def get_sales_data(marca, griffe_list, data_inicio, data_fim):
     JOIN gold_planejamento.dim_marcas D ON A.REDE_LOJAS_VENDA = D.REDE_LOJAS
     WHERE D.MARCA_SIGLA = '{marca}' 
       AND C.GRIFFE in ({griffe_condition})
-      AND DATA BETWEEN '{data_inicio}' AND '{data_fim}'
+      AND DATA >= '{data_inicio}'
     GROUP BY A.DATA, D.MARCA_SIGLA, A.ID_LOJA_VENDA, A.CANAL_ORIGEM, A.LINHA, A.GRUPO, A.CATEGORIA_N1, 
              A.TIPO_VENDA, A.STATUS_PRODUTO, B.CIDADE, B.UF, C.GRIFFE
     """
@@ -46,7 +46,7 @@ def get_sales_data(marca, griffe_list, data_inicio, data_fim):
     return df
 
 
-data = get_sales_data('JJ', ['John John Fem', 'John John Masc'], '2013-01-01', '2024-12-31')
+data = get_sales_data('JJ', ['John John Fem', 'John John Masc'], '2013-01-01')
 
 
 print(len(data))

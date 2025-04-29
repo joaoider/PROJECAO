@@ -3,6 +3,7 @@ print('unindo_datas.py iniciado')
 import pandas as pd
 
 from BB_configuracoes import variaveis_futuras, start_date, end_date
+from BB_liquidacao import process_liquidacao, liqui_datas
 
 from datas.diadasmaes import process_dia_das_maes
 from datas.diadospais import process_dia_dos_pais
@@ -24,7 +25,7 @@ from datas.carnaval import process_carnaval
 from datas.diadasemana import process_dia_da_semana
 from datas.mesdoano import process_mes_do_ano
 from datas.covid import process_covid
-from BB_liquidacao import process_liquidacao, liqui_datas
+
 
 # Criar DataFrame com todos os dias no intervalo especificado
 date_range = pd.date_range(start=start_date, end=end_date)

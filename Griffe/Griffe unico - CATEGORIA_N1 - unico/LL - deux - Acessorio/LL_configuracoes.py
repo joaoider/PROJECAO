@@ -7,7 +7,21 @@ variaveis_historicas = ['QLF', 'ROL', 'CPV']
 # marcas
 
 marca = 'LL'
+
 data_inicio_base = '2013-01-01'
+data_final_base = '2024-12-31'
+
+data_train = '2023-12-31'
+data_test = '2024-01-01'
+
+data_inicio_futr_test = '2024-01-01'
+data_final_futr_test = '2024-12-31'
+
+data_inicio_futr = '2025-01-01'
+data_final_futr = '2025-12-31'
+
+start_date = '2013-01-01'
+end_date = '2025-12-31'
 
 
 

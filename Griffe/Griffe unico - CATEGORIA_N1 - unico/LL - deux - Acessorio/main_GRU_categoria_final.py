@@ -10,6 +10,9 @@ from configuracoes_modelos.imports import *
 from LL_configuracoes import marca, horizon
 from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
 from LL_base_categoria import data_neural, futr_df, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
+modelo = 'GRU'
+griffe = 'deux'
+linha = 'acessorio'
 
 print('Iniciando previsões com GRU')
 print('###############################')
@@ -75,7 +78,7 @@ for params in param_combinations:
         data_neural_hat['unique_id'] = ids_repeated
 
         # Salvar o DataFrame gerado diretamente em um arquivo CSV
-        csv_file_path = os.path.join(output_dir, f'forecast_GRU_{marca}_categoria_acessorio_final.csv')
+        csv_file_path = os.path.join(output_dir, f'forecast_{modelo}_{marca}_{griffe}_{linha}_final.csv')
         data_neural_hat.to_csv(csv_file_path, index=False)
         print(f"Previsões salvas com sucesso em: {csv_file_path}")
 

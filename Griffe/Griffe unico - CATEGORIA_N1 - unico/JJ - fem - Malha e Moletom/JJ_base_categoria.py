@@ -3,7 +3,7 @@ print('base_categoria.py iniciado')
 
 from configuracoes_modelos.imports import *
 from unindo_datas import datas
-from JJ_configuracoes import marca, horizon, freq, data_inicio_base
+from JJ_configuracoes import marca, horizon, freq, data_inicio_base, data_final_base, data_train, data_test, data_inicio_futr_test, data_final_futr_test, data_inicio_futr, data_final_futr
 from funcoes import verificar_e_completar_datas_faltantes
 from querys.JJ_query_databricks import data
 

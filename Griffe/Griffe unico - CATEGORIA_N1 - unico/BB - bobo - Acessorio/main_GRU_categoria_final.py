@@ -7,12 +7,10 @@ print('main_GRU_categoria_final.py iniciado')
 
 # Importar módulos e dataframes necessários
 from configuracoes_modelos.imports import *
-from BB_configuracoes import marca, horizon
+from BB_configuracoes import marca, horizon, modelo, griffe, linha, output_dir, data_inicio_futr
 from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
-from BB_base_categoria import data_neural, futr_df, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
-modelo = 'GRU'
-griffe = 'bobo'
-linha = 'acessorio'
+from BB_base_categoria import data_neural, futr_df, unique_ids 
+
 
 print('Iniciando previsões com GRU')
 print('###############################')
@@ -128,3 +126,7 @@ execution_time = end_time - start_time
 print(f"Tempo de execução total: {execution_time:.2f} segundos")
 
 print('main_GRU_categoria_final.py finalizado')
+
+#salvar parquet
+df_forecast = ler_forecast_csv(output_dir, marca, modelo)
+salvar_em_parquet(df_forecast)

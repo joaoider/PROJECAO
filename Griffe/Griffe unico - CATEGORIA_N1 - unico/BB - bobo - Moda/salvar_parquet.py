@@ -2,13 +2,8 @@ from pyspark.sql import SparkSession
 
 import pandas as pd
 import os
-from BB_configuracoes import marca
-#from BB_rodar_modelo_vencedor import modelo_vencedor
-from BB_configuracoes import data_inicio_futr
-modelo = 'GRU'
-griffe = 'bobo'
-linha = 'moda'
-output_dir = "outputs"
+from BB_configuracoes import marca, modelo, griffe, linha, output_dir, data_inicio_futr
+
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):
     csv_file_path = os.path.join(output_dir, f'forecast_{modelo}_{marca}_{griffe}_{linha}_final.csv')

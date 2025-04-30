@@ -29,6 +29,10 @@ def rodar_modelo_vencedor():
 
     print(f"Modelo vencedor: {modelo_vencedor}")
 
+    # 🔽 Salva o nome do modelo vencedor em um arquivo txt
+    with open(f'{pasta_saida}/modelo_vencedor.txt', 'w') as f:
+        f.write(modelo_vencedor)
+
     # Carregar os parâmetros do modelo vencedor (remover colunas de métricas como MAE, RMSE, MAPE)
     parametros_df = pd.read_csv(caminho_parametros)
     parametros_relevantes = parametros_df.drop(columns=['MAE', 'RMSE', 'MAPE']).iloc[0].to_dict()

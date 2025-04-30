@@ -1,11 +1,12 @@
 from pyspark.sql import SparkSession
-
 import pandas as pd
 import os
-from LL_configuracoes import marca
-#from BB_rodar_modelo_vencedor import modelo_vencedor
-from LL_configuracoes import data_inicio_futr
-modelo_vencedor = 'GRU'
+from LL_configuracoes import marca, data_inicio_futr
+
+with open('outputs/modelo_vencedor.txt', 'r') as f:
+    modelo_vencedor = f.read().strip()
+print(f"Modelo vencedor carregado: {modelo_vencedor}")
+
 output_dir = "outputs"
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):

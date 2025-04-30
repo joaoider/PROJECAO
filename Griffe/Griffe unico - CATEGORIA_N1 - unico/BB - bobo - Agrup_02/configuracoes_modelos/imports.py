@@ -1,6 +1,7 @@
 # imports.py
 print('imports.py iniciado')
 
+from pyspark.sql import SparkSession
 import pandas as pd
 import numpy as np
 from pandas.plotting import autocorrelation_plot

@@ -7,9 +7,9 @@ print('main_GRU_categoria.py iniciado')
 
 # Importar módulos e dataframes necessários
 from configuracoes_modelos.imports import *
-from DD_configuracoes import marca, horizon
+from JJ_configuracoes import marca, horizon, data_inicio_futr, modelo, griffe, linha, output_dir
 from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
-from DD_base_categoria import data_neural_train, data_neural_test, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
+from JJ_base_categoria import data_neural, futr_df, unique_ids 
 
 print('Iniciando previsões com GRU')
 print('###############################')

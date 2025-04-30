@@ -7,7 +7,7 @@ print('main_GRU_categoria_final.py iniciado')
 
 # Importar módulos e dataframes necessários
 from configuracoes_modelos.imports import *
-from BB_configuracoes import marca, horizon, modelo, griffe, linha, output_dir, data_inicio_futr
+from BB_configuracoes import marca, horizon, data_inicio_futr, modelo, griffe, linha, output_dir
 from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
 from BB_base_categoria import data_neural, futr_df, unique_ids 
 
@@ -126,7 +126,3 @@ execution_time = end_time - start_time
 print(f"Tempo de execução total: {execution_time:.2f} segundos")
 
 print('main_GRU_categoria_final.py finalizado')
-
-#salvar parquet
-df_forecast = ler_forecast_csv(output_dir, marca, modelo)
-salvar_em_parquet(df_forecast)

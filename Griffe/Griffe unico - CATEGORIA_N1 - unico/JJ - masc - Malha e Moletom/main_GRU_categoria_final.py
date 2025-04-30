@@ -7,12 +7,10 @@ print('main_GRU_categoria_final.py iniciado')
 
 # Importar módulos e dataframes necessários
 from configuracoes_modelos.imports import *
-from JJ_configuracoes import marca, horizon
+from JJ_configuracoes import marca, horizon, data_inicio_futr, modelo, griffe, linha, output_dir
 from configuracoes_modelos.configuracoes_GRU import gerar_combinacoes_parametros
 from JJ_base_categoria import data_neural, futr_df, unique_ids  # Certifique-se que 'unique_ids' está no 'base_categoria'
-modelo = 'GRU'
-griffe = 'masc'
-linha = 'malhaemoletom'
+
 
 print('Iniciando previsões com GRU')
 print('###############################')

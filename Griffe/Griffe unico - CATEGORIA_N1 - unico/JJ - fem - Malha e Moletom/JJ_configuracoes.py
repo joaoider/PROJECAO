@@ -7,6 +7,10 @@ variaveis_historicas = ['QLF', 'ROL', 'CPV']
 # marcas
 
 marca = 'JJ'
+modelo = 'GRU'
+griffe = 'fem'
+linha = 'malhaemoletom'
+output_dir = "outputs"
 
 data_inicio_base = '2013-01-01'
 data_final_base = '2024-12-31'

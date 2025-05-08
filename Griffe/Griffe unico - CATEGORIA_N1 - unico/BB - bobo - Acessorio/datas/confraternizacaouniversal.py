@@ -14,7 +14,7 @@ def process_confraternizacao_universal(df):
     specific_dates_confraternizacao_universal = [
         '2013-01-01', '2014-01-01', '2015-01-01', '2016-01-01', '2017-01-01',
         '2018-01-01', '2019-01-01', '2020-01-01', '2021-01-01', '2022-01-01',
-        '2023-01-01', '2024-01-01', '2025-01-01'
+        '2023-01-01', '2024-01-01', '2025-01-01', '2026-01-01'
     ]
     specific_dates_confraternizacao_universal = pd.to_datetime(specific_dates_confraternizacao_universal)
 

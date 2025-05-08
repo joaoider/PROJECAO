@@ -12,7 +12,7 @@ def process_sexta_feira_santa(df):
     specific_dates_sexta_feira_santa = [
         '2013-03-29', '2014-04-18', '2015-04-03', '2016-03-25', '2017-04-14',
         '2018-03-30', '2019-04-19', '2020-04-10', '2021-04-02', '2022-04-15',
-        '2023-04-07', '2024-03-29', '2025-04-18'
+        '2023-04-07', '2024-03-29', '2025-04-18', '2026-04-03'
     ]
     specific_dates_sexta_feira_santa = pd.to_datetime(specific_dates_sexta_feira_santa)
 

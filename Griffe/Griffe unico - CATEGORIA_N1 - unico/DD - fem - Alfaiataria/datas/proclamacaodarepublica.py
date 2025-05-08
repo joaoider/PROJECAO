@@ -12,7 +12,7 @@ def process_proclamacao_da_republica(df):
     specific_dates_proclamacao_da_republica = [
         '2013-11-15', '2014-11-15', '2015-11-15', '2016-11-15', '2017-11-15',
         '2018-11-15', '2019-11-15', '2020-11-15', '2021-11-15', '2022-11-15',
-        '2023-11-15', '2024-11-15', '2025-11-15'
+        '2023-11-15', '2024-11-15', '2025-11-15', '2026-11-15'
     ]
     specific_dates_proclamacao_da_republica = pd.to_datetime(specific_dates_proclamacao_da_republica)
 

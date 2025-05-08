@@ -12,7 +12,7 @@ def process_nossa_senhora_aparecida(df):
     specific_dates_nossa_senhora_aparecida = [
         '2013-10-12', '2014-10-12', '2015-10-12', '2016-10-12', '2017-10-12',
         '2018-10-12', '2019-10-12', '2020-10-12', '2021-10-12', '2022-10-12',
-        '2023-10-12', '2024-10-12', '2025-10-12'
+        '2023-10-12', '2024-10-12', '2025-10-12', '2026-10-12'
     ]
     specific_dates_nossa_senhora_aparecida = pd.to_datetime(specific_dates_nossa_senhora_aparecida)
 

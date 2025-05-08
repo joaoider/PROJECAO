@@ -14,7 +14,7 @@ def process_dia_do_trabalhador(df):
     specific_dates_dia_do_trabalhador = [
         '2013-05-01', '2014-05-01', '2015-05-01', '2016-05-01', '2017-05-01',
         '2018-05-01', '2019-05-01', '2020-05-01', '2021-05-01', '2022-05-01',
-        '2023-05-01', '2024-05-01', '2025-05-01'
+        '2023-05-01', '2024-05-01', '2025-05-01', '2026-05-01'
     ]
     specific_dates_dia_do_trabalhador = pd.to_datetime(specific_dates_dia_do_trabalhador)
 

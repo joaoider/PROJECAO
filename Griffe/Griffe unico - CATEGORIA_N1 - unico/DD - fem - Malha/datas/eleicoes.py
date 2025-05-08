@@ -12,7 +12,7 @@ def process_eleicoes(df):
 
     # Lista de datas específicas para as Eleições conforme fornecido
     specific_dates_eleicoes = [
-        '2018-10-07', '2018-10-28', '2022-10-02', '2022-10-30', '2024-10-06', '2024-10-27'
+        '2018-10-07', '2018-10-28', '2022-10-02', '2022-10-30', '2024-10-06', '2024-10-27', '2026-10-04', '2026-10-25'
     ]
     specific_dates_eleicoes = pd.to_datetime(specific_dates_eleicoes)
 

@@ -12,7 +12,7 @@ def process_independencia_do_brasil(df):
     specific_dates_independencia_do_brasil = [
         '2013-09-07', '2014-09-07', '2015-09-07', '2016-09-07', '2017-09-07',
         '2018-09-07', '2019-09-07', '2020-09-07', '2021-09-07', '2022-09-07',
-        '2023-09-07', '2024-09-07', '2025-09-07'
+        '2023-09-07', '2024-09-07', '2025-09-07', '2026-09-07'
     ]
     specific_dates_independencia_do_brasil = pd.to_datetime(specific_dates_independencia_do_brasil)
 

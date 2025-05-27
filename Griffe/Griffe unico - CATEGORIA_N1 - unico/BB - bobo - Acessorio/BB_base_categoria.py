@@ -12,7 +12,7 @@ print(data.head())
 #data = pd.read_csv(path)
 
 # Processar o DataFrame como no código original
-data = data.drop(columns=['MARCA_SIGLA', 'GRIFFE', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO', 'MEDIA_VLF', 'MEDIA_QLF', 'MEDIA_ROL', 'MEDIA_CPV'])
+data = data.drop(columns=['MARCA_SIGLA', 'CATEGORIA_N1', 'CODIGO_FILIAL', 'CANAL_ORIGEM', 'CIDADE', 'UF', 'STATUS_PRODUTO', 'TIPO_VENDA', 'LINHA', 'GRUPO', 'MEDIA_VLF', 'MEDIA_QLF', 'MEDIA_ROL', 'MEDIA_CPV'])
 
 data['DATA'] = pd.to_datetime(data['DATA'])
 data = data.loc[data['DATA'] >= data_inicio_base]
@@ -21,9 +21,9 @@ data['VLF'] = data['VLF'].astype(float)
 data['QLF'] = data['QLF'].astype(float)
 data['ROL'] = data['ROL'].astype(float)
 data['CPV'] = data['CPV'].astype(float)
-data['CATEGORIA_N1'] = data['CATEGORIA_N1'].astype(object)
+data['GRIFFE'] = data['GRIFFE'].astype(object)
 
-data.rename(columns={'CATEGORIA_N1': 'unique_id'}, inplace=True)
+data.rename(columns={'GRIFFE': 'unique_id'}, inplace=True)
 
 ## Agrupando por data e somando as colunas VLF e QLF
 # Agrupando por DATA e unique_id e somando as colunas VLF, QLF, ROL e CPV
@@ -57,7 +57,7 @@ plt.plot(data_neural['ds'], data_neural['y'])
 plt.xlabel('DATA')
 plt.ylabel('VLF')
 plt.title('VLF by DATA')
-plt.savefig(f'outputs/base_{marca}_categoria_acessorio.png')
+plt.savefig(f'outputs/base_{marca}_bobo.png')
 
 
 ############################################################################# Criando Static_df
@@ -100,10 +100,10 @@ data_neural = pd.merge(data_neural, datas, on=['ds'])
 
 ############################################ Criando base para previsão futura
 # Fixando tudo para referencia de fim de setembro 2024!
-data_neural = data_neural[data_neural['ds'] <= '2024-12-31'] # a base só está indo até essa data, é só pra confirmar
+data_neural = data_neural[data_neural['ds'] <= data_final_base] # a base só está indo até essa data, é só pra confirmar
 #print(len(data_neural))
 
-futr_df = datas[(datas['ds'] >= '2025-01-01') & (datas['ds'] <= '2025-12-31')]
+futr_df = datas[(datas['ds'] >= data_inicio_futr) & (datas['ds'] <= data_final_futr)]
 #print(data_neural.head())
 #print(futr_df.head())
 #print('len(futr_df) antes do merge:', len(futr_df))
@@ -116,9 +116,9 @@ futr_df = futr_df.sort_values(by=['unique_id', 'ds']).reset_index(drop=True)
 
 
 ######################################### Criando base para previsão de treino e teste
-data_neural_train = data_neural[data_neural['ds'] <= '2023-12-31']
+data_neural_train = data_neural[data_neural['ds'] <= data_train]
 #print(data_neural_train.head())
-data_neural_test = data_neural[(data_neural['ds'] >= '2024-01-01') & (data_neural['ds'] < '2024-12-31')]
+data_neural_test = data_neural[(data_neural['ds'] >= data_test) & (data_neural['ds'] <= data_final_base)]
 #print(data_neural_test.head())
 print('len(data_neural_test) antes do merge:', len(data_neural_test))
 # Criar um DataFrame com todas as combinações de 'ds' e 'unique_id'

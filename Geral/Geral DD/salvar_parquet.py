@@ -11,12 +11,18 @@ output_dir = "outputs"
 
 def ler_forecast_csv(output_dir, marca, modelo_vencedor):
     csv_file_path = os.path.join(output_dir, f'melhor_modelo_forecast_{modelo_vencedor}_final_{marca}.csv')
-    
     if not os.path.exists(csv_file_path):
         raise FileNotFoundError(f"Arquivo CSV não encontrado: {csv_file_path}")
-    
     print(f"Lendo o arquivo: {csv_file_path}")
     df = pd.read_csv(csv_file_path)
+    # Identificar a terceira coluna (que não é 'unique_id' nem 'ds')
+    outras_colunas = [col for col in df.columns if col not in ['unique_id', 'ds']]
+    if len(outras_colunas) != 1:
+        raise ValueError("Esperava exatamente uma terceira coluna além de 'unique_id' e 'ds'.")
+    terceira_coluna = outras_colunas[0]
+    # Renomear para 'value' e criar a coluna 'atributos'
+    df['atributos'] = terceira_coluna
+    df = df.rename(columns={terceira_coluna: 'value'})
     return df
 
 def salvar_em_parquet(df_pandas, blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/"):

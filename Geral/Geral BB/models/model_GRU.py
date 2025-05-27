@@ -48,7 +48,7 @@ def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decod
     nf.fit(df = data_neural_train)
 
     # Gerar o dataframe futuro com as combinações corretas de ids e tempos
-    #future_dataframe = nf.make_future_dataframe(h=horizon)
+    #future_dataframe = nf.make_future_dataframe(365)
     #print(f"Future dataframe:\n{future_dataframe}")
     
     # Verificar se há combinações faltando

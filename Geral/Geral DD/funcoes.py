@@ -1,7 +1,6 @@
 import pandas as pd
-from DD_configuracoes import marca
+from DD_configuracoes import marca, data_inicio_base
 import os
-from DD_configuracoes import data_inicio_base
 import subprocess
 
 # Função que verifica as datas faltantes e preenche no dataframe original

@@ -134,4 +134,7 @@ futr_df_test['unique_id'] = futr_df_test['unique_id'].astype(object)
 #print('data train', data_neural_train['ds'].max())
 #print('futr geral test', futr_df_test['ds'].min(), futr_df_test['ds'].max())
 
+########################################################################################
+########################################################################################
+
 print('base.py finalizado')

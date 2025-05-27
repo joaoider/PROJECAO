@@ -26,24 +26,22 @@ else:
 
 def get_sales_data(marca, griffe_list, data_inicio):
     griffe_condition = ', '.join(f"'{griffe}'" for griffe in griffe_list)
-    
     query = f"""
     SELECT A.DATA, D.MARCA_SIGLA, split_part(A.ID_LOJA_VENDA, ':',2) as CODIGO_FILIAL, 
            A.CANAL_ORIGEM, A.LINHA, A.GRUPO, A.CATEGORIA_N1, A.TIPO_VENDA, A.STATUS_PRODUTO, 
            B.CIDADE, B.UF, C.GRIFFE, sum(A.VLF) AS VLF, SUM(A.QLF) AS QLF, 
            sum(A.ROL) AS ROL, sum(A.CPV) AS CPV, AVG(A.VLF) AS MEDIA_VLF, 
            AVG(A.QLF) AS MEDIA_QLF, AVG(A.ROL) AS MEDIA_ROL, AVG(A.CPV) AS MEDIA_CPV
-    FROM gold_planejamento.fact_faturamento_B2c_v2 A
+    FROM gold_planejamento.fact_faturamento_B2c A
     JOIN gold.dim_filiais B ON split_part(A.ID_LOJA_VENDA, ':',2) = B.CODIGO_FILIAL
     JOIN gold_planejamento.dim_produtos C on A.PRODUTO = C.PRODUTO
     JOIN gold_planejamento.dim_marcas D ON A.REDE_LOJAS_VENDA = D.REDE_LOJAS
     WHERE D.MARCA_SIGLA = '{marca}' 
       AND C.GRIFFE in ({griffe_condition})
-      AND DATA >= '{data_inicio}' 
+      AND DATA >= '{data_inicio}'
     GROUP BY A.DATA, D.MARCA_SIGLA, A.ID_LOJA_VENDA, A.CANAL_ORIGEM, A.LINHA, A.GRUPO, A.CATEGORIA_N1, 
              A.TIPO_VENDA, A.STATUS_PRODUTO, B.CIDADE, B.UF, C.GRIFFE
     """
-    
     df = spark.sql(query).toPandas()
     return df
 

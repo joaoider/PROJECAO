@@ -29,31 +29,31 @@ def encontrar_melhor_modelo():
 
     # Caminho para os arquivos CSV dos diferentes modelos
     caminho_lstm = os.path.join(pasta_saida, f'forecast_with_metrics_LSTM_{marca}.csv')
-    caminho_nhits = os.path.join(pasta_saida, f'forecast_with_metrics_NHITS_{marca}.csv')
+    #caminho_nhits = os.path.join(pasta_saida, f'forecast_with_metrics_NHITS_{marca}.csv')
     caminho_gru = os.path.join(pasta_saida, f'forecast_with_metrics_GRU_{marca}.csv')
-    caminho_nbeatsx = os.path.join(pasta_saida, f'forecast_with_metrics_NBEATSx_{marca}.csv')
+    #caminho_nbeatsx = os.path.join(pasta_saida, f'forecast_with_metrics_NBEATSx_{marca}.csv')
 
     # Verificar se os arquivos CSV existem
-    if not os.path.exists(caminho_lstm) or not os.path.exists(caminho_nhits) or not os.path.exists(caminho_gru) or not os.path.exists(caminho_nbeatsx):
+    if not os.path.exists(caminho_lstm) or not os.path.exists(caminho_gru):
         print("Erro: Um ou mais arquivos de métricas não foram encontrados.")
         return
 
     # Ler os arquivos CSV para cada modelo
     lstm_df = pd.read_csv(caminho_lstm)
-    nhits_df = pd.read_csv(caminho_nhits)
+    #nhits_df = pd.read_csv(caminho_nhits)
     gru_df = pd.read_csv(caminho_gru)
-    nbeatsx_df = pd.read_csv(caminho_nbeatsx)
+    #nbeatsx_df = pd.read_csv(caminho_nbeatsx)
 
     # Encontrar a linha com o menor valor de MAPE em cada dataframe
     melhor_lstm = lstm_df.loc[lstm_df['MAPE'].idxmin()]
-    melhor_nhits = nhits_df.loc[nhits_df['MAPE'].idxmin()]
+    #melhor_nhits = nhits_df.loc[nhits_df['MAPE'].idxmin()]
     melhor_gru = gru_df.loc[gru_df['MAPE'].idxmin()]
-    melhor_nbeatsx = nbeatsx_df.loc[nbeatsx_df['MAPE'].idxmin()]
+    #melhor_nbeatsx = nbeatsx_df.loc[nbeatsx_df['MAPE'].idxmin()]
 
     # Criar um DataFrame com os melhores de cada modelo
     todos_melhores = pd.DataFrame({
-        'Modelo': ['LSTM', 'NHITS', 'GRU', 'NBEATSx'],
-        'MAPE': [melhor_lstm['MAPE'], melhor_nhits['MAPE'], melhor_gru['MAPE'], melhor_nbeatsx['MAPE']],
+        'Modelo': ['LSTM', 'GRU'],
+        'MAPE': [melhor_lstm['MAPE'], melhor_gru['MAPE']],
     })
 
     # Encontrar o melhor modelo baseado apenas no MAPE
@@ -70,12 +70,6 @@ def encontrar_melhor_modelo():
     if melhor_modelo['Modelo'] == 'LSTM':
         print(melhor_lstm)
         parametros_melhor_modelo = melhor_lstm
-    elif melhor_modelo['Modelo'] == 'NBEATSx':
-        print(melhor_nbeatsx)
-        parametros_melhor_modelo = melhor_nbeatsx
-    elif melhor_modelo['Modelo'] == 'NHITS':
-        print(melhor_nhits)
-        parametros_melhor_modelo = melhor_nhits
     else:
         print(melhor_gru)
         parametros_melhor_modelo = melhor_gru

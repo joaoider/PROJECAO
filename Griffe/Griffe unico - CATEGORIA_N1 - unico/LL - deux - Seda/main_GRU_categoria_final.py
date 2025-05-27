@@ -101,7 +101,7 @@ for params in param_combinations:
         df_grouped.loc['Total'] = df_grouped.sum()
 
         # Salvar o novo DataFrame agrupado com a linha de soma
-        csv_grouped_file_path = os.path.join(output_dir, f'forecast_grouped_GRU_{marca}_categoria_seda_final.csv')
+        csv_grouped_file_path = os.path.join(output_dir, f'forecast_grouped_GRU_{marca}_{griffe}_{linha}_final.csv')
         df_grouped.to_csv(csv_grouped_file_path)
         print(f"DataFrame agrupado por mês/ano salvo com sucesso em: {csv_grouped_file_path}")
 
@@ -116,7 +116,7 @@ for params in param_combinations:
         transposed_df.rename(columns={'index': 'Data'}, inplace=True)
 
         # Salvar o novo DataFrame transformado
-        csv_transposed_file_path = os.path.join(output_dir, f'forecast_transposed_GRU_{marca}_categoria_seda_final.csv')
+        csv_transposed_file_path = os.path.join(output_dir, f'forecast_transposed_GRU_{marca}_{griffe}_{linha}_final.csv')
         transposed_df.to_csv(csv_transposed_file_path, index=False)
         print(f"DataFrame transposto salvo com sucesso em: {csv_transposed_file_path}")
 

@@ -1,2 +1,0 @@
-max_steps,learning_rate,batch_size,encoder_hidden_size,decoder_hidden_size,encoder_n_layers,decoder_layers,context_size,encoder_activation,encoder_bias,encoder_dropout,num_lr_decays,early_stop_patience_steps,val_check_steps,scaler_type,random_seed,MAE,RMSE,MAPE
-3000,0.001,32,200,200,2,2,10,tanh,True,0.0,-1,-1,100,robust,1,482674.4482280219,685509.9004025165,37.79928451425587

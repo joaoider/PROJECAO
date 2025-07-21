@@ -8,13 +8,15 @@ from datetime import datetime
 from config.settings import (
     MARCAS, TIPOS_PREVISAO, DATA_INICIO_BASE, DATA_FINAL_BASE,
     DATA_TRAIN, DATA_TEST, DATA_INICIO_FUTR,
-    DATA_FINAL_FUTR, FORECASTS_DIR, PROCESSED_DATA_DIR, MODELOS_A_EXECUTAR
+    DATA_FINAL_FUTR, FORECASTS_DIR, PROCESSED_DATA_DIR, MODELOS_A_EXECUTAR,
+    MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS
 )
 from utils.data_processing import DataProcessor
 from utils.special_dates import SpecialDates
 from utils.queries import DataQueries
 from utils.metrics import calculate_metrics, save_metrics, compare_models
 from models.base_model import BaseModel
+from utils.save_config_vars import salvar_variaveis_csv
 
 # Configuração do logging
 logging.basicConfig(
@@ -193,6 +195,10 @@ def main():
     """Função principal que orquestra todo o fluxo."""
     try:
         logger.info("Iniciando execução do pipeline")
+
+        # Salvar variáveis de configuração
+        # Ajuste aqui para passar as listas corretas de variáveis futuras e históricas
+        salvar_variaveis_csv(MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, DATA_INICIO_BASE)
         
         # Processa cada combinação de marca e tipo
         for marca in MARCAS:

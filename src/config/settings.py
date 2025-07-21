@@ -94,3 +94,7 @@ FORECASTS_DIR = create_forecast_directories()
 
 # Modelos a serem executados (adicione ou remova conforme desejar)
 MODELOS_A_EXECUTAR = ['LSTM', 'GRU', 'NHITS', 'NBEATSx'] 
+
+# Variáveis exógenas futuras e históricas (ajuste conforme necessário)
+VARIAVEIS_FUTURAS = []
+VARIAVEIS_HISTORICAS = [] 

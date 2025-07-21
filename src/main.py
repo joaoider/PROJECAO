@@ -12,7 +12,7 @@ from config.settings import (
     MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, MODEL_PARAM_GRID
 )
 from utils.data_processing import DataProcessor
-from utils.special_dates import SpecialDates
+from utils.special_dates import SpecialDates, marcar_evento_range
 from utils.queries import DataQueries
 from utils.metrics import calculate_metrics, save_metrics, compare_models
 from models.base_model import BaseModel
@@ -84,6 +84,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
         right_on='data',
         how='left'
     )
+
+    # Marcar Black Friday com range de 1 dia antes e 1 dia depois
+    black_friday_dates = [
+        '2013-11-29', '2014-11-28', '2015-11-27', '2016-11-25', '2017-11-24',
+        '2018-11-23', '2019-11-29', '2020-11-27', '2021-11-26', '2022-11-25',
+        '2023-11-24', '2024-11-29', '2025-11-28', '2026-11-28'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'black_friday', black_friday_dates, days_before=1, days_after=1)
     
     # Salva os dados processados
     processor.save_processed_data(

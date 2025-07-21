@@ -23,112 +23,87 @@ class SpecialDates:
             Dicionário com as datas especiais por tipo
         """
         return {
-            'feriados': [
-                ('2020-01-01', 'Ano Novo'),
-                ('2020-04-10', 'Sexta-feira Santa'),
-                ('2020-04-12', 'Páscoa'),
-                ('2020-04-21', 'Tiradentes'),
-                ('2020-05-01', 'Dia do Trabalho'),
-                ('2020-06-11', 'Corpus Christi'),
-                ('2020-09-07', 'Independência do Brasil'),
-                ('2020-10-12', 'Nossa Senhora Aparecida'),
-                ('2020-11-02', 'Finados'),
-                ('2020-11-15', 'Proclamação da República'),
-                ('2020-12-25', 'Natal'),
-                ('2021-01-01', 'Ano Novo'),
-                ('2021-04-02', 'Sexta-feira Santa'),
-                ('2021-04-04', 'Páscoa'),
-                ('2021-04-21', 'Tiradentes'),
-                ('2021-05-01', 'Dia do Trabalho'),
-                ('2021-06-03', 'Corpus Christi'),
-                ('2021-09-07', 'Independência do Brasil'),
-                ('2021-10-12', 'Nossa Senhora Aparecida'),
-                ('2021-11-02', 'Finados'),
-                ('2021-11-15', 'Proclamação da República'),
-                ('2021-12-25', 'Natal'),
-                ('2022-01-01', 'Ano Novo'),
-                ('2022-04-15', 'Sexta-feira Santa'),
-                ('2022-04-17', 'Páscoa'),
-                ('2022-04-21', 'Tiradentes'),
-                ('2022-05-01', 'Dia do Trabalho'),
-                ('2022-06-16', 'Corpus Christi'),
-                ('2022-09-07', 'Independência do Brasil'),
-                ('2022-10-12', 'Nossa Senhora Aparecida'),
-                ('2022-11-02', 'Finados'),
-                ('2022-11-15', 'Proclamação da República'),
-                ('2022-12-25', 'Natal'),
-                ('2023-01-01', 'Ano Novo'),
-                ('2023-04-07', 'Sexta-feira Santa'),
-                ('2023-04-09', 'Páscoa'),
-                ('2023-04-21', 'Tiradentes'),
-                ('2023-05-01', 'Dia do Trabalho'),
-                ('2023-06-08', 'Corpus Christi'),
-                ('2023-09-07', 'Independência do Brasil'),
-                ('2023-10-12', 'Nossa Senhora Aparecida'),
-                ('2023-11-02', 'Finados'),
-                ('2023-11-15', 'Proclamação da República'),
-                ('2023-12-25', 'Natal'),
-                ('2024-01-01', 'Ano Novo'),
-                ('2024-03-29', 'Sexta-feira Santa'),
-                ('2024-03-31', 'Páscoa'),
-                ('2024-04-21', 'Tiradentes'),
-                ('2024-05-01', 'Dia do Trabalho'),
-                ('2024-05-30', 'Corpus Christi'),
-                ('2024-09-07', 'Independência do Brasil'),
-                ('2024-10-12', 'Nossa Senhora Aparecida'),
-                ('2024-11-02', 'Finados'),
-                ('2024-11-15', 'Proclamação da República'),
-                ('2024-12-25', 'Natal')
-            ],
             'black_friday': [
-                ('2020-11-27', 'Black Friday'),
-                ('2021-11-26', 'Black Friday'),
-                ('2022-11-25', 'Black Friday'),
-                ('2023-11-24', 'Black Friday'),
-                ('2024-11-29', 'Black Friday')
-            ],
-            'cyber_monday': [
-                ('2020-11-30', 'Cyber Monday'),
-                ('2021-11-29', 'Cyber Monday'),
-                ('2022-11-28', 'Cyber Monday'),
-                ('2023-11-27', 'Cyber Monday'),
-                ('2024-12-02', 'Cyber Monday')
-            ],
-            'dia_maes': [
-                ('2020-05-10', 'Dia das Mães'),
-                ('2021-05-09', 'Dia das Mães'),
-                ('2022-05-08', 'Dia das Mães'),
-                ('2023-05-14', 'Dia das Mães'),
-                ('2024-05-12', 'Dia das Mães')
-            ],
-            'dia_pais': [
-                ('2020-08-09', 'Dia dos Pais'),
-                ('2021-08-08', 'Dia dos Pais'),
-                ('2022-08-14', 'Dia dos Pais'),
-                ('2023-08-13', 'Dia dos Pais'),
-                ('2024-08-11', 'Dia dos Pais')
-            ],
-            'dia_criancas': [
-                ('2020-10-12', 'Dia das Crianças'),
-                ('2021-10-12', 'Dia das Crianças'),
-                ('2022-10-12', 'Dia das Crianças'),
-                ('2023-10-12', 'Dia das Crianças'),
-                ('2024-10-12', 'Dia das Crianças')
-            ],
-            'dia_namorados': [
-                ('2020-06-12', 'Dia dos Namorados'),
-                ('2021-06-12', 'Dia dos Namorados'),
-                ('2022-06-12', 'Dia dos Namorados'),
-                ('2023-06-12', 'Dia dos Namorados'),
-                ('2024-06-12', 'Dia dos Namorados')
-            ],
-            'carnaval': [
-                ('2020-02-25', 'Carnaval'),
-                ('2021-02-16', 'Carnaval'),
-                ('2022-03-01', 'Carnaval'),
-                ('2023-02-21', 'Carnaval'),
-                ('2024-02-13', 'Carnaval')
-            ],
+    ('2013-11-29', 'Black Friday'),
+    ('2014-11-28', 'Black Friday'),
+    ('2015-11-27', 'Black Friday'),
+    ('2016-11-25', 'Black Friday'),
+    ('2017-11-24', 'Black Friday'),
+    ('2018-11-23', 'Black Friday'),
+    ('2019-11-29', 'Black Friday'),
+    ('2020-11-27', 'Black Friday'),
+    ('2021-11-26', 'Black Friday'),
+    ('2022-11-25', 'Black Friday'),
+    ('2023-11-24', 'Black Friday'),
+    ('2024-11-29', 'Black Friday'),
+    ('2025-11-28', 'Black Friday'),
+    ('2026-11-28', 'Black Friday')
+],
+
+        'carnaval': [
+    ('2013-02-11', 'Carnaval'),
+    ('2014-03-03', 'Carnaval'),
+    ('2015-02-16', 'Carnaval'),
+    ('2016-02-08', 'Carnaval'),
+    ('2017-02-27', 'Carnaval'),
+    ('2018-02-12', 'Carnaval'),
+    ('2019-03-04', 'Carnaval'),
+    ('2020-02-24', 'Carnaval'),
+    ('2021-02-15', 'Carnaval'),
+    ('2022-02-28', 'Carnaval'),
+    ('2023-02-20', 'Carnaval'),
+    ('2024-02-12', 'Carnaval'),
+    ('2025-03-04', 'Carnaval'),
+    ('2026-02-17', 'Carnaval')
+],
+
+        'confraternizacao_universal': [
+    ('2013-01-01', 'Confraternização Universal'),
+    ('2014-01-01', 'Confraternização Universal'),
+    ('2015-01-01', 'Confraternização Universal'),
+    ('2016-01-01', 'Confraternização Universal'),
+    ('2017-01-01', 'Confraternização Universal'),
+    ('2018-01-01', 'Confraternização Universal'),
+    ('2019-01-01', 'Confraternização Universal'),
+    ('2020-01-01', 'Confraternização Universal'),
+    ('2021-01-01', 'Confraternização Universal'),
+    ('2022-01-01', 'Confraternização Universal'),
+    ('2023-01-01', 'Confraternização Universal'),
+    ('2024-01-01', 'Confraternização Universal'),
+    ('2025-01-01', 'Confraternização Universal'),
+    ('2026-01-01', 'Confraternização Universal')
+],
+
+        'copa_do_mundo': [
+    ('2014-06-12', 'Copa do Mundo'),
+    ('2014-06-17', 'Copa do Mundo'),
+    ('2014-06-23', 'Copa do Mundo'),
+    ('2014-06-28', 'Copa do Mundo'),
+    ('2014-07-04', 'Copa do Mundo'),
+    ('2014-07-08', 'Copa do Mundo'),
+    ('2014-07-12', 'Copa do Mundo'),
+    ('2018-06-14', 'Copa do Mundo'),
+    ('2018-06-17', 'Copa do Mundo'),
+    ('2018-06-22', 'Copa do Mundo'),
+    ('2018-07-02', 'Copa do Mundo'),
+    ('2018-07-06', 'Copa do Mundo'),
+    ('2022-11-20', 'Copa do Mundo'),
+    ('2022-11-24', 'Copa do Mundo'),
+    ('2022-11-28', 'Copa do Mundo'),
+    ('2022-12-02', 'Copa do Mundo'),
+    ('2022-12-05', 'Copa do Mundo'),
+    ('2022-12-09', 'Copa do Mundo'),
+    ('2026-07-11', 'Copa do Mundo')
+],       
+
+        'covid':[
+        ('2020-03-01', 'Covid') 
+],
+
+            
+
+
+            
             'liquidacoes': [
                 ('2020-01-06', 'Liquidação de Verão'),
                 ('2020-07-06', 'Liquidação de Inverno'),
@@ -223,3 +198,14 @@ class SpecialDates:
             'tipo': info['tipo'].iloc[0],
             'evento': info['evento'].iloc[0]
         } 
+
+def marcar_evento_range(df, nome_coluna, datas_evento, days_before=0, days_after=0):
+    """
+    Marca 1 na coluna nome_coluna para datas dentro do range de cada data de evento.
+    """
+    df[nome_coluna] = 0
+    for data_evento in pd.to_datetime(datas_evento):
+        start_range = data_evento - pd.Timedelta(days=days_before)
+        end_range = data_evento + pd.Timedelta(days=days_after)
+        df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), nome_coluna] = 1
+    return df 

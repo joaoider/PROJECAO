@@ -101,6 +101,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'carnaval', carnaval_dates, days_before=3, days_after=2)
     
+    # Marcar Confraternização Universal com range de 1 dia antes e 0 dias depois
+    confraternizacao_universal_dates = [
+        '2013-01-01', '2014-01-01', '2015-01-01', '2016-01-01', '2017-01-01',
+        '2018-01-01', '2019-01-01', '2020-01-01', '2021-01-01', '2022-01-01',
+        '2023-01-01', '2024-01-01', '2025-01-01', '2026-01-01'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'confraternizacao_universal', confraternizacao_universal_dates, days_before=1, days_after=0)
+    
     # Salva os dados processados
     processor.save_processed_data(
         data_neural,

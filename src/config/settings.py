@@ -23,8 +23,8 @@ DATA_INICIO_FUTR_TEST = '2024-10-01'
 DATA_FINAL_FUTR_TEST = '2024-12-31'
 
 # Configurações das marcas e tipos
-MARCAS = ['LL', 'DD', 'JJ', 'BB']  # Substituir pelos nomes reais das marcas
-TIPOS_PREVISAO = ['GERAL', 'GRIFFE', 'GRIFFE_N1']
+MARCAS = ['BB']#, 'LL', 'DD', 'JJ']  # Substituir pelos nomes reais das marcas
+TIPOS_PREVISAO = ['GERAL']#, 'GRIFFE', 'GRIFFE_N1']
 
 # Configurações do modelo
 MARCA = os.getenv('MARCA', 'default')

@@ -29,7 +29,7 @@ TIPOS_PREVISAO = ['GERAL', 'GRIFFE', 'GRIFFE_N1']
 # Configurações do modelo
 MARCA = os.getenv('MARCA', 'default')
 TIPO_PREVISAO = os.getenv('TIPO_PREVISAO', 'GERAL')
-HORIZON = int(os.getenv('HORIZON', '90'))
+HORIZON = int(os.getenv('HORIZON', '365'))
 FREQ = os.getenv('FREQ', 'D')
 
 # Configurações de logging

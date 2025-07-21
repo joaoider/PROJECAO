@@ -9,7 +9,7 @@ from config.settings import (
     MARCAS, TIPOS_PREVISAO, DATA_INICIO_BASE, DATA_FINAL_BASE,
     DATA_TRAIN, DATA_TEST, DATA_INICIO_FUTR,
     DATA_FINAL_FUTR, FORECASTS_DIR, PROCESSED_DATA_DIR, MODELOS_A_EXECUTAR,
-    MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS
+    MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, MODEL_PARAM_GRID
 )
 from utils.data_processing import DataProcessor
 from utils.special_dates import SpecialDates
@@ -20,6 +20,7 @@ from utils.save_config_vars import salvar_variaveis_csv
 import os
 import pandas as pd
 from pyspark.sql import SparkSession
+import itertools
 
 # Configuração do logging
 logging.basicConfig(
@@ -80,10 +81,9 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     return data_neural
 
 def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previsao: str):
-    """Treina e avalia todos os modelos para uma marca e tipo específico."""
+    """Treina e avalia todos os modelos para uma marca e tipo específico, realizando grid search."""
     logger.info(f"Iniciando treinamento e avaliação dos modelos para marca {marca} e tipo {tipo_previsao}")
     
-    # Importa os modelos
     from models.lstm_model import LSTMModel
     from models.gru_model import GRUModel
     from models.nhits_model import NHITSModel
@@ -96,61 +96,57 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
         'NBEATSx': NBEATSxModel
     }
     
-    # Lista de modelos para treinar conforme configuração
-    models = [model_classes[nome] for nome in MODELOS_A_EXECUTAR if nome in model_classes]
-    
     results = {}
-    
-    # Treina e avalia cada modelo
-    for model_class in models:
-        logger.info(f"Treinando modelo {model_class.__name__} para marca {marca} e tipo {tipo_previsao}")
-        model = model_class()
-        
-        # Treina o modelo
-        model.fit(data_neural)
-        
-        # Faz previsões
-        predictions = model.predict(data_neural)
-        
-        # Avalia o modelo
-        metrics = calculate_metrics(
-            data_neural['y'],
-            predictions['y_pred']
-        )
-        
-        results[model_class.__name__] = {
-            'model': model,
-            'metrics': metrics
-        }
-        
-        # Salva as métricas
-        save_metrics(
-            metrics,
-            model_class.__name__,
-            marca,
-            str(FORECASTS_DIR / marca / tipo_previsao)
-        )
-    
+    # Para cada modelo selecionado
+    for model_name in MODELOS_A_EXECUTAR:
+        if model_name not in model_classes:
+            continue
+        ModelClass = model_classes[model_name]
+        param_grid = MODEL_PARAM_GRID.get(model_name, {})
+        # Gerar todas as combinações possíveis do grid
+        keys, values = zip(*param_grid.items()) if param_grid else ([], [])
+        for param_values in itertools.product(*values):
+            params = dict(zip(keys, param_values))
+            logger.info(f"Treinando {model_name} com params: {params}")
+            # Instanciar o modelo com os parâmetros do grid
+            model = ModelClass(**params) if params else ModelClass()
+            # Treinar e avaliar
+            model.fit(data_neural)
+            predictions = model.predict(data_neural)
+            metrics = calculate_metrics(
+                data_neural['y'],
+                predictions['y_pred']
+            )
+            # Chave única para cada combinação
+            result_key = f"{model_name}_{'_'.join([str(v) for v in param_values])}" if param_values else model_name
+            results[result_key] = {
+                'model': model,
+                'metrics': metrics,
+                'params': params
+            }
+            # Salvar as métricas
+            save_metrics(
+                metrics,
+                result_key,
+                marca,
+                str(FORECASTS_DIR / marca / tipo_previsao)
+            )
     logger.info(f"Treinamento e avaliação dos modelos concluído para marca {marca} e tipo {tipo_previsao}")
     return results
 
 def find_best_model(results: dict, marca: str, tipo_previsao: str):
-    """Encontra o melhor modelo baseado nas métricas para uma marca e tipo específico."""
-    logger.info(f"Identificando melhor modelo para marca {marca} e tipo {tipo_previsao}")
-    
-    # Compara os modelos usando MAPE
+    """Encontra o melhor modelo/configuração baseado nas métricas para uma marca e tipo específico."""
+    logger.info(f"Identificando melhor modelo/configuração para marca {marca} e tipo {tipo_previsao}")
+    # Compara os modelos/configurações usando MAPE
     best_model = min(
         results.items(),
         key=lambda x: x[1]['metrics']['MAPE']
     )
-    
-    logger.info(f"Melhor modelo para marca {marca} e tipo {tipo_previsao}: {best_model[0]} com MAPE: {best_model[1]['metrics']['MAPE']:.2f}%")
-    
+    logger.info(f"Melhor modelo/configuração para marca {marca} e tipo {tipo_previsao}: {best_model[0]} com MAPE: {best_model[1]['metrics']['MAPE']:.2f}% e params: {best_model[1]['params']}")
     # Salva os parâmetros do melhor modelo
     best_model[1]['model'].save_model(
         FORECASTS_DIR / marca / tipo_previsao / f'melhor_modelo_parametros_{best_model[0]}.csv'
     )
-    
     return best_model
 
 def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tipo_previsao: str):

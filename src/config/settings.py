@@ -76,6 +76,42 @@ MODEL_CONFIGS = {
 # Configurações de métricas
 METRICS = ['MAPE', 'RMSE', 'MAE']
 
+# Grid de hiperparâmetros para grid search
+MODEL_PARAM_GRID = {
+    'LSTM': {
+        'hidden_size': [32, 64],
+        'num_layers': [1, 2],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
+    },
+    'GRU': {
+        'hidden_size': [32, 64],
+        'num_layers': [1, 2],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
+    },
+    'NHITS': {
+        'n_blocks': [2, 3],
+        'mlp_units': [32, 64],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
+    },
+    'NBEATSx': {
+        'n_blocks': [2, 3],
+        'mlp_units': [32, 64],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
+    }
+}
+
 # Função para criar estrutura de diretórios
 def create_forecast_directories():
     """Cria a estrutura de diretórios para as previsões."""

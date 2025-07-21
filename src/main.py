@@ -92,6 +92,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
         '2023-11-24', '2024-11-29', '2025-11-28', '2026-11-28'
     ]
     data_neural = marcar_evento_range(data_neural, 'black_friday', black_friday_dates, days_before=1, days_after=1)
+
+    # Marcar Carnaval com range de 3 dias antes e 2 dias depois
+    carnaval_dates = [
+        '2013-02-11', '2014-03-03', '2015-02-16', '2016-02-08', '2017-02-27',
+        '2018-02-12', '2019-03-04', '2020-02-24', '2021-02-15', '2022-02-28',
+        '2023-02-20', '2024-02-12', '2025-03-04', '2026-02-17'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'carnaval', carnaval_dates, days_before=3, days_after=2)
     
     # Salva os dados processados
     processor.save_processed_data(

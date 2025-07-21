@@ -40,12 +40,22 @@ LOG_FILE = BASE_DIR / 'app.log'
 # Configurações de modelos
 MODEL_PARAM_GRID = {
     'LSTM': {
-        'hidden_size': [32, 64],
-        'num_layers': [1, 2],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [32],
+        'encoder_hidden_size': [200],
+        'decoder_hidden_size': [200],
+        'encoder_n_layers': [2],
+        'decoder_layers': [2],
+        'context_size': [10],
+        'encoder_bias': [True],
+        'encoder_dropout': [0.0],
+        'num_lr_decays': [-1],
+        'early_stop_patience_steps': [-1],
+        'val_check_steps': [100],
+        'random_seed': [1],
+        'num_workers_loader': [0],
+        'drop_last_loader': [False]
     },
     'GRU': {
         'max_steps': [1000],
@@ -90,12 +100,22 @@ METRICS = ['MAPE', 'RMSE', 'MAE']
 # Grid de hiperparâmetros para grid search
 MODEL_PARAM_GRID = {
     'LSTM': {
-        'hidden_size': [32, 64],
-        'num_layers': [1, 2],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [32],
+        'encoder_hidden_size': [200],
+        'decoder_hidden_size': [200],
+        'encoder_n_layers': [2],
+        'decoder_layers': [2],
+        'context_size': [10],
+        'encoder_bias': [True],
+        'encoder_dropout': [0.0],
+        'num_lr_decays': [-1],
+        'early_stop_patience_steps': [-1],
+        'val_check_steps': [100],
+        'random_seed': [1],
+        'num_workers_loader': [0],
+        'drop_last_loader': [False]
     },
     'GRU': {
         'max_steps': [1000],

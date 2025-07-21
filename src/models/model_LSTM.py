@@ -7,13 +7,13 @@ from configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 from funcoes import get_output_dir
 from src.config.settings import HORIZON
 
-def treinar_LSTM(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, encoder_n_layers, decoder_layers, context_size, encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, val_check_steps, random_seed, drop_last_loader):
+def treinar_LSTM(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, encoder_n_layers, decoder_layers, context_size, encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, val_check_steps, random_seed, drop_last_loader, num_workers_loader=None, scaler_type='robust'):
     print(f'treinar_LSTM iniciado com max_steps={max_steps}, learning_rate={learning_rate}, batch_size={batch_size}, '
           f'encoder_hidden_size={encoder_hidden_size}, decoder_hidden_size={decoder_hidden_size}, '
           f'encoder_n_layers={encoder_n_layers}, decoder_layers={decoder_layers}, context_size={context_size}, '
           f'encoder_bias={encoder_bias}, encoder_dropout={encoder_dropout}, num_lr_decays={num_lr_decays}, '
           f'early_stop_patience_steps={early_stop_patience_steps}, val_check_steps={val_check_steps}, '
-          f'random_seed={random_seed}, drop_last_loader={drop_last_loader}')
+          f'random_seed={random_seed}, drop_last_loader={drop_last_loader}, num_workers_loader={num_workers_loader}, scaler_type={scaler_type}')
     
     # Definir o modelo LSTM com os parâmetros variáveis
     model = [LSTM(
@@ -34,9 +34,10 @@ def treinar_LSTM(max_steps, learning_rate, batch_size, encoder_hidden_size, deco
                 val_check_steps=val_check_steps,  # Novo parâmetro adicionado
                 futr_exog_list=variaveis_futuras,
                 hist_exog_list=variaveis_historicas,
-                scaler_type='robust',
+                scaler_type=scaler_type,
                 random_seed=random_seed,  # Novo parâmetro adicionado
-                drop_last_loader=drop_last_loader  # Novo parâmetro adicionado
+                drop_last_loader=drop_last_loader,  # Novo parâmetro adicionado
+                num_workers_loader=num_workers_loader  # Novo parâmetro adicionado
             )]
 
     # Instanciar e treinar o modelo

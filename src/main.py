@@ -148,6 +148,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'dia_dos_namorados', dia_dos_namorados_dates, days_before=7, days_after=1)
     
+    # Marcar Dia dos Pais com range de 7 dias antes e 1 dia depois
+    dia_dos_pais_dates = [
+        '2013-08-11', '2014-08-10', '2015-08-09', '2016-08-14', '2017-08-13',
+        '2018-08-12', '2019-08-11', '2020-08-09', '2021-08-08', '2022-08-14',
+        '2023-08-13', '2024-08-11', '2025-08-10', '2026-08-09'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'dia_dos_pais', dia_dos_pais_dates, days_before=7, days_after=1)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

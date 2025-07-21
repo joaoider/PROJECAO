@@ -132,6 +132,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'dia_das_maes', dia_das_maes_dates, days_before=7, days_after=1)
     
+    # Marcar Dia de Finados com range de 0 dias antes e 0 dias depois
+    dia_de_finados_dates = [
+        '2013-11-02', '2014-11-02', '2015-11-02', '2016-11-02', '2017-11-02',
+        '2018-11-02', '2019-11-02', '2020-11-02', '2021-11-02', '2022-11-02',
+        '2023-11-02', '2024-11-02', '2025-11-02', '2026-11-02'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'dia_de_finados', dia_de_finados_dates, days_before=0, days_after=0)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

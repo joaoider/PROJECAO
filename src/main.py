@@ -124,6 +124,20 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'covid', covid_dates, days_before=60, days_after=240)
     
+    # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
+    data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
+    day_mapping = {
+        'Monday': 0,
+        'Tuesday': 1,
+        'Wednesday': 2,
+        'Thursday': 3,
+        'Friday': 4,
+        'Saturday': 5,
+        'Sunday': 6
+    }
+    data_neural['dayofweek'] = data_neural['dia_da_semana'].map(day_mapping)
+    data_neural = data_neural.drop(columns=['dia_da_semana'])
+    
     # Salva os dados processados
     processor.save_processed_data(
         data_neural,

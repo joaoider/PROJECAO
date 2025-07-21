@@ -38,38 +38,38 @@ LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FILE = BASE_DIR / 'app.log'
 
 # Configurações de modelos
-MODEL_CONFIGS = {
+MODEL_PARAM_GRID = {
     'LSTM': {
-        'hidden_size': 64,
-        'num_layers': 2,
-        'dropout': 0.1,
-        'batch_size': 32,
-        'learning_rate': 0.001,
-        'epochs': 100
+        'hidden_size': [32, 64],
+        'num_layers': [1, 2],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
     },
     'GRU': {
-        'hidden_size': 64,
-        'num_layers': 2,
-        'dropout': 0.1,
-        'batch_size': 32,
-        'learning_rate': 0.001,
-        'epochs': 100
+        'hidden_size': [32, 64],
+        'num_layers': [1, 2],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
     },
     'NHITS': {
-        'n_blocks': 3,
-        'mlp_units': 64,
-        'dropout': 0.1,
-        'batch_size': 32,
-        'learning_rate': 0.001,
-        'epochs': 100
+        'n_blocks': [2, 3],
+        'mlp_units': [32, 64],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
     },
     'NBEATSx': {
-        'n_blocks': 3,
-        'mlp_units': 64,
-        'dropout': 0.1,
-        'batch_size': 32,
-        'learning_rate': 0.001,
-        'epochs': 100
+        'n_blocks': [2, 3],
+        'mlp_units': [32, 64],
+        'dropout': [0.1],
+        'batch_size': [16, 32],
+        'learning_rate': [0.001],
+        'epochs': [50]
     }
 }
 

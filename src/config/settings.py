@@ -58,7 +58,7 @@ MODEL_PARAM_GRID = {
         'drop_last_loader': [False]
     },
     'GRU': {
-        'max_steps': [1000],
+        'max_steps': [1],
         'learning_rate': [0.001],
         'batch_size': [64],
         'encoder_hidden_size': [50],

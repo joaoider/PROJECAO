@@ -48,12 +48,23 @@ MODEL_PARAM_GRID = {
         'epochs': [50]
     },
     'GRU': {
-        'hidden_size': [32, 64],
-        'num_layers': [1, 2],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1000],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [64],
+        'encoder_hidden_size': [50],
+        'decoder_hidden_size': [50],
+        'encoder_n_layers': [2],
+        'decoder_layers': [2],
+        'context_size': [10],
+        'encoder_activation': ['tanh'],
+        'encoder_bias': [True],
+        'encoder_dropout': [0.0],
+        'num_lr_decays': [-1],
+        'early_stop_patience_steps': [-1],
+        'val_check_steps': [100],
+        'scaler_type': ['robust'],
+        'random_seed': [1],
+        'loss': ['MAE']
     },
     'NHITS': {
         'n_blocks': [2, 3],
@@ -87,12 +98,23 @@ MODEL_PARAM_GRID = {
         'epochs': [50]
     },
     'GRU': {
-        'hidden_size': [32, 64],
-        'num_layers': [1, 2],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1000],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [64],
+        'encoder_hidden_size': [50],
+        'decoder_hidden_size': [50],
+        'encoder_n_layers': [2],
+        'decoder_layers': [2],
+        'context_size': [10],
+        'encoder_activation': ['tanh'],
+        'encoder_bias': [True],
+        'encoder_dropout': [0.0],
+        'num_lr_decays': [-1],
+        'early_stop_patience_steps': [-1],
+        'val_check_steps': [100],
+        'scaler_type': ['robust'],
+        'random_seed': [1],
+        'loss': ['MAE']
     },
     'NHITS': {
         'n_blocks': [2, 3],

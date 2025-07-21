@@ -22,6 +22,20 @@ import pandas as pd
 from pyspark.sql import SparkSession
 import itertools
 
+# Função utilitária para converter string de loss em função/classe
+LOSS_MAP = {
+    'MAE': lambda: MAE(),
+    'MSE': lambda: MSE(),
+    'RMSE': lambda: RMSE(),
+    'MAPE': lambda: MAPE(),
+    # Adicione outros losses se necessário
+}
+try:
+    from neuralforecast.losses.pytorch import MAE, MSE, RMSE, MAPE
+except ImportError:
+    # Se não estiver disponível, defina dummies para evitar erro de import
+    MAE = MSE = RMSE = MAPE = None
+
 # Configuração do logging
 logging.basicConfig(
     level=logging.INFO,
@@ -107,6 +121,10 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
         keys, values = zip(*param_grid.items()) if param_grid else ([], [])
         for param_values in itertools.product(*values):
             params = dict(zip(keys, param_values))
+            # Converter 'loss' de string para função/classe se necessário
+            if model_name == 'GRU' and 'loss' in params and isinstance(params['loss'], str):
+                if params['loss'] in LOSS_MAP:
+                    params['loss'] = LOSS_MAP[params['loss']]()
             logger.info(f"Treinando {model_name} com params: {params}")
             # Instanciar o modelo com os parâmetros do grid
             model = ModelClass(**params) if params else ModelClass()

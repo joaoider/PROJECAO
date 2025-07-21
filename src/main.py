@@ -17,6 +17,9 @@ from utils.queries import DataQueries
 from utils.metrics import calculate_metrics, save_metrics, compare_models
 from models.base_model import BaseModel
 from utils.save_config_vars import salvar_variaveis_csv
+import os
+import pandas as pd
+from pyspark.sql import SparkSession
 
 # Configuração do logging
 logging.basicConfig(
@@ -157,13 +160,22 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     # Faz previsões com o melhor modelo
     predictions = best_model[1]['model'].predict(data_neural)
     
-    # Salva as previsões
-    predictions.to_csv(
-        FORECASTS_DIR / marca / tipo_previsao / f'previsoes_finais_{best_model[0]}.csv',
-        index=False
-    )
-    
+    # Salva as previsões em CSV
+    csv_path = FORECASTS_DIR / marca / tipo_previsao / f'previsoes_finais_{best_model[0]}.csv'
+    predictions.to_csv(csv_path, index=False)
     logger.info(f"Previsões finais salvas com sucesso para marca {marca} e tipo {tipo_previsao}")
+
+    # Salva as previsões em Parquet usando Spark
+    try:
+        spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
+        logger.info(f"Convertendo CSV para Parquet usando Spark: {csv_path}")
+        df_pandas = pd.read_csv(csv_path)
+        sparkdf = spark.createDataFrame(df_pandas)
+        parquet_path = str(FORECASTS_DIR / marca / tipo_previsao / f'previsoes_finais_{best_model[0]}.parquet')
+        sparkdf.coalesce(1).write.mode('overwrite').parquet(parquet_path)
+        logger.info(f"Parquet salvo com sucesso em {parquet_path}")
+    except Exception as e:
+        logger.error(f"Erro ao salvar Parquet: {e}")
 
 def process_marca_tipo(marca: str, tipo_previsao: str):
     """Processa uma combinação específica de marca e tipo."""

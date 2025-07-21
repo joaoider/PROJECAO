@@ -118,6 +118,12 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'copa_do_mundo', copa_do_mundo_dates, days_before=0, days_after=0)
     
+    # Marcar COVID com range de 60 dias antes e 240 dias depois
+    covid_dates = [
+        '2020-03-01'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'covid', covid_dates, days_before=60, days_after=240)
+    
     # Salva os dados processados
     processor.save_processed_data(
         data_neural,

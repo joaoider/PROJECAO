@@ -77,12 +77,22 @@ MODEL_PARAM_GRID = {
         'loss': ['MAE']
     },
     'NHITS': {
-        'n_blocks': [2, 3],
-        'mlp_units': [32, 64],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [32],
+        'activation': ['ReLU'],
+        'n_blocks': [[1, 1, 1]],
+        'mlp_units': [[[512, 512], [512, 512], [512, 512]]],
+        'n_pool_kernel_size': [[2, 2, 1]],
+        'n_freq_downsample': [[4, 2, 1]],
+        'pooling_mode': ['MaxPool1d'],
+        'dropout_prob_theta': [0.0],
+        'scaler_type': ['identity'],
+        'windows_batch_size': [1024],
+        'step_size': [1],
+        'random_seed': [1],
+        'num_lr_decays': [3],
+        'start_padding_enabled': [False]
     },
     'NBEATSx': {
         'max_steps': [1],
@@ -135,12 +145,22 @@ MODEL_PARAM_GRID = {
         'loss': ['MAE']
     },
     'NHITS': {
-        'n_blocks': [2, 3],
-        'mlp_units': [32, 64],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [32],
+        'activation': ['ReLU'],
+        'n_blocks': [[1, 1, 1]],
+        'mlp_units': [[[512, 512], [512, 512], [512, 512]]],
+        'n_pool_kernel_size': [[2, 2, 1]],
+        'n_freq_downsample': [[4, 2, 1]],
+        'pooling_mode': ['MaxPool1d'],
+        'dropout_prob_theta': [0.0],
+        'scaler_type': ['identity'],
+        'windows_batch_size': [1024],
+        'step_size': [1],
+        'random_seed': [1],
+        'num_lr_decays': [3],
+        'start_padding_enabled': [False]
     },
     'NBEATSx': {
         'max_steps': [1],

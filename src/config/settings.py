@@ -85,12 +85,10 @@ MODEL_PARAM_GRID = {
         'epochs': [50]
     },
     'NBEATSx': {
-        'n_blocks': [2, 3],
-        'mlp_units': [32, 64],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [32],
+        'activation': ['ReLU']
     }
 }
 
@@ -145,12 +143,10 @@ MODEL_PARAM_GRID = {
         'epochs': [50]
     },
     'NBEATSx': {
-        'n_blocks': [2, 3],
-        'mlp_units': [32, 64],
-        'dropout': [0.1],
-        'batch_size': [16, 32],
+        'max_steps': [1],
         'learning_rate': [0.001],
-        'epochs': [50]
+        'batch_size': [32],
+        'activation': ['ReLU']
     }
 }
 

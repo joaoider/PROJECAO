@@ -124,6 +124,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'covid', covid_dates, days_before=60, days_after=240)
     
+    # Marcar Dia das Mães com range de 7 dias antes e 1 dia depois
+    dia_das_maes_dates = [
+        '2013-05-12', '2014-05-11', '2015-05-10', '2016-05-08', '2017-05-14',
+        '2018-05-13', '2019-05-12', '2020-05-10', '2021-05-09', '2022-05-08',
+        '2023-05-14', '2024-05-12', '2025-05-11', '2026-05-10'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'dia_das_maes', dia_das_maes_dates, days_before=7, days_after=1)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

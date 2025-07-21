@@ -5,6 +5,7 @@ from configs.configuracoes_LSTM import *
 from base import data_neural_train, futr_df_test
 from configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 from funcoes import get_output_dir
+from src.config.settings import HORIZON
 
 def treinar_LSTM(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, encoder_n_layers, decoder_layers, context_size, encoder_bias, encoder_dropout, num_lr_decays, early_stop_patience_steps, val_check_steps, random_seed, drop_last_loader):
     print(f'treinar_LSTM iniciado com max_steps={max_steps}, learning_rate={learning_rate}, batch_size={batch_size}, '
@@ -17,7 +18,7 @@ def treinar_LSTM(max_steps, learning_rate, batch_size, encoder_hidden_size, deco
     # Definir o modelo LSTM com os parâmetros variáveis
     model = [LSTM(
                 max_steps=max_steps,  
-                h=horizon,  
+                h=HORIZON,  
                 input_size=-1,  
                 batch_size=batch_size, 
                 encoder_hidden_size=encoder_hidden_size, 

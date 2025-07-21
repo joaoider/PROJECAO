@@ -4,6 +4,7 @@ from configs.configuracoes_NBEATSx import *
 from base import data_neural_train, futr_df_test
 from configuracoes import horizon, freq
 from funcoes import get_output_dir
+from src.config.settings import HORIZON
 
 # Função para treinar o modelo NBEATSx
 def treinar_NBEATSx(max_steps, learning_rate, batch_size, activation):
@@ -12,8 +13,8 @@ def treinar_NBEATSx(max_steps, learning_rate, batch_size, activation):
     # Definir o modelo NBEATSx com os parâmetros variáveis
     model = [NBEATSx(
                 max_steps=max_steps,  # Número máximo de iterações
-                input_size=5 * horizon,  # Tamanho do input, ajustado para o horizonte
-                h=horizon,  # Horizonte de previsão
+                input_size=5 * HORIZON,  # Tamanho do input, ajustado para o horizonte
+                h=HORIZON,  # Horizonte de previsão
                 n_harmonics=2,  # Número de harmônicos
                 n_polynomials=2,  # Número de polinômios
                 activation=activation,  # Função de ativação (ReLU, Softplus, etc.)

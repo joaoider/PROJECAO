@@ -5,6 +5,7 @@ from configs.configuracoes_GRU import *
 from base import data_neural_train, futr_df_test
 from configuracoes import horizon, freq, variaveis_futuras, variaveis_historicas
 from funcoes import get_output_dir
+from src.config.settings import HORIZON
 
 # Função para treinar o modelo GRU
 def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decoder_hidden_size, 
@@ -22,7 +23,7 @@ def treinar_GRU(max_steps, learning_rate, batch_size, encoder_hidden_size, decod
     # Definir o modelo GRU com os parâmetros variáveis
     model = [GRU(
                 max_steps = max_steps,  # Número máximo de iterações
-                h = horizon,  # Horizonte de previsão
+                h = HORIZON,  # Horizonte de previsão
                 input_size = -1,  # Tamanho do input
                 loss = loss, # MAE(),  # Função de perda
                 #valid_loss = MAE(),  # Função de perda para validação

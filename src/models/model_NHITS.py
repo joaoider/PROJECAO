@@ -4,6 +4,7 @@ print('model_NHITS.py iniciado')
 from base import data_neural_train, futr_df_test
 from configs.configuracoes_NHITS import horizon, freq, variaveis_futuras, variaveis_historicas
 from funcoes import get_output_dir
+from src.config.settings import HORIZON
 
 # Função para treinar o modelo NHITS
 def treinar_NHITS(max_steps, learning_rate, batch_size, activation, n_blocks, mlp_units, 
@@ -20,8 +21,8 @@ def treinar_NHITS(max_steps, learning_rate, batch_size, activation, n_blocks, ml
     # Definir o modelo NHITS com os parâmetros variáveis
     model = [NHITS(
                 max_steps=max_steps, 
-                h=horizon,
-                input_size=5 * horizon,  # Pode ajustar conforme necessário
+                h=HORIZON,
+                input_size=5 * HORIZON,  # Pode ajustar conforme necessário
                 futr_exog_list=variaveis_futuras,
                 hist_exog_list=variaveis_historicas,
                 n_blocks=n_blocks, 

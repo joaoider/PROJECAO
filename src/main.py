@@ -109,6 +109,15 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'confraternizacao_universal', confraternizacao_universal_dates, days_before=1, days_after=0)
     
+    # Marcar Copa do Mundo com range de 0 dias antes e 0 dias depois
+    copa_do_mundo_dates = [
+        '2014-06-12', '2014-06-17', '2014-06-23', '2014-06-28', '2014-07-04',
+        '2014-07-08', '2014-07-12', '2018-06-14', '2018-06-17', '2018-06-22',
+        '2018-07-02', '2018-07-06', '2022-11-20', '2022-11-24', '2022-11-28',
+        '2022-12-02', '2022-12-05', '2022-12-09', '2026-07-11'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'copa_do_mundo', copa_do_mundo_dates, days_before=0, days_after=0)
+    
     # Salva os dados processados
     processor.save_processed_data(
         data_neural,

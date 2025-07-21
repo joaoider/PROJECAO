@@ -90,4 +90,7 @@ for directory in [RAW_DATA_DIR, PROCESSED_DATA_DIR]:
     directory.mkdir(parents=True, exist_ok=True)
 
 # Criar estrutura de diretórios para previsões
-FORECASTS_DIR = create_forecast_directories() 
+FORECASTS_DIR = create_forecast_directories()
+
+# Modelos a serem executados (adicione ou remova conforme desejar)
+MODELOS_A_EXECUTAR = ['LSTM', 'GRU', 'NHITS', 'NBEATSx'] 

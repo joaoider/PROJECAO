@@ -8,7 +8,7 @@ from datetime import datetime
 from config.settings import (
     MARCAS, TIPOS_PREVISAO, DATA_INICIO_BASE, DATA_FINAL_BASE,
     DATA_TRAIN, DATA_TEST, DATA_INICIO_FUTR,
-    DATA_FINAL_FUTR, FORECASTS_DIR, PROCESSED_DATA_DIR
+    DATA_FINAL_FUTR, FORECASTS_DIR, PROCESSED_DATA_DIR, MODELOS_A_EXECUTAR
 )
 from utils.data_processing import DataProcessor
 from utils.special_dates import SpecialDates
@@ -84,13 +84,15 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
     from models.nhits_model import NHITSModel
     from models.nbeatsx_model import NBEATSxModel
     
-    # Lista de modelos para treinar
-    models = [
-        LSTMModel,
-        GRUModel,
-        NHITSModel,
-        NBEATSxModel
-    ]
+    model_classes = {
+        'LSTM': LSTMModel,
+        'GRU': GRUModel,
+        'NHITS': NHITSModel,
+        'NBEATSx': NBEATSxModel
+    }
+    
+    # Lista de modelos para treinar conforme configuração
+    models = [model_classes[nome] for nome in MODELOS_A_EXECUTAR if nome in model_classes]
     
     results = {}
     

@@ -18,23 +18,24 @@ from utils.metrics import calculate_metrics, save_metrics, compare_models
 from models.base_model import BaseModel
 from utils.save_config_vars import salvar_variaveis_csv
 import os
-import pandas as pd
 from pyspark.sql import SparkSession
 import itertools
 
-# Função utilitária para converter string de loss em função/classe
-LOSS_MAP = {
-    'MAE': lambda: MAE(),
-    'MSE': lambda: MSE(),
-    'RMSE': lambda: RMSE(),
-    'MAPE': lambda: MAPE(),
-    # Adicione outros losses se necessário
-}
+# Importar losses do neuralforecast
 try:
     from neuralforecast.losses.pytorch import MAE, MSE, RMSE, MAPE
+    # Função utilitária para converter string de loss em função/classe
+    LOSS_MAP = {
+        'MAE': lambda: MAE(),
+        'MSE': lambda: MSE(),
+        'RMSE': lambda: RMSE(),
+        'MAPE': lambda: MAPE(),
+        # Adicione outros losses se necessário
+    }
 except ImportError:
     # Se não estiver disponível, defina dummies para evitar erro de import
     MAE = MSE = RMSE = MAPE = None
+    LOSS_MAP = {}
 
 # Configuração do logging
 logging.basicConfig(
@@ -170,10 +171,10 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
     """Treina e avalia todos os modelos para uma marca e tipo específico, realizando grid search."""
     logger.info(f"Iniciando treinamento e avaliação dos modelos para marca {marca} e tipo {tipo_previsao}")
     
-    from models.lstm_model import LSTMModel
-    from models.gru_model import GRUModel
-    from models.nhits_model import NHITSModel
-    from models.nbeatsx_model import NBEATSxModel
+    from models.model_LSTM import LSTMModel
+    from models.model_GRU import GRUModel
+    from models.model_NHITS import NHITSModel
+    from models.model_NBEATSx import NBEATSxModel
     
     model_classes = {
         'LSTM': LSTMModel,
@@ -309,7 +310,6 @@ def find_best_model(results: dict, marca: str, tipo_previsao: str):
 
 def save_model_comparison_report(model_scores: dict, marca: str, tipo_previsao: str):
     """Salva um relatório detalhado de comparação de todos os modelos."""
-    import pandas as pd
     
     # Criar DataFrame com todos os resultados
     report_data = []

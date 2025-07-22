@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from config.settings import MARCA, FREQ, HORIZON, MODEL_CONFIGS, DATA_INICIO_BASE
+from config.settings import MARCA, FREQ, HORIZON, DATA_INICIO_BASE
 
 # Função para salvar as variáveis em um CSV
 # variaveis_futuras e variaveis_historicas devem ser passadas como listas

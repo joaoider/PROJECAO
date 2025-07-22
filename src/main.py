@@ -202,6 +202,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'nossa_senhora_aparecida', nossa_senhora_aparecida_dates, days_before=0, days_after=0)
     
+    # Marcar Páscoa com range de 0 dias antes e 0 dias depois
+    pascoa_dates = [
+        '2013-03-31', '2014-04-20', '2015-04-05', '2016-03-27', '2017-04-16',
+        '2018-04-01', '2019-04-21', '2020-04-12', '2021-04-04', '2022-04-17',
+        '2023-04-09', '2024-03-31', '2025-04-20', '2026-04-05'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'pascoa', pascoa_dates, days_before=0, days_after=0)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

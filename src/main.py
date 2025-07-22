@@ -194,6 +194,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'natal', natal_dates, days_before=7, days_after=0)
     
+    # Marcar Nossa Senhora Aparecida com range de 0 dias antes e 0 dias depois
+    nossa_senhora_aparecida_dates = [
+        '2013-10-12', '2014-10-12', '2015-10-12', '2016-10-12', '2017-10-12',
+        '2018-10-12', '2019-10-12', '2020-10-12', '2021-10-12', '2022-10-12',
+        '2023-10-12', '2024-10-12', '2025-10-12', '2026-10-12'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'nossa_senhora_aparecida', nossa_senhora_aparecida_dates, days_before=0, days_after=0)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

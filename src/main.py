@@ -186,6 +186,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'independencia_do_brasil', independencia_do_brasil_dates, days_before=0, days_after=0)
     
+    # Marcar Natal com range de 7 dias antes e 0 dias depois
+    natal_dates = [
+        '2013-12-25', '2014-12-25', '2015-12-25', '2016-12-25', '2017-12-25',
+        '2018-12-25', '2019-12-25', '2020-12-25', '2021-12-25', '2022-12-25',
+        '2023-12-25', '2024-12-25', '2025-12-25', '2026-12-25'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'natal', natal_dates, days_before=7, days_after=0)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

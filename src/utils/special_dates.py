@@ -162,6 +162,23 @@ class SpecialDates:
     ('2026-09-07', 'Independência do Brasil')
 ],
 
+        'natal': [
+    ('2013-12-25', 'Natal'),
+    ('2014-12-25', 'Natal'),
+    ('2015-12-25', 'Natal'),
+    ('2016-12-25', 'Natal'),
+    ('2017-12-25', 'Natal'),
+    ('2018-12-25', 'Natal'),
+    ('2019-12-25', 'Natal'),
+    ('2020-12-25', 'Natal'),
+    ('2021-12-25', 'Natal'),
+    ('2022-12-25', 'Natal'),
+    ('2023-12-25', 'Natal'),
+    ('2024-12-25', 'Natal'),
+    ('2025-12-25', 'Natal'),
+    ('2026-12-25', 'Natal')
+],
+
         }
     
     def get_all_dates(self) -> pd.DataFrame:
@@ -447,3 +464,42 @@ def process_mes_do_ano(df):
     mesdoano = mesdoano.drop(columns=['mes_do_ano'])
 
     return mesdoano 
+
+def process_natal(df):
+    """
+    Processa o DataFrame para adicionar a coluna natal.
+    
+    Args:
+        df: DataFrame com coluna 'ds' (datas)
+        
+    Returns:
+        DataFrame com a coluna 'natal' adicionada
+    """
+    natal = df.copy()
+    
+    # Inicializa a coluna natal com 0
+    natal['natal'] = 0
+
+    # Definir o range de dias antes e depois
+    days_before = 7
+    days_after = 0
+
+    # Lista de datas específicas para o Natal, desde 2013 até 2025
+    specific_dates_natal = [
+        '2013-12-25', '2014-12-25', '2015-12-25', '2016-12-25', '2017-12-25',
+        '2018-12-25', '2019-12-25', '2020-12-25', '2021-12-25', '2022-12-25',
+        '2023-12-25', '2024-12-25', '2025-12-25', '2026-12-25'
+    ]
+    specific_dates_natal = pd.to_datetime(specific_dates_natal)
+
+    # Função para definir os valores no intervalo de datas específicas
+    def set_values(df, specific_dates, days_before, days_after):
+        for specific_date in specific_dates:
+            start_range = specific_date - pd.Timedelta(days=days_before)
+            end_range = specific_date + pd.Timedelta(days=days_after)
+            df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), 'natal'] = 1
+
+    # Aplicar a função ao DataFrame
+    set_values(natal, specific_dates_natal, days_before, days_after)
+
+    return natal 

@@ -200,6 +200,10 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     data_neural['dayofweek'] = data_neural['dia_da_semana'].map(day_mapping)
     data_neural = data_neural.drop(columns=['dia_da_semana'])
     
+    # Adicionar coluna com o mês do ano (1=Janeiro, ..., 12=Dezembro)
+    from utils.special_dates import process_mes_do_ano
+    data_neural = process_mes_do_ano(data_neural)
+    
     # Salva os dados processados
     processor.save_processed_data(
         data_neural,

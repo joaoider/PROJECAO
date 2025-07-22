@@ -247,6 +247,74 @@ class SpecialDates:
     ('2026-04-03', 'Sexta-Feira Santa')
 ],
 
+        'dia_das_maes': [
+    ('2013-05-12', 'Dia das Mães'),
+    ('2014-05-11', 'Dia das Mães'),
+    ('2015-05-10', 'Dia das Mães'),
+    ('2016-05-09', 'Dia das Mães'),
+    ('2017-05-08', 'Dia das Mães'),
+    ('2018-05-07', 'Dia das Mães'),
+    ('2019-05-06', 'Dia das Mães'),
+    ('2020-05-05', 'Dia das Mães'),
+    ('2021-05-04', 'Dia das Mães'),
+    ('2022-05-03', 'Dia das Mães'),
+    ('2023-05-02', 'Dia das Mães'),
+    ('2024-05-01', 'Dia das Mães'),
+    ('2025-04-30', 'Dia das Mães'),
+    ('2026-04-29', 'Dia das Mães')
+],
+
+        'dia_de_finados': [
+    ('2013-11-02', 'Dia de Finados'),
+    ('2014-11-01', 'Dia de Finados'),
+    ('2015-10-31', 'Dia de Finados'),
+    ('2016-10-31', 'Dia de Finados'),
+    ('2017-10-31', 'Dia de Finados'),
+    ('2018-10-31', 'Dia de Finados'),
+    ('2019-10-31', 'Dia de Finados'),
+    ('2020-10-31', 'Dia de Finados'),
+    ('2021-10-31', 'Dia de Finados'),
+    ('2022-10-31', 'Dia de Finados'),
+    ('2023-10-31', 'Dia de Finados'),
+    ('2024-10-31', 'Dia de Finados'),
+    ('2025-10-31', 'Dia de Finados'),
+    ('2026-10-31', 'Dia de Finados')
+],
+
+        'dia_dos_namorados': [
+    ('2013-07-07', 'Dia dos Namorados'),
+    ('2014-07-07', 'Dia dos Namorados'),
+    ('2015-07-07', 'Dia dos Namorados'),
+    ('2016-07-07', 'Dia dos Namorados'),
+    ('2017-07-07', 'Dia dos Namorados'),
+    ('2018-07-07', 'Dia dos Namorados'),
+    ('2019-07-07', 'Dia dos Namorados'),
+    ('2020-07-07', 'Dia dos Namorados'),
+    ('2021-07-07', 'Dia dos Namorados'),
+    ('2022-07-07', 'Dia dos Namorados'),
+    ('2023-07-07', 'Dia dos Namorados'),
+    ('2024-07-07', 'Dia dos Namorados'),
+    ('2025-07-07', 'Dia dos Namorados'),
+    ('2026-07-07', 'Dia dos Namorados')
+],
+
+        'dia_dos_pais': [
+    ('2013-08-12', 'Dia dos Pais'),
+    ('2014-08-12', 'Dia dos Pais'),
+    ('2015-08-12', 'Dia dos Pais'),
+    ('2016-08-12', 'Dia dos Pais'),
+    ('2017-08-12', 'Dia dos Pais'),
+    ('2018-08-12', 'Dia dos Pais'),
+    ('2019-08-12', 'Dia dos Pais'),
+    ('2020-08-12', 'Dia dos Pais'),
+    ('2021-08-12', 'Dia dos Pais'),
+    ('2022-08-12', 'Dia dos Pais'),
+    ('2023-08-12', 'Dia dos Pais'),
+    ('2024-08-12', 'Dia dos Pais'),
+    ('2025-08-12', 'Dia dos Pais'),
+    ('2026-08-12', 'Dia dos Pais')
+],
+
         }
     
     def get_all_dates(self) -> pd.DataFrame:
@@ -328,7 +396,94 @@ class SpecialDates:
             'data': info['data'].iloc[0].strftime('%Y-%m-%d'),
             'tipo': info['tipo'].iloc[0],
             'evento': info['evento'].iloc[0]
-        } 
+        }
+    
+    def get_dates_for_event(self, event_name: str) -> List[str]:
+        """
+        Retorna a lista de datas para um evento específico.
+        
+        Args:
+            event_name: Nome do evento (ex: 'black_friday', 'carnaval', etc.)
+            
+        Returns:
+            Lista de datas no formato YYYY-MM-DD
+        """
+        if event_name not in self.dates:
+            return []
+        
+        return [date for date, _ in self.dates[event_name]]
+    
+    def get_black_friday_dates(self) -> List[str]:
+        """Retorna as datas do Black Friday."""
+        return self.get_dates_for_event('black_friday')
+    
+    def get_carnaval_dates(self) -> List[str]:
+        """Retorna as datas do Carnaval."""
+        return self.get_dates_for_event('carnaval')
+    
+    def get_confraternizacao_universal_dates(self) -> List[str]:
+        """Retorna as datas da Confraternização Universal."""
+        return self.get_dates_for_event('confraternizacao_universal')
+    
+    def get_copa_do_mundo_dates(self) -> List[str]:
+        """Retorna as datas da Copa do Mundo."""
+        return self.get_dates_for_event('copa_do_mundo')
+    
+    def get_covid_dates(self) -> List[str]:
+        """Retorna as datas do COVID."""
+        return self.get_dates_for_event('covid')
+    
+    def get_dia_do_trabalhador_dates(self) -> List[str]:
+        """Retorna as datas do Dia do Trabalhador."""
+        return self.get_dates_for_event('dia_do_trabalhador')
+    
+    def get_eleicoes_dates(self) -> List[str]:
+        """Retorna as datas das Eleições."""
+        return self.get_dates_for_event('eleicoes')
+    
+    def get_halloween_dates(self) -> List[str]:
+        """Retorna as datas do Halloween."""
+        return self.get_dates_for_event('halloween')
+    
+    def get_independencia_do_brasil_dates(self) -> List[str]:
+        """Retorna as datas da Independência do Brasil."""
+        return self.get_dates_for_event('independencia_do_brasil')
+    
+    def get_natal_dates(self) -> List[str]:
+        """Retorna as datas do Natal."""
+        return self.get_dates_for_event('natal')
+    
+    def get_nossa_senhora_aparecida_dates(self) -> List[str]:
+        """Retorna as datas de Nossa Senhora Aparecida."""
+        return self.get_dates_for_event('nossa_senhora_aparecida')
+    
+    def get_pascoa_dates(self) -> List[str]:
+        """Retorna as datas da Páscoa."""
+        return self.get_dates_for_event('pascoa')
+    
+    def get_proclamacao_da_republica_dates(self) -> List[str]:
+        """Retorna as datas da Proclamação da República."""
+        return self.get_dates_for_event('proclamacao_da_republica')
+    
+    def get_sexta_feira_santa_dates(self) -> List[str]:
+        """Retorna as datas da Sexta-Feira Santa."""
+        return self.get_dates_for_event('sexta_feira_santa')
+    
+    def get_dia_das_maes_dates(self) -> List[str]:
+        """Retorna as datas do Dia das Mães."""
+        return self.get_dates_for_event('dia_das_maes')
+    
+    def get_dia_de_finados_dates(self) -> List[str]:
+        """Retorna as datas do Dia de Finados."""
+        return self.get_dates_for_event('dia_de_finados')
+    
+    def get_dia_dos_namorados_dates(self) -> List[str]:
+        """Retorna as datas do Dia dos Namorados."""
+        return self.get_dates_for_event('dia_dos_namorados')
+    
+    def get_dia_dos_pais_dates(self) -> List[str]:
+        """Retorna as datas do Dia dos Pais."""
+        return self.get_dates_for_event('dia_dos_pais')
 
 def marcar_evento_range(df, nome_coluna, datas_evento, days_before=0, days_after=0):
     """

@@ -86,145 +86,58 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     )
 
     # Marcar Black Friday com range de 1 dia antes e 1 dia depois
-    black_friday_dates = [
-        '2013-11-29', '2014-11-28', '2015-11-27', '2016-11-25', '2017-11-24',
-        '2018-11-23', '2019-11-29', '2020-11-27', '2021-11-26', '2022-11-25',
-        '2023-11-24', '2024-11-29', '2025-11-28', '2026-11-28'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'black_friday', black_friday_dates, days_before=1, days_after=1)
+    data_neural = marcar_evento_range(data_neural, 'black_friday', special_dates.get_black_friday_dates(), days_before=1, days_after=1)
 
     # Marcar Carnaval com range de 3 dias antes e 2 dias depois
-    carnaval_dates = [
-        '2013-02-11', '2014-03-03', '2015-02-16', '2016-02-08', '2017-02-27',
-        '2018-02-12', '2019-03-04', '2020-02-24', '2021-02-15', '2022-02-28',
-        '2023-02-20', '2024-02-12', '2025-03-04', '2026-02-17'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'carnaval', carnaval_dates, days_before=3, days_after=2)
+    data_neural = marcar_evento_range(data_neural, 'carnaval', special_dates.get_carnaval_dates(), days_before=3, days_after=2)
     
     # Marcar Confraternização Universal com range de 1 dia antes e 0 dias depois
-    confraternizacao_universal_dates = [
-        '2013-01-01', '2014-01-01', '2015-01-01', '2016-01-01', '2017-01-01',
-        '2018-01-01', '2019-01-01', '2020-01-01', '2021-01-01', '2022-01-01',
-        '2023-01-01', '2024-01-01', '2025-01-01', '2026-01-01'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'confraternizacao_universal', confraternizacao_universal_dates, days_before=1, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'confraternizacao_universal', special_dates.get_confraternizacao_universal_dates(), days_before=1, days_after=0)
     
     # Marcar Copa do Mundo com range de 0 dias antes e 0 dias depois
-    copa_do_mundo_dates = [
-        '2014-06-12', '2014-06-17', '2014-06-23', '2014-06-28', '2014-07-04',
-        '2014-07-08', '2014-07-12', '2018-06-14', '2018-06-17', '2018-06-22',
-        '2018-07-02', '2018-07-06', '2022-11-20', '2022-11-24', '2022-11-28',
-        '2022-12-02', '2022-12-05', '2022-12-09', '2026-07-11'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'copa_do_mundo', copa_do_mundo_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'copa_do_mundo', special_dates.get_copa_do_mundo_dates(), days_before=0, days_after=0)
     
     # Marcar COVID com range de 60 dias antes e 240 dias depois
-    covid_dates = [
-        '2020-03-01'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'covid', covid_dates, days_before=60, days_after=240)
+    data_neural = marcar_evento_range(data_neural, 'covid', special_dates.get_covid_dates(), days_before=60, days_after=240)
     
     # Marcar Dia das Mães com range de 7 dias antes e 1 dia depois
-    dia_das_maes_dates = [
-        '2013-05-12', '2014-05-11', '2015-05-10', '2016-05-08', '2017-05-14',
-        '2018-05-13', '2019-05-12', '2020-05-10', '2021-05-09', '2022-05-08',
-        '2023-05-14', '2024-05-12', '2025-05-11', '2026-05-10'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'dia_das_maes', dia_das_maes_dates, days_before=7, days_after=1)
+    data_neural = marcar_evento_range(data_neural, 'dia_das_maes', special_dates.get_dia_das_maes_dates(), days_before=7, days_after=1)
     
     # Marcar Dia de Finados com range de 0 dias antes e 0 dias depois
-    dia_de_finados_dates = [
-        '2013-11-02', '2014-11-02', '2015-11-02', '2016-11-02', '2017-11-02',
-        '2018-11-02', '2019-11-02', '2020-11-02', '2021-11-02', '2022-11-02',
-        '2023-11-02', '2024-11-02', '2025-11-02', '2026-11-02'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'dia_de_finados', dia_de_finados_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'dia_de_finados', special_dates.get_dia_de_finados_dates(), days_before=0, days_after=0)
     
     # Marcar Dia dos Namorados com range de 7 dias antes e 1 dia depois
-    dia_dos_namorados_dates = [
-        '2013-06-12', '2014-06-12', '2015-06-12', '2016-06-12', '2017-06-12',
-        '2018-06-12', '2019-06-12', '2020-06-12', '2021-06-12', '2022-06-12',
-        '2023-06-12', '2024-06-12', '2025-06-12', '2026-06-12'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'dia_dos_namorados', dia_dos_namorados_dates, days_before=7, days_after=1)
+    data_neural = marcar_evento_range(data_neural, 'dia_dos_namorados', special_dates.get_dia_dos_namorados_dates(), days_before=7, days_after=1)
     
     # Marcar Dia dos Pais com range de 7 dias antes e 1 dia depois
-    dia_dos_pais_dates = [
-        '2013-08-11', '2014-08-10', '2015-08-09', '2016-08-14', '2017-08-13',
-        '2018-08-12', '2019-08-11', '2020-08-09', '2021-08-08', '2022-08-14',
-        '2023-08-13', '2024-08-11', '2025-08-10', '2026-08-09'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'dia_dos_pais', dia_dos_pais_dates, days_before=7, days_after=1)
+    data_neural = marcar_evento_range(data_neural, 'dia_dos_pais', special_dates.get_dia_dos_pais_dates(), days_before=7, days_after=1)
     
     # Marcar Dia do Trabalhador com range de 0 dias antes e 0 dias depois
-    dia_do_trabalhador_dates = [
-        '2013-05-01', '2014-05-01', '2015-05-01', '2016-05-01', '2017-05-01',
-        '2018-05-01', '2019-05-01', '2020-05-01', '2021-05-01', '2022-05-01',
-        '2023-05-01', '2024-05-01', '2025-05-01', '2026-05-01'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'dia_do_trabalhador', dia_do_trabalhador_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'dia_do_trabalhador', special_dates.get_dia_do_trabalhador_dates(), days_before=0, days_after=0)
     
     # Marcar Eleições com range de 0 dias antes e 0 dias depois
-    eleicoes_dates = [
-        '2018-10-07', '2018-10-28', '2022-10-02', '2022-10-30', '2024-10-06', '2024-10-27', '2026-10-04', '2026-10-25'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'eleicoes', eleicoes_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'eleicoes', special_dates.get_eleicoes_dates(), days_before=0, days_after=0)
     
     # Marcar Halloween com range de 1 dia antes e 1 dia depois
-    halloween_dates = [
-        '2013-10-31', '2014-10-31', '2015-10-31', '2016-10-31', '2017-10-31',
-        '2018-10-31', '2019-10-31', '2020-10-31', '2021-10-31', '2022-10-31',
-        '2023-10-31', '2024-10-31', '2025-10-31', '2026-10-31'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'halloween', halloween_dates, days_before=1, days_after=1)
+    data_neural = marcar_evento_range(data_neural, 'halloween', special_dates.get_halloween_dates(), days_before=1, days_after=1)
     
     # Marcar Independência do Brasil com range de 0 dias antes e 0 dias depois
-    independencia_do_brasil_dates = [
-        '2013-09-07', '2014-09-07', '2015-09-07', '2016-09-07', '2017-09-07',
-        '2018-09-07', '2019-09-07', '2020-09-07', '2021-09-07', '2022-09-07',
-        '2023-09-07', '2024-09-07', '2025-09-07', '2026-09-07'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'independencia_do_brasil', independencia_do_brasil_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'independencia_do_brasil', special_dates.get_independencia_do_brasil_dates(), days_before=0, days_after=0)
     
     # Marcar Natal com range de 7 dias antes e 0 dias depois
-    natal_dates = [
-        '2013-12-25', '2014-12-25', '2015-12-25', '2016-12-25', '2017-12-25',
-        '2018-12-25', '2019-12-25', '2020-12-25', '2021-12-25', '2022-12-25',
-        '2023-12-25', '2024-12-25', '2025-12-25', '2026-12-25'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'natal', natal_dates, days_before=7, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'natal', special_dates.get_natal_dates(), days_before=7, days_after=0)
     
     # Marcar Nossa Senhora Aparecida com range de 0 dias antes e 0 dias depois
-    nossa_senhora_aparecida_dates = [
-        '2013-10-12', '2014-10-12', '2015-10-12', '2016-10-12', '2017-10-12',
-        '2018-10-12', '2019-10-12', '2020-10-12', '2021-10-12', '2022-10-12',
-        '2023-10-12', '2024-10-12', '2025-10-12', '2026-10-12'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'nossa_senhora_aparecida', nossa_senhora_aparecida_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'nossa_senhora_aparecida', special_dates.get_nossa_senhora_aparecida_dates(), days_before=0, days_after=0)
     
     # Marcar Páscoa com range de 0 dias antes e 0 dias depois
-    pascoa_dates = [
-        '2013-03-31', '2014-04-20', '2015-04-05', '2016-03-27', '2017-04-16',
-        '2018-04-01', '2019-04-21', '2020-04-12', '2021-04-04', '2022-04-17',
-        '2023-04-09', '2024-03-31', '2025-04-20', '2026-04-05'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'pascoa', pascoa_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'pascoa', special_dates.get_pascoa_dates(), days_before=0, days_after=0)
     
     # Marcar Proclamação da República com range de 0 dias antes e 0 dias depois
-    proclamacao_da_republica_dates = [
-        '2013-11-15', '2014-11-15', '2015-11-15', '2016-11-15', '2017-11-15',
-        '2018-11-15', '2019-11-15', '2020-11-15', '2021-11-15', '2022-11-15',
-        '2023-11-15', '2024-11-15', '2025-11-15', '2026-11-15'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'proclamacao_da_republica', proclamacao_da_republica_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'proclamacao_da_republica', special_dates.get_proclamacao_da_republica_dates(), days_before=0, days_after=0)
     
     # Marcar Sexta-Feira Santa com range de 0 dias antes e 0 dias depois
-    sexta_feira_santa_dates = [
-        '2013-03-29', '2014-04-18', '2015-04-03', '2016-03-25', '2017-04-14',
-        '2018-03-30', '2019-04-19', '2020-04-10', '2021-04-02', '2022-04-15',
-        '2023-04-07', '2024-03-29', '2025-04-18', '2026-04-03'
-    ]
-    data_neural = marcar_evento_range(data_neural, 'sexta_feira_santa', sexta_feira_santa_dates, days_before=0, days_after=0)
+    data_neural = marcar_evento_range(data_neural, 'sexta_feira_santa', special_dates.get_sexta_feira_santa_dates(), days_before=0, days_after=0)
     
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()

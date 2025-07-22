@@ -124,5 +124,9 @@ class BaseModel(ABC):
         mae = np.mean(np.abs(y_true - y_pred))
         metrics['MAE'] = mae
         
+        # MSE
+        mse = np.mean((y_true - y_pred) ** 2)
+        metrics['MSE'] = mse
+        
         logger.info(f"Métricas de avaliação: {metrics}")
         return metrics 

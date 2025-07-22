@@ -50,6 +50,20 @@ def calculate_mae(y_true: Union[np.ndarray, pd.Series],
     """
     return np.mean(np.abs(y_true - y_pred))
 
+def calculate_mse(y_true: Union[np.ndarray, pd.Series], 
+                 y_pred: Union[np.ndarray, pd.Series]) -> float:
+    """
+    Calcula o Mean Square Error (MSE).
+    
+    Args:
+        y_true: Valores reais
+        y_pred: Valores previstos
+        
+    Returns:
+        Valor do MSE
+    """
+    return np.mean((y_true - y_pred) ** 2)
+
 def calculate_metrics(y_true: Union[np.ndarray, pd.Series], 
                      y_pred: Union[np.ndarray, pd.Series]) -> Dict[str, float]:
     """
@@ -65,7 +79,8 @@ def calculate_metrics(y_true: Union[np.ndarray, pd.Series],
     metrics = {
         'MAPE': calculate_mape(y_true, y_pred),
         'RMSE': calculate_rmse(y_true, y_pred),
-        'MAE': calculate_mae(y_true, y_pred)
+        'MAE': calculate_mae(y_true, y_pred),
+        'MSE': calculate_mse(y_true, y_pred)
     }
     
     logger.info(f"Métricas calculadas: {metrics}")

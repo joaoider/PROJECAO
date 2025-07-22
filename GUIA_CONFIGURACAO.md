@@ -62,7 +62,7 @@ MODELOS_A_EXECUTAR = ['LSTM', 'GRU', 'NHITS', 'NBEATSx']
 
 **O que é:** Selecione quais métricas calcular para avaliar os modelos.
 
-**Opções disponíveis:** `['MAPE', 'RMSE', 'MAE']`
+**Opções disponíveis:** `['MAPE', 'RMSE', 'MAE', 'MSE']`
 
 **Exemplos:**
 ```python
@@ -72,8 +72,11 @@ METRICS = ['MAPE']
 # Calcular MAPE e RMSE
 METRICS = ['MAPE', 'RMSE']
 
-# Calcular todas as métricas
+# Calcular MAPE, RMSE e MAE
 METRICS = ['MAPE', 'RMSE', 'MAE']
+
+# Calcular todas as métricas
+METRICS = ['MAPE', 'RMSE', 'MAE', 'MSE']
 ```
 
 ## 🔧 5. VARIAVEIS_FUTURAS
@@ -178,7 +181,7 @@ VARIAVEIS_HISTORICAS = ['QLF', 'ROL']
 MARCAS = ['BB', 'LL', 'DD', 'JJ']
 TIPOS_PREVISAO = ['GERAL', 'GRIFFE', 'GRIFFE_N1']
 MODELOS_A_EXECUTAR = ['LSTM', 'GRU', 'NHITS', 'NBEATSx']
-METRICS = ['MAPE', 'RMSE', 'MAE']
+METRICS = ['MAPE', 'RMSE', 'MAE', 'MSE']
 VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween', 
                      'dia_do_trabalhador', 'eleicoes', 'independencia_do_brasil',
                      'nossa_senhora_aparecida', 'pascoa', 'proclamacao_da_republica',

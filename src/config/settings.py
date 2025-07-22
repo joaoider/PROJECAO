@@ -67,9 +67,11 @@ MODELOS_A_EXECUTAR = ['LSTM']  # Apenas LSTM
 # CONFIGURAÇÕES DE MÉTRICAS
 # =============================================================================
 # 🔧 METRICS: Selecione quais métricas calcular
-# Opções disponíveis: ['MAPE', 'RMSE', 'MAE']
-METRICS = ['MAPE']  # Apenas MAPE
+# Opções disponíveis: ['MAPE', 'RMSE', 'MAE', 'MSE']
+METRICS = ['MAPE', 'RMSE', 'MAE', 'MSE']  # Todas as métricas
+# METRICS = ['MAPE']  # Apenas MAPE
 # METRICS = ['MAPE', 'RMSE']  # Apenas MAPE e RMSE
+# METRICS = ['MAPE', 'RMSE', 'MAE']  # MAPE, RMSE e MAE
 
 # =============================================================================
 # CONFIGURAÇÕES DE VARIÁVEIS
@@ -82,7 +84,7 @@ METRICS = ['MAPE']  # Apenas MAPE
 #                     'covid', 'dia_das_maes', 'dia_de_finados', 'dia_dos_namorados',
 #                     'dia_dos_pais']
 # Opções disponíveis para características temporais: ['dayofweek', 'monthofyear']
-VARIAVEIS_FUTURAS = ['black_friday', 'dayofweek'] # Black Friday + dia da semana
+VARIAVEIS_FUTURAS = ['black_friday'] # Black Friday + dia da semana
 # VARIAVEIS_FUTURAS = ['black_friday', 'natal', 'dayofweek', 'monthofyear']  # Múltiplas variáveis
 # VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween', 
 #                      'dia_do_trabalhador', 'eleicoes', 'independencia_do_brasil',

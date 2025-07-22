@@ -230,6 +230,23 @@ class SpecialDates:
     ('2026-11-15', 'Proclamação da República')
 ],
 
+        'sexta_feira_santa': [
+    ('2013-03-29', 'Sexta-Feira Santa'),
+    ('2014-04-18', 'Sexta-Feira Santa'),
+    ('2015-04-03', 'Sexta-Feira Santa'),
+    ('2016-03-25', 'Sexta-Feira Santa'),
+    ('2017-04-14', 'Sexta-Feira Santa'),
+    ('2018-03-30', 'Sexta-Feira Santa'),
+    ('2019-04-19', 'Sexta-Feira Santa'),
+    ('2020-04-10', 'Sexta-Feira Santa'),
+    ('2021-04-02', 'Sexta-Feira Santa'),
+    ('2022-04-15', 'Sexta-Feira Santa'),
+    ('2023-04-07', 'Sexta-Feira Santa'),
+    ('2024-03-29', 'Sexta-Feira Santa'),
+    ('2025-04-18', 'Sexta-Feira Santa'),
+    ('2026-04-03', 'Sexta-Feira Santa')
+],
+
         }
     
     def get_all_dates(self) -> pd.DataFrame:
@@ -670,4 +687,43 @@ def process_proclamacao_da_republica(df):
     # Aplicar a função ao DataFrame
     set_values(proclamacao_da_republica, specific_dates_proclamacao_da_republica, days_before, days_after)
 
-    return proclamacao_da_republica 
+    return proclamacao_da_republica
+
+def process_sexta_feira_santa(df):
+    """
+    Processa o DataFrame para adicionar a coluna sexta_feira_santa.
+    
+    Args:
+        df: DataFrame com coluna 'ds' (datas)
+        
+    Returns:
+        DataFrame com a coluna 'sexta_feira_santa' adicionada
+    """
+    sexta_feira_santa = df.copy()
+    
+    # Inicializa a coluna sexta_feira_santa com 0
+    sexta_feira_santa['sexta_feira_santa'] = 0
+
+    # Intervalo de dias antes e depois é 0 para ambos, conforme especificado
+    days_before = 0
+    days_after = 0
+
+    # Lista de datas específicas para a Sexta-Feira Santa conforme fornecido
+    specific_dates_sexta_feira_santa = [
+        '2013-03-29', '2014-04-18', '2015-04-03', '2016-03-25', '2017-04-14',
+        '2018-03-30', '2019-04-19', '2020-04-10', '2021-04-02', '2022-04-15',
+        '2023-04-07', '2024-03-29', '2025-04-18', '2026-04-03'
+    ]
+    specific_dates_sexta_feira_santa = pd.to_datetime(specific_dates_sexta_feira_santa)
+
+    # Função para definir os valores no intervalo de datas específicas
+    def set_values(df, specific_dates, days_before, days_after):
+        for specific_date in specific_dates:
+            start_range = specific_date - pd.Timedelta(days=days_before)
+            end_range = specific_date + pd.Timedelta(days=days_after)
+            df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), 'sexta_feira_santa'] = 1
+
+    # Aplicar a função ao DataFrame
+    set_values(sexta_feira_santa, specific_dates_sexta_feira_santa, days_before, days_after)
+
+    return sexta_feira_santa 

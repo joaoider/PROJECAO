@@ -218,6 +218,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'proclamacao_da_republica', proclamacao_da_republica_dates, days_before=0, days_after=0)
     
+    # Marcar Sexta-Feira Santa com range de 0 dias antes e 0 dias depois
+    sexta_feira_santa_dates = [
+        '2013-03-29', '2014-04-18', '2015-04-03', '2016-03-25', '2017-04-14',
+        '2018-03-30', '2019-04-19', '2020-04-10', '2021-04-02', '2022-04-15',
+        '2023-04-07', '2024-03-29', '2025-04-18', '2026-04-03'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'sexta_feira_santa', sexta_feira_santa_dates, days_before=0, days_after=0)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

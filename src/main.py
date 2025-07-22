@@ -9,7 +9,7 @@ from config.settings import (
     MARCAS, TIPOS_PREVISAO, DATA_INICIO_BASE, DATA_FINAL_BASE,
     DATA_TRAIN, DATA_TEST, DATA_INICIO_FUTR,
     DATA_FINAL_FUTR, FORECASTS_DIR, PROCESSED_DATA_DIR, MODELOS_A_EXECUTAR,
-    MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, MODEL_PARAM_GRID
+    MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, MODEL_PARAM_GRID, METRICS
 )
 from utils.data_processing import DataProcessor
 from utils.special_dates import SpecialDates, marcar_evento_range
@@ -225,19 +225,153 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
     return results
 
 def find_best_model(results: dict, marca: str, tipo_previsao: str):
-    """Encontra o melhor modelo/configuração baseado nas métricas para uma marca e tipo específico."""
+    """Encontra o melhor modelo/configuração baseado em todas as métricas configuradas."""
     logger.info(f"Identificando melhor modelo/configuração para marca {marca} e tipo {tipo_previsao}")
-    # Compara os modelos/configurações usando MAPE
-    best_model = min(
-        results.items(),
-        key=lambda x: x[1]['metrics']['MAPE']
+    
+    # Verificar quais métricas estão configuradas
+    available_metrics = METRICS
+    logger.info(f"Métricas configuradas para avaliação: {available_metrics}")
+    
+    # Calcular pontuação composta para cada modelo
+    model_scores = {}
+    
+    for model_key, model_data in results.items():
+        metrics = model_data['metrics']
+        score = 0
+        metric_count = 0
+        
+        # Calcular pontuação baseada em todas as métricas configuradas
+        for metric_name in available_metrics:
+            if metric_name in metrics:
+                metric_value = metrics[metric_name]
+                
+                # Normalizar e ponderar cada métrica
+                if metric_name == 'MAPE':
+                    # MAPE: menor é melhor (0-100%)
+                    normalized_score = max(0, 100 - metric_value) / 100
+                    score += normalized_score * 0.4  # Peso maior para MAPE
+                elif metric_name == 'RMSE':
+                    # RMSE: menor é melhor
+                    # Normalizar baseado no range típico dos dados
+                    max_rmse = max([r['metrics'].get('RMSE', 0) for r in results.values()])
+                    normalized_score = max(0, (max_rmse - metric_value) / max_rmse) if max_rmse > 0 else 0
+                    score += normalized_score * 0.3
+                elif metric_name == 'MAE':
+                    # MAE: menor é melhor
+                    max_mae = max([r['metrics'].get('MAE', 0) for r in results.values()])
+                    normalized_score = max(0, (max_mae - metric_value) / max_mae) if max_mae > 0 else 0
+                    score += normalized_score * 0.2
+                elif metric_name == 'MSE':
+                    # MSE: menor é melhor
+                    max_mse = max([r['metrics'].get('MSE', 0) for r in results.values()])
+                    normalized_score = max(0, (max_mse - metric_value) / max_mse) if max_mse > 0 else 0
+                    score += normalized_score * 0.1
+                
+                metric_count += 1
+        
+        # Calcular pontuação final normalizada
+        if metric_count > 0:
+            final_score = score / metric_count
+        else:
+            final_score = 0
+            
+        model_scores[model_key] = {
+            'score': final_score,
+            'metrics': metrics,
+            'params': model_data['params'],
+            'model': model_data['model']
+        }
+        
+        logger.info(f"Modelo {model_key}: Score={final_score:.4f}, Métricas={metrics}")
+    
+    # Selecionar o melhor modelo baseado na pontuação composta
+    best_model_key = max(model_scores.keys(), key=lambda k: model_scores[k]['score'])
+    best_model_data = model_scores[best_model_key]
+    
+    logger.info(f"🎯 MELHOR MODELO SELECIONADO:")
+    logger.info(f"   Modelo: {best_model_key}")
+    logger.info(f"   Score Composto: {best_model_data['score']:.4f}")
+    logger.info(f"   Métricas: {best_model_data['metrics']}")
+    logger.info(f"   Parâmetros: {best_model_data['params']}")
+    
+    # Salvar relatório detalhado de todos os modelos
+    df_report = save_model_comparison_report(model_scores, marca, tipo_previsao)
+    
+    # Imprimir resumo completo
+    print_evaluation_summary(results, model_scores, marca, tipo_previsao)
+    
+    # Salvar os parâmetros do melhor modelo
+    best_model_data['model'].save_model(
+        FORECASTS_DIR / marca / tipo_previsao / f'melhor_modelo_parametros_{best_model_key}.csv'
     )
-    logger.info(f"Melhor modelo/configuração para marca {marca} e tipo {tipo_previsao}: {best_model[0]} com MAPE: {best_model[1]['metrics']['MAPE']:.2f}% e params: {best_model[1]['params']}")
-    # Salva os parâmetros do melhor modelo
-    best_model[1]['model'].save_model(
-        FORECASTS_DIR / marca / tipo_previsao / f'melhor_modelo_parametros_{best_model[0]}.csv'
-    )
-    return best_model
+    
+    return (best_model_key, best_model_data)
+
+def save_model_comparison_report(model_scores: dict, marca: str, tipo_previsao: str):
+    """Salva um relatório detalhado de comparação de todos os modelos."""
+    import pandas as pd
+    
+    # Criar DataFrame com todos os resultados
+    report_data = []
+    for model_key, data in model_scores.items():
+        row = {
+            'Modelo': model_key,
+            'Score_Composto': data['score'],
+            **data['metrics']
+        }
+        report_data.append(row)
+    
+    df_report = pd.DataFrame(report_data)
+    
+    # Ordenar por score composto (melhor primeiro)
+    df_report = df_report.sort_values('Score_Composto', ascending=False)
+    
+    # Salvar relatório
+    report_path = FORECASTS_DIR / marca / tipo_previsao / f'relatorio_comparacao_modelos.csv'
+    df_report.to_csv(report_path, index=False)
+    
+    logger.info(f"📊 Relatório de comparação salvo em: {report_path}")
+    logger.info(f"🏆 Top 3 modelos:")
+    for i, (_, row) in enumerate(df_report.head(3).iterrows()):
+        logger.info(f"   {i+1}. {row['Modelo']}: Score={row['Score_Composto']:.4f}")
+    
+    return df_report
+
+def print_evaluation_summary(results: dict, model_scores: dict, marca: str, tipo_previsao: str):
+    """Imprime um resumo completo do processo de avaliação."""
+    logger.info("=" * 80)
+    logger.info(f"📋 RESUMO COMPLETO DA AVALIAÇÃO - {marca} - {tipo_previsao}")
+    logger.info("=" * 80)
+    
+    # Estatísticas gerais
+    total_models = len(results)
+    total_metrics = len(METRICS)
+    
+    logger.info(f"🔢 ESTATÍSTICAS GERAIS:")
+    logger.info(f"   • Total de modelos testados: {total_models}")
+    logger.info(f"   • Total de métricas avaliadas: {total_metrics}")
+    logger.info(f"   • Métricas configuradas: {METRICS}")
+    logger.info(f"   • Modelos configurados: {MODELOS_A_EXECUTAR}")
+    
+    # Melhores resultados por métrica
+    logger.info(f"\n🏅 MELHORES RESULTADOS POR MÉTRICA:")
+    for metric in METRICS:
+        if any(metric in r['metrics'] for r in results.values()):
+            best_for_metric = min(
+                results.items(),
+                key=lambda x: x[1]['metrics'].get(metric, float('inf'))
+            )
+            logger.info(f"   • {metric}: {best_for_metric[0]} = {best_for_metric[1]['metrics'][metric]:.4f}")
+    
+    # Top 5 modelos por score composto
+    logger.info(f"\n🏆 TOP 5 MODELOS (Score Composto):")
+    sorted_models = sorted(model_scores.items(), key=lambda x: x[1]['score'], reverse=True)
+    for i, (model_key, data) in enumerate(sorted_models[:5]):
+        logger.info(f"   {i+1}. {model_key}: Score={data['score']:.4f}")
+        for metric, value in data['metrics'].items():
+            logger.info(f"      • {metric}: {value:.4f}")
+    
+    logger.info("=" * 80)
 
 def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tipo_previsao: str):
     """Executa o melhor modelo para fazer previsões finais para uma marca e tipo específico."""

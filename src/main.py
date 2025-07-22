@@ -210,6 +210,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'pascoa', pascoa_dates, days_before=0, days_after=0)
     
+    # Marcar Proclamação da República com range de 0 dias antes e 0 dias depois
+    proclamacao_da_republica_dates = [
+        '2013-11-15', '2014-11-15', '2015-11-15', '2016-11-15', '2017-11-15',
+        '2018-11-15', '2019-11-15', '2020-11-15', '2021-11-15', '2022-11-15',
+        '2023-11-15', '2024-11-15', '2025-11-15', '2026-11-15'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'proclamacao_da_republica', proclamacao_da_republica_dates, days_before=0, days_after=0)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

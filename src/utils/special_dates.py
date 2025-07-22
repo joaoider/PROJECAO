@@ -213,6 +213,23 @@ class SpecialDates:
     ('2026-04-05', 'Páscoa')
 ],
 
+        'proclamacao_da_republica': [
+    ('2013-11-15', 'Proclamação da República'),
+    ('2014-11-15', 'Proclamação da República'),
+    ('2015-11-15', 'Proclamação da República'),
+    ('2016-11-15', 'Proclamação da República'),
+    ('2017-11-15', 'Proclamação da República'),
+    ('2018-11-15', 'Proclamação da República'),
+    ('2019-11-15', 'Proclamação da República'),
+    ('2020-11-15', 'Proclamação da República'),
+    ('2021-11-15', 'Proclamação da República'),
+    ('2022-11-15', 'Proclamação da República'),
+    ('2023-11-15', 'Proclamação da República'),
+    ('2024-11-15', 'Proclamação da República'),
+    ('2025-11-15', 'Proclamação da República'),
+    ('2026-11-15', 'Proclamação da República')
+],
+
         }
     
     def get_all_dates(self) -> pd.DataFrame:
@@ -614,4 +631,43 @@ def process_pascoa(df):
     # Aplicar a função ao DataFrame
     set_values(pascoa, specific_dates_pascoa, days_before, days_after)
 
-    return pascoa 
+    return pascoa
+
+def process_proclamacao_da_republica(df):
+    """
+    Processa o DataFrame para adicionar a coluna proclamacao_da_republica.
+    
+    Args:
+        df: DataFrame com coluna 'ds' (datas)
+        
+    Returns:
+        DataFrame com a coluna 'proclamacao_da_republica' adicionada
+    """
+    proclamacao_da_republica = df.copy()
+    
+    # Inicializa a coluna proclamacao_da_republica com 0
+    proclamacao_da_republica['proclamacao_da_republica'] = 0
+
+    # Intervalo de dias antes e depois é 0 para ambos, conforme especificado
+    days_before = 0
+    days_after = 0
+
+    # Lista de datas específicas para a Proclamação da República conforme fornecido
+    specific_dates_proclamacao_da_republica = [
+        '2013-11-15', '2014-11-15', '2015-11-15', '2016-11-15', '2017-11-15',
+        '2018-11-15', '2019-11-15', '2020-11-15', '2021-11-15', '2022-11-15',
+        '2023-11-15', '2024-11-15', '2025-11-15', '2026-11-15'
+    ]
+    specific_dates_proclamacao_da_republica = pd.to_datetime(specific_dates_proclamacao_da_republica)
+
+    # Função para definir os valores no intervalo de datas específicas
+    def set_values(df, specific_dates, days_before, days_after):
+        for specific_date in specific_dates:
+            start_range = specific_date - pd.Timedelta(days=days_before)
+            end_range = specific_date + pd.Timedelta(days=days_after)
+            df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), 'proclamacao_da_republica'] = 1
+
+    # Aplicar a função ao DataFrame
+    set_values(proclamacao_da_republica, specific_dates_proclamacao_da_republica, days_before, days_after)
+
+    return proclamacao_da_republica 

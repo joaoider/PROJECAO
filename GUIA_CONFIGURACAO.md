@@ -78,9 +78,9 @@ METRICS = ['MAPE', 'RMSE', 'MAE']
 
 ## 🔧 5. VARIAVEIS_FUTURAS
 
-**O que é:** Selecione eventos especiais que afetam as vendas futuras.
+**O que é:** Selecione eventos especiais e características temporais que afetam as vendas futuras.
 
-**Opções disponíveis:**
+**Opções disponíveis para eventos:**
 - `'black_friday'` - Black Friday
 - `'carnaval'` - Carnaval
 - `'natal'` - Natal
@@ -100,44 +100,55 @@ METRICS = ['MAPE', 'RMSE', 'MAE']
 - `'dia_dos_namorados'` - Dia dos Namorados
 - `'dia_dos_pais'` - Dia dos Pais
 
-**Exemplos:**
-```python
-# Nenhum evento especial
-VARIAVEIS_FUTURAS = []
-
-# Apenas Black Friday e Natal
-VARIAVEIS_FUTURAS = ['black_friday', 'natal']
-
-# Múltiplos eventos
-VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween']
-
-# Todos os eventos importantes
-VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween', 
-                     'dia_do_trabalhador', 'eleicoes', 'independencia_do_brasil',
-                     'nossa_senhora_aparecida', 'pascoa', 'proclamacao_da_republica',
-                     'sexta_feira_santa', 'confraternizacao_universal', 'copa_do_mundo',
-                     'covid', 'dia_das_maes', 'dia_de_finados', 'dia_dos_namorados',
-                     'dia_dos_pais']
-```
-
-## 🔧 6. VARIAVEIS_HISTORICAS
-
-**O que é:** Selecione características temporais dos dados históricos.
-
-**Opções disponíveis:**
+**Opções disponíveis para características temporais:**
 - `'dayofweek'` - Dia da semana (0=Segunda, 6=Domingo)
 - `'monthofyear'` - Mês do ano (1=Janeiro, 12=Dezembro)
 
 **Exemplos:**
 ```python
-# Nenhuma característica temporal
+# Nenhum evento especial
+VARIAVEIS_FUTURAS = []
+
+# Apenas Black Friday
+VARIAVEIS_FUTURAS = ['black_friday']
+
+# Black Friday + características temporais
+VARIAVEIS_FUTURAS = ['black_friday', 'dayofweek']
+
+# Múltiplos eventos + características temporais
+VARIAVEIS_FUTURAS = ['black_friday', 'natal', 'dayofweek', 'monthofyear']
+
+# Todos os eventos importantes + características temporais
+VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween', 
+                     'dia_do_trabalhador', 'eleicoes', 'independencia_do_brasil',
+                     'nossa_senhora_aparecida', 'pascoa', 'proclamacao_da_republica',
+                     'sexta_feira_santa', 'confraternizacao_universal', 'copa_do_mundo',
+                     'covid', 'dia_das_maes', 'dia_de_finados', 'dia_dos_namorados',
+                     'dia_dos_pais', 'dayofweek', 'monthofyear']
+```
+
+## 🔧 6. VARIAVEIS_HISTORICAS
+
+**O que é:** Selecione dados históricos de vendas que serão usados como variáveis exógenas.
+
+**Opções disponíveis:**
+- `'QLF'` - Quantidade vendida (Quantity)
+- `'ROL'` - Receita (Revenue)
+- `'CPV'` - Custo do produto vendido (Cost)
+
+**Exemplos:**
+```python
+# Nenhuma variável histórica
 VARIAVEIS_HISTORICAS = []
 
-# Apenas dia da semana
-VARIAVEIS_HISTORICAS = ['dayofweek']
+# Apenas quantidade vendida
+VARIAVEIS_HISTORICAS = ['QLF']
 
-# Dia da semana e mês
-VARIAVEIS_HISTORICAS = ['dayofweek', 'monthofyear']
+# Quantidade e receita
+VARIAVEIS_HISTORICAS = ['QLF', 'ROL']
+
+# Quantidade, receita e custo
+VARIAVEIS_HISTORICAS = ['QLF', 'ROL', 'CPV']
 ```
 
 ## 🚀 Exemplos de Configuração
@@ -148,8 +159,8 @@ MARCAS = ['BB']
 TIPOS_PREVISAO = ['GERAL']
 MODELOS_A_EXECUTAR = ['LSTM']
 METRICS = ['MAPE']
-VARIAVEIS_FUTURAS = []
-VARIAVEIS_HISTORICAS = ['dayofweek']
+VARIAVEIS_FUTURAS = ['dayofweek']
+VARIAVEIS_HISTORICAS = ['QLF']
 ```
 
 ### Configuração Média (Teste Completo)
@@ -158,8 +169,8 @@ MARCAS = ['BB', 'LL']
 TIPOS_PREVISAO = ['GERAL', 'GRIFFE']
 MODELOS_A_EXECUTAR = ['LSTM', 'GRU']
 METRICS = ['MAPE', 'RMSE']
-VARIAVEIS_FUTURAS = ['black_friday', 'natal']
-VARIAVEIS_HISTORICAS = ['dayofweek', 'monthofyear']
+VARIAVEIS_FUTURAS = ['black_friday', 'natal', 'dayofweek', 'monthofyear']
+VARIAVEIS_HISTORICAS = ['QLF', 'ROL']
 ```
 
 ### Configuração Completa (Produção)
@@ -173,8 +184,8 @@ VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween',
                      'nossa_senhora_aparecida', 'pascoa', 'proclamacao_da_republica',
                      'sexta_feira_santa', 'confraternizacao_universal', 'copa_do_mundo',
                      'covid', 'dia_das_maes', 'dia_de_finados', 'dia_dos_namorados',
-                     'dia_dos_pais']
-VARIAVEIS_HISTORICAS = ['dayofweek', 'monthofyear']
+                     'dia_dos_pais', 'dayofweek', 'monthofyear']
+VARIAVEIS_HISTORICAS = ['QLF', 'ROL', 'CPV']
 ```
 
 ## ⚡ Dicas de Performance

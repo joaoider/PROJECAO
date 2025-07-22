@@ -156,6 +156,36 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     ]
     data_neural = marcar_evento_range(data_neural, 'dia_dos_pais', dia_dos_pais_dates, days_before=7, days_after=1)
     
+    # Marcar Dia do Trabalhador com range de 0 dias antes e 0 dias depois
+    dia_do_trabalhador_dates = [
+        '2013-05-01', '2014-05-01', '2015-05-01', '2016-05-01', '2017-05-01',
+        '2018-05-01', '2019-05-01', '2020-05-01', '2021-05-01', '2022-05-01',
+        '2023-05-01', '2024-05-01', '2025-05-01', '2026-05-01'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'dia_do_trabalhador', dia_do_trabalhador_dates, days_before=0, days_after=0)
+    
+    # Marcar Eleições com range de 0 dias antes e 0 dias depois
+    eleicoes_dates = [
+        '2018-10-07', '2018-10-28', '2022-10-02', '2022-10-30', '2024-10-06', '2024-10-27', '2026-10-04', '2026-10-25'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'eleicoes', eleicoes_dates, days_before=0, days_after=0)
+    
+    # Marcar Halloween com range de 1 dia antes e 1 dia depois
+    halloween_dates = [
+        '2013-10-31', '2014-10-31', '2015-10-31', '2016-10-31', '2017-10-31',
+        '2018-10-31', '2019-10-31', '2020-10-31', '2021-10-31', '2022-10-31',
+        '2023-10-31', '2024-10-31', '2025-10-31', '2026-10-31'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'halloween', halloween_dates, days_before=1, days_after=1)
+    
+    # Marcar Independência do Brasil com range de 0 dias antes e 0 dias depois
+    independencia_do_brasil_dates = [
+        '2013-09-07', '2014-09-07', '2015-09-07', '2016-09-07', '2017-09-07',
+        '2018-09-07', '2019-09-07', '2020-09-07', '2021-09-07', '2022-09-07',
+        '2023-09-07', '2024-09-07', '2025-09-07', '2026-09-07'
+    ]
+    data_neural = marcar_evento_range(data_neural, 'independencia_do_brasil', independencia_do_brasil_dates, days_before=0, days_after=0)
+    
     # Adicionar coluna com o dia da semana (0=Monday, ..., 6=Sunday)
     data_neural['dia_da_semana'] = pd.to_datetime(data_neural['ds']).dt.day_name()
     day_mapping = {

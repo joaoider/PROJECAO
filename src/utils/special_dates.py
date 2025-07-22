@@ -100,22 +100,68 @@ class SpecialDates:
         ('2020-03-01', 'Covid') 
 ],
 
-            
+        'dia_do_trabalhador': [
+    ('2013-05-01', 'Dia do Trabalhador'),
+    ('2014-05-01', 'Dia do Trabalhador'),
+    ('2015-05-01', 'Dia do Trabalhador'),
+    ('2016-05-01', 'Dia do Trabalhador'),
+    ('2017-05-01', 'Dia do Trabalhador'),
+    ('2018-05-01', 'Dia do Trabalhador'),
+    ('2019-05-01', 'Dia do Trabalhador'),
+    ('2020-05-01', 'Dia do Trabalhador'),
+    ('2021-05-01', 'Dia do Trabalhador'),
+    ('2022-05-01', 'Dia do Trabalhador'),
+    ('2023-05-01', 'Dia do Trabalhador'),
+    ('2024-05-01', 'Dia do Trabalhador'),
+    ('2025-05-01', 'Dia do Trabalhador'),
+    ('2026-05-01', 'Dia do Trabalhador')
+],
 
+        'eleicoes': [
+    ('2018-10-07', 'Eleições'),
+    ('2018-10-28', 'Eleições'),
+    ('2022-10-02', 'Eleições'),
+    ('2022-10-30', 'Eleições'),
+    ('2024-10-06', 'Eleições'),
+    ('2024-10-27', 'Eleições'),
+    ('2026-10-04', 'Eleições'),
+    ('2026-10-25', 'Eleições')
+],
 
-            
-            'liquidacoes': [
-                ('2020-01-06', 'Liquidação de Verão'),
-                ('2020-07-06', 'Liquidação de Inverno'),
-                ('2021-01-04', 'Liquidação de Verão'),
-                ('2021-07-05', 'Liquidação de Inverno'),
-                ('2022-01-03', 'Liquidação de Verão'),
-                ('2022-07-04', 'Liquidação de Inverno'),
-                ('2023-01-02', 'Liquidação de Verão'),
-                ('2023-07-03', 'Liquidação de Inverno'),
-                ('2024-01-02', 'Liquidação de Verão'),
-                ('2024-07-01', 'Liquidação de Inverno')
-            ]
+        'halloween': [
+    ('2013-10-31', 'Halloween'),
+    ('2014-10-31', 'Halloween'),
+    ('2015-10-31', 'Halloween'),
+    ('2016-10-31', 'Halloween'),
+    ('2017-10-31', 'Halloween'),
+    ('2018-10-31', 'Halloween'),
+    ('2019-10-31', 'Halloween'),
+    ('2020-10-31', 'Halloween'),
+    ('2021-10-31', 'Halloween'),
+    ('2022-10-31', 'Halloween'),
+    ('2023-10-31', 'Halloween'),
+    ('2024-10-31', 'Halloween'),
+    ('2025-10-31', 'Halloween'),
+    ('2026-10-31', 'Halloween')
+],
+
+        'independencia_do_brasil': [
+    ('2013-09-07', 'Independência do Brasil'),
+    ('2014-09-07', 'Independência do Brasil'),
+    ('2015-09-07', 'Independência do Brasil'),
+    ('2016-09-07', 'Independência do Brasil'),
+    ('2017-09-07', 'Independência do Brasil'),
+    ('2018-09-07', 'Independência do Brasil'),
+    ('2019-09-07', 'Independência do Brasil'),
+    ('2020-09-07', 'Independência do Brasil'),
+    ('2021-09-07', 'Independência do Brasil'),
+    ('2022-09-07', 'Independência do Brasil'),
+    ('2023-09-07', 'Independência do Brasil'),
+    ('2024-09-07', 'Independência do Brasil'),
+    ('2025-09-07', 'Independência do Brasil'),
+    ('2026-09-07', 'Independência do Brasil')
+],
+
         }
     
     def get_all_dates(self) -> pd.DataFrame:
@@ -208,4 +254,158 @@ def marcar_evento_range(df, nome_coluna, datas_evento, days_before=0, days_after
         start_range = data_evento - pd.Timedelta(days=days_before)
         end_range = data_evento + pd.Timedelta(days=days_after)
         df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), nome_coluna] = 1
-    return df 
+    return df
+
+def process_dia_do_trabalhador(df):
+    """
+    Processa o DataFrame para adicionar a coluna dia_do_trabalhador.
+    
+    Args:
+        df: DataFrame com coluna 'ds' (datas)
+        
+    Returns:
+        DataFrame com a coluna 'dia_do_trabalhador' adicionada
+    """
+    dia_do_trabalhador = df.copy()
+    
+    # Inicializa a coluna dia_do_trabalhador com 0
+    dia_do_trabalhador['dia_do_trabalhador'] = 0
+
+    # Intervalo de dias antes e depois é 0 para ambos, conforme especificado
+    days_before = 0
+    days_after = 0
+
+    # Lista de datas específicas para o Dia do Trabalhador conforme fornecido
+    specific_dates_dia_do_trabalhador = [
+        '2013-05-01', '2014-05-01', '2015-05-01', '2016-05-01', '2017-05-01',
+        '2018-05-01', '2019-05-01', '2020-05-01', '2021-05-01', '2022-05-01',
+        '2023-05-01', '2024-05-01', '2025-05-01', '2026-05-01'
+    ]
+    specific_dates_dia_do_trabalhador = pd.to_datetime(specific_dates_dia_do_trabalhador)
+
+    # Função para definir os valores no intervalo de datas específicas
+    def set_values(df, specific_dates, days_before, days_after):
+        for specific_date in specific_dates:
+            start_range = specific_date - pd.Timedelta(days=days_before)
+            end_range = specific_date + pd.Timedelta(days=days_after)
+            df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), 'dia_do_trabalhador'] = 1
+
+    # Aplicar a função ao DataFrame
+    set_values(dia_do_trabalhador, specific_dates_dia_do_trabalhador, days_before, days_after)
+
+    return dia_do_trabalhador
+
+def process_eleicoes(df):
+    """
+    Processa o DataFrame para adicionar a coluna eleicoes.
+    
+    Args:
+        df: DataFrame com coluna 'ds' (datas)
+        
+    Returns:
+        DataFrame com a coluna 'eleicoes' adicionada
+    """
+    eleicoes = df.copy()
+    
+    # Inicializa a coluna eleicoes com 0
+    eleicoes['eleicoes'] = 0
+
+    # Intervalo de dias antes e depois é 0 para ambos, conforme especificado
+    days_before = 0
+    days_after = 0
+
+    # Lista de datas específicas para as Eleições conforme fornecido
+    specific_dates_eleicoes = [
+        '2018-10-07', '2018-10-28', '2022-10-02', '2022-10-30', '2024-10-06', '2024-10-27', '2026-10-04', '2026-10-25'
+    ]
+    specific_dates_eleicoes = pd.to_datetime(specific_dates_eleicoes)
+
+    # Função para definir os valores no intervalo de datas específicas
+    def set_values(df, specific_dates, days_before, days_after):
+        for specific_date in specific_dates:
+            start_range = specific_date - pd.Timedelta(days=days_before)
+            end_range = specific_date + pd.Timedelta(days=days_after)
+            df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), 'eleicoes'] = 1
+
+    # Aplicar a função ao DataFrame
+    set_values(eleicoes, specific_dates_eleicoes, days_before, days_after)
+
+    return eleicoes
+
+def process_halloween(df):
+    """
+    Processa o DataFrame para adicionar a coluna halloween.
+    
+    Args:
+        df: DataFrame com coluna 'ds' (datas)
+        
+    Returns:
+        DataFrame com a coluna 'halloween' adicionada
+    """
+    halloween = df.copy()
+    
+    # Inicializa a coluna halloween com 0
+    halloween['halloween'] = 0
+
+    # Definir o range de dias antes e depois
+    days_before = 1
+    days_after = 1
+
+    # Lista de datas específicas para o Halloween, desde 2013 até 2025
+    specific_dates_halloween = [
+        '2013-10-31', '2014-10-31', '2015-10-31', '2016-10-31', '2017-10-31',
+        '2018-10-31', '2019-10-31', '2020-10-31', '2021-10-31', '2022-10-31',
+        '2023-10-31', '2024-10-31', '2025-10-31', '2026-10-31'
+    ]
+    specific_dates_halloween = pd.to_datetime(specific_dates_halloween)
+
+    # Função para definir os valores no intervalo de datas específicas
+    def set_values(df, specific_dates, days_before, days_after):
+        for specific_date in specific_dates:
+            start_range = specific_date - pd.Timedelta(days=days_before)
+            end_range = specific_date + pd.Timedelta(days=days_after)
+            df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), 'halloween'] = 1
+
+    # Aplicar a função ao DataFrame
+    set_values(halloween, specific_dates_halloween, days_before, days_after)
+
+    return halloween
+
+def process_independencia_do_brasil(df):
+    """
+    Processa o DataFrame para adicionar a coluna independencia_do_brasil.
+    
+    Args:
+        df: DataFrame com coluna 'ds' (datas)
+        
+    Returns:
+        DataFrame com a coluna 'independencia_do_brasil' adicionada
+    """
+    independencia_do_brasil = df.copy()
+    
+    # Inicializa a coluna independencia_do_brasil com 0
+    independencia_do_brasil['independencia_do_brasil'] = 0
+
+    # Intervalo de dias antes e depois é 0 para ambos, conforme especificado
+    days_before = 0
+    days_after = 0
+
+    # Lista de datas específicas para a Independência do Brasil conforme fornecido
+    specific_dates_independencia_do_brasil = [
+        '2013-09-07', '2014-09-07', '2015-09-07', '2016-09-07', '2017-09-07',
+        '2018-09-07', '2019-09-07', '2020-09-07', '2021-09-07', '2022-09-07',
+        '2023-09-07', '2024-09-07', '2025-09-07', '2026-09-07'
+    ]
+    specific_dates_independencia_do_brasil = pd.to_datetime(specific_dates_independencia_do_brasil)
+
+    # Função para definir os valores no intervalo de datas específicas
+    def set_values(df, specific_dates, days_before, days_after):
+        for specific_date in specific_dates:
+            start_range = specific_date - pd.Timedelta(days=days_before)
+            end_range = specific_date + pd.Timedelta(days=days_after)
+            df.loc[(df['ds'] >= start_range) & (df['ds'] <= end_range), 'independencia_do_brasil'] = 1
+
+    # Aplicar a função ao DataFrame
+    set_values(independencia_do_brasil, specific_dates_independencia_do_brasil, days_before, days_after)
+
+    return independencia_do_brasil 

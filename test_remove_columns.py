@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script de teste para verificar a correção do merge.
+Script de teste para verificar a remoção das colunas.
 """
 import sys
 import os
@@ -9,9 +9,9 @@ sys.path.append('src')
 import pandas as pd
 from utils.special_dates import SpecialDates
 
-def test_fix_merge():
-    """Testa a correção do merge."""
-    print("=== TESTE CORREÇÃO MERGE ===")
+def test_remove_columns():
+    """Testa a remoção das colunas problemáticas."""
+    print("=== TESTE REMOÇÃO DE COLUNAS ===")
     
     try:
         # Criar dados simulados
@@ -28,8 +28,8 @@ def test_fix_merge():
         special_dates = SpecialDates()
         dates_df = special_dates.get_all_dates()
         
-        # Fazer merge com correção
-        print("\n3. Fazendo merge com correção...")
+        # Fazer merge
+        print("\n3. Fazendo merge...")
         merged_df = pd.merge(
             data_neural,
             dates_df,
@@ -38,33 +38,34 @@ def test_fix_merge():
             how='left'
         )
         
-        # Aplicar correção
-        print("\n4. Aplicando correção...")
-        merged_df['tipo'] = merged_df['tipo'].fillna('sem_evento')
-        merged_df['evento'] = merged_df['evento'].fillna('Sem Evento')
-        
-        # Remover coluna 'data' duplicada se existir
-        if 'data' in merged_df.columns:
-            merged_df = merged_df.drop(columns=['data'])
-        
-        print(f"Merge corrigido: {merged_df.shape}")
+        print(f"Antes da remoção: {merged_df.shape}")
         print(f"Colunas: {merged_df.columns.tolist()}")
         
-        # Verificar valores nulos após correção
-        print(f"\n5. Verificando valores nulos após correção:")
+        # Remover colunas problemáticas
+        print("\n4. Removendo colunas problemáticas...")
+        if 'data' in merged_df.columns:
+            merged_df = merged_df.drop(columns=['data'])
+        if 'tipo' in merged_df.columns:
+            merged_df = merged_df.drop(columns=['tipo'])
+        if 'evento' in merged_df.columns:
+            merged_df = merged_df.drop(columns=['evento'])
+        
+        print(f"Após remoção: {merged_df.shape}")
+        print(f"Colunas: {merged_df.columns.tolist()}")
+        
+        # Verificar se há valores nulos
+        print(f"\n5. Verificando valores nulos:")
         null_counts = merged_df.isnull().sum()
         print(f"Valores nulos: {null_counts}")
         
         if null_counts.any():
             print("❌ AINDA HÁ VALORES NULOS!")
-            null_columns = null_counts[null_counts > 0].index.tolist()
-            print(f"Colunas com nulos: {null_columns}")
         else:
-            print("✅ Nenhum valor nulo encontrado após correção")
+            print("✅ Nenhum valor nulo encontrado")
         
-        # Verificar valores únicos nas colunas
-        print(f"\n6. Valores únicos em 'tipo': {merged_df['tipo'].unique()}")
-        print(f"Valores únicos em 'evento': {merged_df['evento'].unique()}")
+        # Verificar tipos de dados
+        print(f"\n6. Tipos de dados:")
+        print(merged_df.dtypes)
         
         return True
         
@@ -75,7 +76,7 @@ def test_fix_merge():
         return False
 
 if __name__ == "__main__":
-    success = test_fix_merge()
+    success = test_remove_columns()
     if success:
         print("\n✅ TESTE CONCLUÍDO COM SUCESSO")
     else:

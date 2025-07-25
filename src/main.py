@@ -87,13 +87,14 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
         how='left'
     )
     
-    # Preencher valores nulos das colunas de eventos
-    data_neural['tipo'] = data_neural['tipo'].fillna('sem_evento')
-    data_neural['evento'] = data_neural['evento'].fillna('Sem Evento')
-    
-    # Remover coluna 'data' duplicada se existir
+    # Remover colunas de eventos que não são necessárias para o modelo
+    # (elas são usadas apenas para marcar eventos específicos)
     if 'data' in data_neural.columns:
         data_neural = data_neural.drop(columns=['data'])
+    if 'tipo' in data_neural.columns:
+        data_neural = data_neural.drop(columns=['tipo'])
+    if 'evento' in data_neural.columns:
+        data_neural = data_neural.drop(columns=['evento'])
 
     # Marcar Black Friday com range de 1 dia antes e 1 dia depois
     data_neural = marcar_evento_range(data_neural, 'black_friday', special_dates.get_black_friday_dates(), days_before=1, days_after=1)

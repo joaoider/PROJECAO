@@ -96,9 +96,9 @@ class SpecialDates:
     ('2026-07-11', 'Copa do Mundo')
 ],       
 
-        'covid':[
-        ('2020-03-01', 'Covid') 
-],
+        'covid': [
+            ('2020-03-01', 'Covid')
+        ],
 
         'dia_do_trabalhador': [
     ('2013-05-01', 'Dia do Trabalhador'),
@@ -328,14 +328,30 @@ class SpecialDates:
         
         for tipo, datas in self.dates.items():
             for data, evento in datas:
-                dates_list.append({
-                    'data': pd.to_datetime(data),
-                    'tipo': tipo,
-                    'evento': evento
-                })
+                # Validar se data e evento não são None ou vazios
+                if data and evento and pd.notna(data) and pd.notna(evento):
+                    try:
+                        dates_list.append({
+                            'data': pd.to_datetime(data),
+                            'tipo': tipo,
+                            'evento': evento
+                        })
+                    except (ValueError, TypeError) as e:
+                        logger.warning(f"Data inválida ignorada: {data} - {evento} - Erro: {e}")
+                        continue
+        
+        if not dates_list:
+            logger.warning("Nenhuma data válida encontrada")
+            return pd.DataFrame(columns=['data', 'tipo', 'evento'])
         
         df = pd.DataFrame(dates_list)
         df = df.sort_values('data')
+        
+        # Verificar se há valores nulos
+        if df.isnull().any().any():
+            logger.warning(f"Valores nulos encontrados: {df.isnull().sum()}")
+            df = df.dropna()
+        
         return df
     
     def get_dates_by_type(self, tipo: str) -> pd.DataFrame:

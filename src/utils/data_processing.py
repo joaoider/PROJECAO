@@ -157,6 +157,9 @@ class DataProcessor:
             data: DataFrame com os dados processados
             output_dir: Diretório de saída
         """
+        # Garante que o diretório existe
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
         output_file = output_dir / f'processed_data_{self.marca}.csv'
         data.to_csv(output_file, index=False)
         logger.info(f"Dados processados salvos em {output_file}") 

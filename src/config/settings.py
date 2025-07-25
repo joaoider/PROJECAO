@@ -191,16 +191,24 @@ def create_forecast_directories():
             dir_path.mkdir(parents=True, exist_ok=True)
     return FORECASTS_DIR
 
-# Criar diretórios necessários
-for directory in [RAW_DATA_DIR, PROCESSED_DATA_DIR]:
-    directory.mkdir(parents=True, exist_ok=True)
+def create_all_directories():
+    """Cria todos os diretórios necessários."""
+    # Criar diretórios base
+    for directory in [RAW_DATA_DIR, PROCESSED_DATA_DIR]:
+        directory.mkdir(parents=True, exist_ok=True)
+    
+    # Criar diretórios para cada marca e tipo
+    for marca in MARCAS:
+        for tipo in TIPOS_PREVISAO:
+            # Diretório de dados processados
+            processed_dir = PROCESSED_DATA_DIR / marca / tipo
+            processed_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Diretório de previsões
+            forecast_dir = FORECASTS_DIR / marca / tipo
+            forecast_dir.mkdir(parents=True, exist_ok=True)
+    
+    return FORECASTS_DIR
 
-# Criar estrutura de diretórios para previsões
-#<<<<<<< Updated upstream
-#FORECASTS_DIR = create_forecast_directories() 
-#=======
-#FORECASTS_DIR = create_forecast_directories()
-
-# Modelos a serem executados (adicione ou remova conforme desejar)
-MODELOS_A_EXECUTAR = ['LSTM']#, 'GRU', 'NHITS', 'NBEATSx'] 
-#>>>>>>> Stashed changes
+# Criar todos os diretórios necessários
+FORECASTS_DIR = create_all_directories()

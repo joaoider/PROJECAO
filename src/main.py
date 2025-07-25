@@ -214,9 +214,27 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
             # Treinar e avaliar
             model.fit(data_neural)
             predictions = model.predict(data_neural)
+            
+            # Verificar a estrutura das previsões e extrair y_pred
+            logger.info(f"Estrutura das previsões: {predictions.columns.tolist()}")
+            
+            # NeuralForecast retorna previsões com colunas específicas
+            # Procurar por coluna de previsão (geralmente termina com _LSTM, _GRU, etc.)
+            y_pred_col = None
+            for col in predictions.columns:
+                if col != 'ds' and col != 'unique_id' and not col.startswith('y'):
+                    y_pred_col = col
+                    break
+            
+            if y_pred_col is None:
+                logger.error(f"Nenhuma coluna de previsão encontrada. Colunas disponíveis: {predictions.columns.tolist()}")
+                continue
+                
+            logger.info(f"Usando coluna de previsão: {y_pred_col}")
+            
             metrics = calculate_metrics(
                 data_neural['y'],
-                predictions['y_pred']
+                predictions[y_pred_col]
             )
             # Chave única para cada combinação
             result_key = f"{model_name}_{'_'.join([str(v) for v in param_values])}" if param_values else model_name

@@ -463,7 +463,7 @@ def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str,
         sparkdf = spark.createDataFrame(df_pandas)
 
         # Data de início do futuro para nome do arquivo
-        data_inicio_futr = DATA_INICIO_FUTR.strftime('%Y%m%d')
+        data_inicio_futr = pd.to_datetime(DATA_INICIO_FUTR).strftime('%Y%m%d')
 
         # Diretório temporário para cada execução
         temp_blob_path = f"{blob_path}/temp_{marca}_{tipo_previsao}_{data_inicio_futr}"

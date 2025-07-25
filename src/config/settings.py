@@ -125,15 +125,12 @@ MODEL_PARAM_GRID = {
         'decoder_hidden_size': [200],
         'encoder_n_layers': [2],
         'decoder_layers': [2],
-        'context_size': [10],
         'encoder_bias': [True],
         'encoder_dropout': [0.0],
         'num_lr_decays': [-1],
         'early_stop_patience_steps': [-1],
         'val_check_steps': [100],
-        'random_seed': [1],
-        'num_workers_loader': [0],
-        'drop_last_loader': [False]
+        'random_seed': [1]
     },
     'GRU': {
         'max_steps': [1],
@@ -143,7 +140,6 @@ MODEL_PARAM_GRID = {
         'decoder_hidden_size': [50],
         'encoder_n_layers': [2],
         'decoder_layers': [2],
-        'context_size': [10],
         'encoder_activation': ['tanh'],
         'encoder_bias': [True],
         'encoder_dropout': [0.0],

@@ -334,6 +334,15 @@ def find_best_model(results: dict, marca: str, tipo_previsao: str):
     # Salvar relatório detalhado de todos os modelos
     df_report = save_model_comparison_report(model_scores, marca, tipo_previsao)
     
+    # Salvar parâmetros do melhor modelo na pasta com data
+    data_atual = datetime.now().strftime('%Y%m')
+    pasta_data = FORECASTS_DIR / marca / tipo_previsao / data_atual
+    pasta_data.mkdir(parents=True, exist_ok=True)
+    
+    best_model_data['model'].save_model(
+        pasta_data / f'melhor_modelo_parametros_{best_model_key}.csv'
+    )
+    
     # Imprimir resumo completo
     print_evaluation_summary(results, model_scores, marca, tipo_previsao)
     
@@ -362,8 +371,13 @@ def save_model_comparison_report(model_scores: dict, marca: str, tipo_previsao: 
     # Ordenar por score composto (melhor primeiro)
     df_report = df_report.sort_values('Score_Composto', ascending=False)
     
+    # Criar pasta com data atual para organizar os arquivos
+    data_atual = datetime.now().strftime('%Y%m')
+    pasta_data = FORECASTS_DIR / marca / tipo_previsao / data_atual
+    pasta_data.mkdir(parents=True, exist_ok=True)
+    
     # Salvar relatório
-    report_path = FORECASTS_DIR / marca / tipo_previsao / f'relatorio_comparacao_modelos.csv'
+    report_path = pasta_data / f'relatorio_comparacao_modelos.csv'
     df_report.to_csv(report_path, index=False)
     
     logger.info(f"📊 Relatório de comparação salvo em: {report_path}")
@@ -416,8 +430,14 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     # Faz previsões com o melhor modelo
     predictions = best_model[1]['model'].predict(data_neural)
     
+    # Criar pasta com data atual para organizar os arquivos
+    data_atual = datetime.now().strftime('%Y%m')
+    pasta_data = FORECASTS_DIR / marca / tipo_previsao / data_atual
+    pasta_data.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Pasta criada: {pasta_data}")
+    
     # Salva as previsões em CSV
-    csv_path = FORECASTS_DIR / marca / tipo_previsao / f'previsoes_finais_{best_model[0]}.csv'
+    csv_path = pasta_data / f'previsoes_finais_{best_model[0]}.csv'
     predictions.to_csv(csv_path, index=False)
     logger.info(f"Previsões finais salvas com sucesso para marca {marca} e tipo {tipo_previsao}")
 
@@ -427,7 +447,7 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
         logger.info(f"Convertendo CSV para Parquet usando Spark: {csv_path}")
         df_pandas = pd.read_csv(csv_path)
         sparkdf = spark.createDataFrame(df_pandas)
-        parquet_path = str(FORECASTS_DIR / marca / tipo_previsao / f'previsoes_finais_{best_model[0]}.parquet')
+        parquet_path = str(pasta_data / f'previsoes_finais_{best_model[0]}.parquet')
         sparkdf.coalesce(1).write.mode('overwrite').parquet(parquet_path)
         logger.info(f"Parquet salvo com sucesso em {parquet_path}")
     except Exception as e:

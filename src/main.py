@@ -462,11 +462,11 @@ def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str,
         
         sparkdf = spark.createDataFrame(df_pandas)
 
-        # Data de início do futuro para nome do arquivo
-        data_inicio_futr = pd.to_datetime(DATA_INICIO_FUTR).strftime('%Y%m%d')
+        # Data atual (ano e mês de hoje) para nome do arquivo
+        data_atual = datetime.now().strftime('%Y%m')
 
         # Diretório temporário para cada execução
-        temp_blob_path = f"{blob_path}/temp_{marca}_{tipo_previsao}_{data_inicio_futr}"
+        temp_blob_path = f"{blob_path}/temp_{marca}_{tipo_previsao}_{data_atual}"
 
         # Salvar o arquivo parquet temporariamente
         logger.info('Salvando parquet em diretório temporário.')
@@ -479,7 +479,7 @@ def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str,
         )
 
         # Nome desejado do arquivo final
-        nome_final = f"{marca}_{tipo_previsao}_{data_inicio_futr}.parquet"
+        nome_final = f"{marca}_{tipo_previsao}_{data_atual}.parquet"
 
         # Obter o nome do arquivo Parquet gerado
         parquet_name = [x.name for x in dbutils.fs.ls(temp_blob_path) if x.name.startswith("part")][0]

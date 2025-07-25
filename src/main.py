@@ -21,6 +21,14 @@ import os
 from pyspark.sql import SparkSession
 import itertools
 
+# Importar dbutils para operações no Azure Blob Storage
+try:
+    from pyspark.dbutils import DBUtils
+    dbutils = DBUtils(SparkSession.builder.getOrCreate())
+except ImportError:
+    # Fallback para ambiente local
+    dbutils = None
+
 # Importar losses do neuralforecast
 try:
     from neuralforecast.losses.pytorch import MAE, MSE, RMSE, MAPE
@@ -413,7 +421,7 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     predictions.to_csv(csv_path, index=False)
     logger.info(f"Previsões finais salvas com sucesso para marca {marca} e tipo {tipo_previsao}")
 
-    # Salva as previsões em Parquet usando Spark
+    # Salva as previsões em Parquet usando Spark (local)
     try:
         spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
         logger.info(f"Convertendo CSV para Parquet usando Spark: {csv_path}")
@@ -423,7 +431,70 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
         sparkdf.coalesce(1).write.mode('overwrite').parquet(parquet_path)
         logger.info(f"Parquet salvo com sucesso em {parquet_path}")
     except Exception as e:
-        logger.error(f"Erro ao salvar Parquet: {e}")
+        logger.error(f"Erro ao salvar Parquet local: {e}")
+
+    # Salva as previsões em Parquet no Azure Blob Storage
+    try:
+        salvar_em_parquet_azure(predictions, marca, tipo_previsao)
+        logger.info(f"Parquet salvo com sucesso no Azure Blob Storage para marca {marca} e tipo {tipo_previsao}")
+    except Exception as e:
+        logger.error(f"Erro ao salvar Parquet no Azure: {e}")
+
+def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str, 
+                           blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/"):
+    """
+    Salva o DataFrame em parquet no Azure Blob Storage.
+    
+    Args:
+        df_pandas: DataFrame pandas com as previsões
+        marca: Nome da marca
+        tipo_previsao: Tipo de previsão
+        blob_path: Caminho do blob storage
+    """
+    try:
+        # Verificar se dbutils está disponível
+        if dbutils is None:
+            logger.warning("dbutils não disponível. Pulando salvamento no Azure Blob Storage.")
+            return
+            
+        spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
+        logger.info('Convertendo para Spark DataFrame.')
+        
+        sparkdf = spark.createDataFrame(df_pandas)
+
+        # Data de início do futuro para nome do arquivo
+        data_inicio_futr = DATA_INICIO_FUTR.strftime('%Y%m%d')
+
+        # Diretório temporário para cada execução
+        temp_blob_path = f"{blob_path}/temp_{marca}_{tipo_previsao}_{data_inicio_futr}"
+
+        # Salvar o arquivo parquet temporariamente
+        logger.info('Salvando parquet em diretório temporário.')
+        (sparkdf
+         .coalesce(1)
+         .write
+         .mode('overwrite')
+         .format('parquet')
+         .save(temp_blob_path)
+        )
+
+        # Nome desejado do arquivo final
+        nome_final = f"{marca}_{tipo_previsao}_{data_inicio_futr}.parquet"
+
+        # Obter o nome do arquivo Parquet gerado
+        parquet_name = [x.name for x in dbutils.fs.ls(temp_blob_path) if x.name.startswith("part")][0]
+
+        # Mover o arquivo parquet gerado para o diretório definitivo com o nome desejado
+        dbutils.fs.mv(f"{temp_blob_path}/{parquet_name}", f"{blob_path}/{nome_final}")
+
+        # Remover o diretório temporário usado
+        dbutils.fs.rm(temp_blob_path, recurse=True)
+
+        logger.info(f"Parquet salvo com sucesso no Azure: {blob_path}/{nome_final}")
+        
+    except Exception as e:
+        logger.error(f"Erro ao salvar parquet no Azure: {e}")
+        raise
 
 def process_marca_tipo(marca: str, tipo_previsao: str):
     """Processa uma combinação específica de marca e tipo."""

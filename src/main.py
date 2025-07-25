@@ -49,11 +49,11 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-def load_data():
+def load_data(marca: str, tipo_previsao: str):
     """Carrega os dados do Databricks."""
-    logger.info("Carregando dados do Databricks")
+    logger.info(f"Carregando dados do Databricks para marca {marca} e tipo {tipo_previsao}")
     queries = DataQueries()
-    data = queries.execute_query('vendas')
+    data = queries.execute_query('vendas', marca, tipo_previsao)
     logger.info(f"Dados carregados: {len(data)} registros")
     return data
 
@@ -403,7 +403,7 @@ def process_marca_tipo(marca: str, tipo_previsao: str):
         logger.info(f"Iniciando processamento para marca {marca} e tipo {tipo_previsao}")
         
         # Carrega os dados
-        data = load_data()
+        data = load_data(marca, tipo_previsao)
         
         # Processa os dados
         data_neural = process_data(data, marca, tipo_previsao)
@@ -430,7 +430,8 @@ def main():
 
         # Salvar variáveis de configuração
         # Ajuste aqui para passar as listas corretas de variáveis futuras e históricas
-        salvar_variaveis_csv(MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, DATA_INICIO_BASE)
+        marca_para_salvar = MARCAS[0] if MARCAS else 'default'
+        salvar_variaveis_csv(marca_para_salvar, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, DATA_INICIO_BASE)
         
         # Processa cada combinação de marca e tipo
         for marca in MARCAS:

@@ -78,9 +78,9 @@ class DataQueries:
         query = f"""
         SELECT A.DATA, D.MARCA_SIGLA, split_part(A.ID_LOJA_VENDA, ':',2) as CODIGO_FILIAL, 
                A.CANAL_ORIGEM, A.LINHA, A.GRUPO, A.CATEGORIA_N1, A.TIPO_VENDA, A.STATUS_PRODUTO, 
-               B.CIDADE, B.UF, C.GRIFFE, sum(A.VLF) AS VLF, SUM(A.QLF) AS QLF, 
-               sum(A.ROL) AS ROL, sum(A.CPV) AS CPV, AVG(A.VLF) AS MEDIA_VLF, 
-               AVG(A.QLF) AS MEDIA_QLF, AVG(A.ROL) AS MEDIA_ROL, AVG(A.CPV) AS MEDIA_CPV
+               B.CIDADE, B.UF, C.GRIFFE, CAST(sum(A.VLF) AS DOUBLE) AS VLF, CAST(SUM(A.QLF) AS DOUBLE) AS QLF, 
+               CAST(sum(A.ROL) AS DOUBLE) AS ROL, CAST(sum(A.CPV) AS DOUBLE) AS CPV, CAST(AVG(A.VLF) AS DOUBLE) AS MEDIA_VLF, 
+               CAST(AVG(A.QLF) AS DOUBLE) AS MEDIA_QLF, CAST(AVG(A.ROL) AS DOUBLE) AS MEDIA_ROL, CAST(AVG(A.CPV) AS DOUBLE) AS MEDIA_CPV
         FROM gold_planejamento.fact_faturamento_B2c A
         JOIN gold.dim_filiais B ON split_part(A.ID_LOJA_VENDA, ':',2) = B.CODIGO_FILIAL
         JOIN gold_planejamento.dim_produtos C on A.PRODUTO = C.PRODUTO

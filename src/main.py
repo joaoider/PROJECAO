@@ -64,7 +64,6 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     # Inicializa o processador de dados
     processor = DataProcessor(
         marca=marca,
-        tipo_previsao=tipo_previsao,
         data_inicio=DATA_INICIO_BASE,
         data_fim=DATA_FINAL_BASE
     )

@@ -64,8 +64,8 @@ class DataProcessor:
             data['unique_id'] = self.marca
         data['unique_id'] = data['unique_id'].astype(object)
         
-        # Agrupa dados
-        group_cols = ['DATA', 'unique_id'] if unique_id is not None else ['DATA']
+        # Agrupa dados sempre incluindo unique_id
+        group_cols = ['DATA', 'unique_id']
         data = data.groupby(group_cols).agg({
             'VLF': 'sum',
             'QLF': 'sum',
@@ -79,9 +79,24 @@ class DataProcessor:
         # Prepara dados para modelo neural
         data_neural = data.copy()
         data_neural.rename(columns={'DATA': 'ds', 'VLF': 'y'}, inplace=True)
-        data_neural = data_neural[['ds', 'unique_id', 'y', 'QLF', 'ROL', 'CPV']]
+        
+        # Verifica se todas as colunas necessárias existem
+        required_columns = ['ds', 'unique_id', 'y', 'QLF', 'ROL', 'CPV']
+        available_columns = data_neural.columns.tolist()
+        logger.info(f"Colunas disponíveis: {available_columns}")
+        logger.info(f"Colunas necessárias: {required_columns}")
+        
+        # Verifica se todas as colunas estão presentes
+        missing_columns = [col for col in required_columns if col not in available_columns]
+        if missing_columns:
+            logger.error(f"Colunas faltando: {missing_columns}")
+            raise ValueError(f"Colunas necessárias não encontradas: {missing_columns}")
+        
+        data_neural = data_neural[required_columns]
         
         logger.info(f"Processamento de dados concluído para {self.marca}")
+        logger.info(f"Shape final: {data_neural.shape}")
+        logger.info(f"Colunas finais: {data_neural.columns.tolist()}")
         return data_neural
     
     def verify_missing_dates(self, data: pd.DataFrame) -> pd.DataFrame:

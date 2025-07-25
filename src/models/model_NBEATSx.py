@@ -1,37 +1,85 @@
-print('model_NBEATSx.py iniciado')
+"""
+Modelo NBEATSx para previsão de vendas.
+"""
+import pandas as pd
+import numpy as np
+from neuralforecast import NeuralForecast
+from neuralforecast.models import NBEATSx
+from typing import Dict, Any
+import logging
 
-from configs.configuracoes_NBEATSx import *
-from base import data_neural_train, futr_df_test
-from configuracoes import horizon, freq
-from funcoes import get_output_dir
-from src.config.settings import HORIZON
+logger = logging.getLogger(__name__)
 
-# Função para treinar o modelo NBEATSx
-def treinar_NBEATSx(max_steps, learning_rate, batch_size, activation):
-    print(f'model_NBEATSx.py iniciado com max_steps={max_steps}, learning_rate={learning_rate}, batch_size={batch_size}, activation={activation}')
+class NBEATSxModel:
+    """Classe para modelo NBEATSx."""
     
-    # Definir o modelo NBEATSx com os parâmetros variáveis
-    model = [NBEATSx(
-                max_steps=max_steps,  # Número máximo de iterações
-                input_size=5 * HORIZON,  # Tamanho do input, ajustado para o horizonte
-                h=HORIZON,  # Horizonte de previsão
-                n_harmonics=2,  # Número de harmônicos
-                n_polynomials=2,  # Número de polinômios
-                activation=activation,  # Função de ativação (ReLU, Softplus, etc.)
-                learning_rate=learning_rate,  # Taxa de aprendizado
-                num_lr_decays=3,  # Número de reduções na taxa de aprendizado
-                early_stop_patience_steps=-1,  # Paciência para o early stopping
-                val_check_steps=100,  # Intervalo de checagem de validação
-                batch_size=batch_size,  # Tamanho do batch
-                random_seed=1  # Semente aleatória para reprodutibilidade
-            )]
-
-    # Instanciar e treinar o modelo
-    nf = NeuralForecast(models = model, freq = freq)
-    nf.fit(df = data_neural_train)
-
-    # Gerar previsões
-    data_neural_hat = nf.predict(futr_df = futr_df_test)
-
-    print('model_NBEATSx.py finalizado')
-    return data_neural_hat
+    def __init__(self, **kwargs):
+        """
+        Inicializa o modelo NBEATSx.
+        
+        Args:
+            **kwargs: Parâmetros do modelo
+        """
+        self.params = kwargs
+        self.model = None
+        self.nf = None
+        
+    def fit(self, data: pd.DataFrame):
+        """
+        Treina o modelo NBEATSx.
+        
+        Args:
+            data: DataFrame com os dados de treinamento
+        """
+        logger.info(f"Treinando modelo NBEATSx com parâmetros: {self.params}")
+        
+        # Criar modelo NBEATSx
+        self.model = NBEATSx(
+            h=365,  # Horizonte de previsão
+            input_size=-1,
+            **self.params
+        )
+        
+        # Instanciar NeuralForecast
+        self.nf = NeuralForecast(models=[self.model], freq='D')
+        
+        # Treinar modelo
+        self.nf.fit(df=data)
+        
+        logger.info("Modelo NBEATSx treinado com sucesso")
+    
+    def predict(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Faz previsões com o modelo NBEATSx.
+        
+        Args:
+            data: DataFrame com dados para previsão
+            
+        Returns:
+            DataFrame com previsões
+        """
+        logger.info("Fazendo previsões com modelo NBEATSx")
+        
+        if self.nf is None:
+            raise ValueError("Modelo não foi treinado. Chame fit() primeiro.")
+        
+        # Fazer previsões
+        predictions = self.nf.predict(df=data)
+        
+        logger.info("Previsões NBEATSx geradas com sucesso")
+        return predictions
+    
+    def save_model(self, filepath: str):
+        """
+        Salva os parâmetros do modelo.
+        
+        Args:
+            filepath: Caminho para salvar os parâmetros
+        """
+        import pandas as pd
+        
+        # Criar DataFrame com parâmetros
+        params_df = pd.DataFrame([self.params])
+        params_df.to_csv(filepath, index=False)
+        
+        logger.info(f"Parâmetros do modelo NBEATSx salvos em {filepath}")

@@ -67,16 +67,19 @@ def load_data(marca: str, tipo_previsao: str):
     logger.info(f"Dados carregados: {len(data)} registros")
     return data
 
-def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
+def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str, data_fim: str = None):
     """Processa os dados iniciais para uma marca e tipo específico."""
+    # Usar data_fim fornecida ou DATA_FINAL_BASE padrão
+    data_fim_processamento = data_fim if data_fim else DATA_FINAL_BASE
+    
     logger.info(f"Iniciando processamento de dados para marca {marca} e tipo {tipo_previsao}")
-    logger.info(f"Período dos dados: {DATA_INICIO_BASE} até {DATA_FINAL_BASE}")
+    logger.info(f"Período dos dados: {DATA_INICIO_BASE} até {data_fim_processamento}")
     
     # Inicializa o processador de dados
     processor = DataProcessor(
         marca=marca,
         data_inicio=DATA_INICIO_BASE,
-        data_fim=DATA_FINAL_BASE
+        data_fim=data_fim_processamento
     )
     
     # Processa os dados
@@ -647,22 +650,31 @@ def process_marca_tipo_with_date(marca: str, tipo_previsao: str, reference_date:
         
         try:
             # Atualizar configurações para a data de referência
+            # DATA_ATUAL = data de referência (último dia do mês anterior)
             DATA_ATUAL = reference_date
+            
+            # DATA_TRAIN = até 1 ano antes da data de referência
             DATA_TRAIN = (reference_date - timedelta(days=365)).strftime('%Y-%m-%d')
+            
+            # DATA_TEST = início do período de teste (1 ano antes da referência)
             DATA_TEST = (reference_date - timedelta(days=365)).strftime('%Y-%m-%d')
+            
+            # DATA_INICIO_FUTR = data de referência (início das previsões futuras)
             DATA_INICIO_FUTR = reference_date.strftime('%Y-%m-%d')
+            
+            # DATA_FINAL_FUTR = 1 ano após a data de referência
             DATA_FINAL_FUTR = (reference_date + timedelta(days=365)).strftime('%Y-%m-%d')
             
             logger.info(f"Configurações atualizadas para data de referência {reference_date.strftime('%Y-%m-%d')}")
             logger.info(f"Período de treinamento: até {DATA_TRAIN}")
             logger.info(f"Período de teste: {DATA_TEST} até {DATA_ATUAL.strftime('%Y-%m-%d')}")
-            logger.info(f"Período de previsões: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
+            logger.info(f"Período de previsões futuras: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
             
             # Carrega os dados
             data = load_data(marca, tipo_previsao)
             
-            # Processa os dados
-            data_neural = process_data(data, marca, tipo_previsao)
+            # Processa os dados até a data de referência
+            data_neural = process_data(data, marca, tipo_previsao, data_fim=reference_date.strftime('%Y-%m-%d'))
             
             # Treina e avalia os modelos
             results = train_and_evaluate_models(data_neural, marca, tipo_previsao)

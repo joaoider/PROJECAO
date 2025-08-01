@@ -532,13 +532,14 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
 
     # Salva as previsões em Parquet no Azure Blob Storage
     try:
-        salvar_em_parquet_azure(predictions_final, marca, tipo_previsao)
+        salvar_em_parquet_azure(predictions_final, marca, tipo_previsao, reference_date=reference_date)
         logger.info(f"Parquet salvo com sucesso no Azure Blob Storage para marca {marca} e tipo {tipo_previsao}")
     except Exception as e:
         logger.error(f"Erro ao salvar Parquet no Azure: {e}")
 
 def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str, 
-                           blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/"):
+                           blob_path="/mnt/analytics/planejamento/datascience/forecast_marca/",
+                           reference_date: datetime = None):
     """
     Salva o DataFrame em parquet no Azure Blob Storage.
     
@@ -547,6 +548,7 @@ def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str,
         marca: Nome da marca
         tipo_previsao: Tipo de previsão
         blob_path: Caminho do blob storage
+        reference_date: Data de referência para nomear o arquivo
     """
     try:
         # Verificar se dbutils está disponível
@@ -559,11 +561,14 @@ def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str,
         
         sparkdf = spark.createDataFrame(df_pandas)
 
-        # Data atual (ano e mês de hoje) para nome do arquivo
-        data_atual = datetime.now().strftime('%Y%m')
+        # Usar data de referência se fornecida, senão usar data atual
+        if reference_date:
+            data_ref = reference_date.strftime('%Y%m')
+        else:
+            data_ref = datetime.now().strftime('%Y%m')
 
         # Diretório temporário para cada execução
-        temp_blob_path = f"{blob_path}/temp_{marca}_{tipo_previsao}_{data_atual}"
+        temp_blob_path = f"{blob_path}/temp_{marca}_{tipo_previsao}_{data_ref}"
 
         # Salvar o arquivo parquet temporariamente
         logger.info('Salvando parquet em diretório temporário.')
@@ -576,7 +581,7 @@ def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str,
         )
 
         # Nome desejado do arquivo final
-        nome_final = f"{marca}_{tipo_previsao}_{data_atual}.parquet"
+        nome_final = f"{marca}_{tipo_previsao}_{data_ref}.parquet"
 
         # Obter o nome do arquivo Parquet gerado
         parquet_name = [x.name for x in dbutils.fs.ls(temp_blob_path) if x.name.startswith("part")][0]

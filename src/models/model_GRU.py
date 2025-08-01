@@ -65,8 +65,12 @@ class GRUModel:
         if self.nf is None:
             raise ValueError("Modelo não foi treinado. Chame fit() primeiro.")
         
+        # Usar o método make_future_dataframe para obter o formato correto
+        # e depois ajustar as datas conforme necessário
+        base_futr_df = self.nf.make_future_dataframe(df=data)
+        
         # Obter datas de referência das configurações globais
-        from config.settings import DATA_ATUAL, DATA_INICIO_FUTR, DATA_FINAL_FUTR
+        from config.settings import DATA_INICIO_FUTR, DATA_FINAL_FUTR
         
         # Criar range de datas futuras baseado nas configurações
         start_date = pd.to_datetime(DATA_INICIO_FUTR)
@@ -81,12 +85,23 @@ class GRUModel:
         # Obter todos os unique_ids dos dados
         unique_ids = data['unique_id'].unique()
         
-        # Criar todas as combinações de unique_id e datas futuras
+        # Criar futr_df com o mesmo formato que o NeuralForecast espera
         futr_df = pd.DataFrame([
             {'ds': date, 'unique_id': uid}
             for date in future_dates
             for uid in unique_ids
         ])
+        
+        # Verificar se há combinações faltantes
+        try:
+            missing_combinations = self.nf.get_missing_future(futr_df)
+            if len(missing_combinations) > 0:
+                logger.warning(f"Combinações faltantes encontradas: {len(missing_combinations)}")
+                # Adicionar as combinações faltantes
+                futr_df = pd.concat([futr_df, missing_combinations], ignore_index=True)
+                futr_df = futr_df.drop_duplicates(subset=['ds', 'unique_id'])
+        except Exception as e:
+            logger.warning(f"Erro ao verificar combinações faltantes: {e}")
         
         logger.info(f"Gerando previsões para {len(futr_df)} períodos futuros")
         logger.info(f"Período: {futr_df['ds'].min()} até {futr_df['ds'].max()}")

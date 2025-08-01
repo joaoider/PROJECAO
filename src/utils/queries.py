@@ -61,7 +61,7 @@ class DataQueries:
             }
         }
 
-    def get_sales_data(self, marca: str, griffe_list: List[str], data_inicio: str) -> pd.DataFrame:
+    def get_sales_data(self, marca: str, griffe_list: List[str], data_inicio: str, data_fim: str = None) -> pd.DataFrame:
         """
         Obtém dados de vendas para uma marca e lista de griffes específicas.
         
@@ -69,11 +69,17 @@ class DataQueries:
             marca: Sigla da marca
             griffe_list: Lista de griffes para filtrar
             data_inicio: Data inicial para filtrar os dados
+            data_fim: Data final para filtrar os dados (opcional)
             
         Returns:
             DataFrame com os dados de vendas
         """
         griffe_condition = ', '.join(f"'{griffe}'" for griffe in griffe_list)
+        
+        # Construir a condição de data
+        data_condition = f"DATA >= '{data_inicio}'"
+        if data_fim:
+            data_condition += f" AND DATA <= '{data_fim}'"
         
         query = f"""
         SELECT A.DATA, D.MARCA_SIGLA, split_part(A.ID_LOJA_VENDA, ':',2) as CODIGO_FILIAL, 
@@ -87,7 +93,7 @@ class DataQueries:
         JOIN gold_planejamento.dim_marcas D ON A.REDE_LOJAS_VENDA = D.REDE_LOJAS
         WHERE D.MARCA_SIGLA = '{marca}' 
           AND C.GRIFFE in ({griffe_condition})
-          AND DATA >= '{data_inicio}'
+          AND {data_condition}
         GROUP BY A.DATA, D.MARCA_SIGLA, A.ID_LOJA_VENDA, A.CANAL_ORIGEM, A.LINHA, A.GRUPO, A.CATEGORIA_N1, 
                  A.TIPO_VENDA, A.STATUS_PRODUTO, B.CIDADE, B.UF, C.GRIFFE
         """
@@ -114,7 +120,7 @@ class DataQueries:
         
         return spark.sql(query).toPandas()
 
-    def execute_query(self, query_type: str, marca: str = None, tipo_previsao: str = None) -> Union[pd.DataFrame, Dict[str, pd.DataFrame]]:
+    def execute_query(self, query_type: str, marca: str = None, tipo_previsao: str = None, data_fim: str = None) -> Union[pd.DataFrame, Dict[str, pd.DataFrame]]:
         """
         Executa a query apropriada baseada no tipo de consulta solicitado.
         
@@ -122,6 +128,7 @@ class DataQueries:
             query_type: Tipo de consulta ('vendas' ou 'liquidacao')
             marca: Sigla da marca (opcional)
             tipo_previsao: Tipo de previsão (GERAL, GRIFFE, GRIFFE_N1)
+            data_fim: Data final para filtrar os dados (opcional)
             
         Returns:
             DataFrame ou dicionário de DataFrames com os resultados
@@ -135,7 +142,8 @@ class DataQueries:
                     return self.get_sales_data(
                         marca,
                         self.griffe_config_geral[marca]['griffe'],
-                        self.griffe_config_geral[marca]['data_inicio']
+                        self.griffe_config_geral[marca]['data_inicio'],
+                        data_fim
                     )
                 else:
                     raise ValueError(f"Marca '{marca}' não está configurada em griffe_config_geral")
@@ -148,7 +156,8 @@ class DataQueries:
                         data[griffe_nome] = self.get_sales_data(
                             marca,
                             conf['griffe'],
-                            conf['data_inicio']
+                            conf['data_inicio'],
+                            data_fim
                         )
                     return data
                 else:
@@ -159,7 +168,7 @@ class DataQueries:
                     data = {}
                     for griffe, linhas in self.griffe_linha_config[marca].items():
                         for linha in linhas:
-                            df = self.get_sales_data(marca, [griffe], DATA_INICIO_BASE)
+                            df = self.get_sales_data(marca, [griffe], DATA_INICIO_BASE, data_fim)
                             data[f'{griffe}_{linha}'] = df
                     return data
                 else:

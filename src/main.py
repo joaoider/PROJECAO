@@ -59,11 +59,13 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-def load_data(marca: str, tipo_previsao: str):
+def load_data(marca: str, tipo_previsao: str, data_fim: str = None):
     """Carrega os dados do Databricks."""
     logger.info(f"Carregando dados do Databricks para marca {marca} e tipo {tipo_previsao}")
+    if data_fim:
+        logger.info(f"Limitando dados até {data_fim}")
     queries = DataQueries()
-    data = queries.execute_query('vendas', marca, tipo_previsao)
+    data = queries.execute_query('vendas', marca, tipo_previsao, data_fim)
     logger.info(f"Dados carregados: {len(data)} registros")
     return data
 
@@ -727,7 +729,7 @@ def process_marca_tipo_with_date(marca: str, tipo_previsao: str, reference_date:
             logger.info(f"Período de previsões futuras: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
             
             # Carrega os dados
-            data = load_data(marca, tipo_previsao)
+            data = load_data(marca, tipo_previsao, data_fim=reference_date.strftime('%Y-%m-%d'))
             
             # Processa os dados até a data de referência
             data_neural = process_data(data, marca, tipo_previsao, data_fim=reference_date.strftime('%Y-%m-%d'))

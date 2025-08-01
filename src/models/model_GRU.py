@@ -50,12 +50,14 @@ class GRUModel:
         
         logger.info("Modelo GRU treinado com sucesso")
     
-    def predict(self, data: pd.DataFrame) -> pd.DataFrame:
+    def predict(self, data: pd.DataFrame, start_date: str = None, end_date: str = None) -> pd.DataFrame:
         """
         Faz previsões com o modelo GRU.
         
         Args:
             data: DataFrame com dados para previsão
+            start_date: Data de início para previsões (opcional)
+            end_date: Data de fim para previsões (opcional)
             
         Returns:
             DataFrame com previsões
@@ -65,20 +67,19 @@ class GRUModel:
         if self.nf is None:
             raise ValueError("Modelo não foi treinado. Chame fit() primeiro.")
         
-        # Usar o método make_future_dataframe para obter o formato correto
-        # e depois ajustar as datas conforme necessário
-        base_futr_df = self.nf.make_future_dataframe(df=data)
+        # Usar datas fornecidas ou configurações globais
+        if start_date is None or end_date is None:
+            from config.settings import DATA_INICIO_FUTR, DATA_FINAL_FUTR
+            start_date = DATA_INICIO_FUTR
+            end_date = DATA_FINAL_FUTR
         
-        # Obter datas de referência das configurações globais
-        from config.settings import DATA_INICIO_FUTR, DATA_FINAL_FUTR
-        
-        # Criar range de datas futuras baseado nas configurações
-        start_date = pd.to_datetime(DATA_INICIO_FUTR)
-        end_date = pd.to_datetime(DATA_FINAL_FUTR)
+        # Criar range de datas futuras
+        start_dt = pd.to_datetime(start_date)
+        end_dt = pd.to_datetime(end_date)
         
         future_dates = pd.date_range(
-            start=start_date,
-            end=end_date,
+            start=start_dt,
+            end=end_dt,
             freq='D'
         )
         

@@ -249,7 +249,7 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
             ])
             
             # Fazer previsões apenas para o período futuro
-            predictions = model.predict(future_data)
+            predictions = model.predict(future_data, start_date=DATA_INICIO_FUTR, end_date=DATA_FINAL_FUTR)
             
             # Verificar a estrutura das previsões e extrair y_pred
             logger.info(f"Estrutura das previsões: {predictions.columns.tolist()}")
@@ -296,7 +296,7 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
                 ])
                 
                 # Fazer previsões para o período de teste
-                test_predictions = model.predict(test_data)
+                test_predictions = model.predict(test_data, start_date=DATA_TEST, end_date=DATA_ATUAL.strftime('%Y-%m-%d'))
                 
                 # Calcular métricas usando dados reais vs previsões
                 metrics = calculate_metrics(
@@ -519,7 +519,7 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     ])
     
     # Fazer previsões apenas para o período futuro
-    predictions = best_model[1]['model'].predict(future_data)
+    predictions = best_model[1]['model'].predict(future_data, start_date=DATA_INICIO_FUTR, end_date=DATA_FINAL_FUTR)
     
     # Criar pasta com data de referência para organizar os arquivos
     if reference_date:

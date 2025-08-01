@@ -544,27 +544,36 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
         (data_neural['ds'] < train_end)
     ].copy()
     
-    # Renomear coluna 'y' para 'y_pred' nos dados de treino para manter consistência
-    dados_treino = dados_treino.rename(columns={'y': 'y_pred'})
-    
-    # Adicionar coluna do modelo vencedor aos dados de treino
-    dados_treino['forecast'] = best_model[0]
+    # Renomear coluna 'y' para 'forecast' nos dados de treino para manter consistência
+    dados_treino = dados_treino.rename(columns={'y': 'forecast'})
     
     # Manter apenas as colunas essenciais nos dados de treino
-    dados_treino = dados_treino[['ds', 'unique_id', 'y_pred', 'forecast']]
+    dados_treino = dados_treino[['ds', 'unique_id', 'forecast']]
     
     logger.info(f"Dados de treino obtidos: {len(dados_treino)} registros")
     logger.info(f"Período de treino: {dados_treino['ds'].min()} a {dados_treino['ds'].max()}")
     
-    # Adicionar coluna do modelo vencedor às previsões futuras
-    predictions['forecast'] = best_model[0]
+    # Renomear coluna de previsão para 'forecast' nas previsões futuras
+    # Procurar por coluna de previsão (geralmente termina com _LSTM, _GRU, etc.)
+    y_pred_col = None
+    for col in predictions.columns:
+        if col != 'ds' and col != 'unique_id' and not col.startswith('y'):
+            y_pred_col = col
+            break
+    
+    if y_pred_col is None:
+        logger.error(f"Nenhuma coluna de previsão encontrada. Colunas disponíveis: {predictions.columns.tolist()}")
+        return
+    
+    # Renomear coluna de previsão para 'forecast'
+    predictions = predictions.rename(columns={y_pred_col: 'forecast'})
     
     # Juntar dados de treino reais com previsões futuras
     serie_completa = pd.concat([dados_treino, predictions], ignore_index=True)
     serie_completa = serie_completa.sort_values('ds').reset_index(drop=True)
     
     # Manter apenas as colunas essenciais na série completa
-    serie_completa = serie_completa[['ds', 'unique_id', 'y_pred', 'forecast']]
+    serie_completa = serie_completa[['ds', 'unique_id', 'forecast']]
     
     logger.info(f"Série completa criada: {len(serie_completa)} registros")
     logger.info(f"Período completo: {serie_completa['ds'].min()} a {serie_completa['ds'].max()}")

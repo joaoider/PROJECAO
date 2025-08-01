@@ -547,12 +547,18 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     # Renomear coluna 'y' para 'y_pred' nos dados de treino para manter consistência
     dados_treino = dados_treino.rename(columns={'y': 'y_pred'})
     
+    # Manter apenas as colunas essenciais nos dados de treino
+    dados_treino = dados_treino[['ds', 'unique_id', 'y_pred']]
+    
     logger.info(f"Dados de treino obtidos: {len(dados_treino)} registros")
     logger.info(f"Período de treino: {dados_treino['ds'].min()} a {dados_treino['ds'].max()}")
     
     # Juntar dados de treino reais com previsões futuras
     serie_completa = pd.concat([dados_treino, predictions], ignore_index=True)
     serie_completa = serie_completa.sort_values('ds').reset_index(drop=True)
+    
+    # Manter apenas as colunas essenciais na série completa
+    serie_completa = serie_completa[['ds', 'unique_id', 'y_pred']]
     
     logger.info(f"Série completa criada: {len(serie_completa)} registros")
     logger.info(f"Período completo: {serie_completa['ds'].min()} a {serie_completa['ds'].max()}")

@@ -240,16 +240,41 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
                 
             logger.info(f"Usando coluna de previsão: {y_pred_col}")
             
-            metrics = calculate_metrics(
-                data_neural['y'],
-                predictions[y_pred_col]
-            )
+            # Calcular métricas usando dados de teste (período de validação)
+            # Filtrar dados para o período de teste
+            data_test = data_neural[
+                (data_neural['ds'] >= pd.to_datetime(DATA_TEST)) & 
+                (data_neural['ds'] <= pd.to_datetime(DATA_FINAL_BASE))
+            ]
+            
+            if len(data_test) > 0:
+                # Fazer previsões para o período de teste
+                test_predictions = model.predict(data_test)
+                
+                # Calcular métricas
+                metrics = calculate_metrics(
+                    data_test['y'],
+                    test_predictions[y_pred_col]
+                )
+                
+                # Salvar previsões de teste para uso posterior
+                test_predictions_clean = test_predictions[['ds', 'unique_id', y_pred_col]].copy()
+                test_predictions_clean = test_predictions_clean.rename(columns={y_pred_col: 'y_pred'})
+            else:
+                logger.warning("Período de teste vazio. Usando dados completos para métricas.")
+                metrics = calculate_metrics(
+                    data_neural['y'],
+                    predictions[y_pred_col]
+                )
+                test_predictions_clean = None
+            
             # Chave única para cada combinação
             result_key = f"{model_name}_{'_'.join([str(v) for v in param_values])}" if param_values else model_name
             results[result_key] = {
                 'model': model,
                 'metrics': metrics,
-                'params': params
+                'params': params,
+                'test_predictions': test_predictions_clean
             }
             # Salvar as métricas
             save_metrics(
@@ -423,7 +448,7 @@ def print_evaluation_summary(results: dict, model_scores: dict, marca: str, tipo
     
     logger.info("=" * 80)
 
-def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tipo_previsao: str):
+def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tipo_previsao: str, results: dict = None):
     """Executa o melhor modelo para fazer previsões finais para uma marca e tipo específico."""
     logger.info(f"Executando melhor modelo para previsões finais de marca {marca} e tipo {tipo_previsao}")
     
@@ -436,9 +461,49 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     pasta_data.mkdir(parents=True, exist_ok=True)
     logger.info(f"Pasta criada: {pasta_data}")
     
-    # Salva as previsões em CSV
+    # Se temos resultados de teste, juntar com previsões futuras
+    if results and best_model[0] in results:
+        logger.info("Juntando dados de teste com previsões futuras...")
+        
+        # Obter dados de teste do melhor modelo
+        best_model_data = results[best_model[0]]
+        test_predictions = best_model_data.get('test_predictions')
+        
+        if test_predictions is not None:
+            # Juntar dados de teste com previsões futuras
+            serie_completa = pd.concat([test_predictions, predictions], ignore_index=True)
+            serie_completa = serie_completa.sort_values('ds').reset_index(drop=True)
+            
+            logger.info(f"Série completa criada: {len(serie_completa)} registros")
+            logger.info(f"Período: {serie_completa['ds'].min()} a {serie_completa['ds'].max()}")
+            
+            # Salvar série completa
+            csv_path_completa = pasta_data / f'serie_completa_{best_model[0]}.csv'
+            serie_completa.to_csv(csv_path_completa, index=False)
+            logger.info(f"Série completa salva em: {csv_path_completa}")
+            
+            # Salvar série completa em Parquet
+            try:
+                spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
+                sparkdf_completa = spark.createDataFrame(serie_completa)
+                parquet_path_completa = str(pasta_data / f'serie_completa_{best_model[0]}.parquet')
+                sparkdf_completa.coalesce(1).write.mode('overwrite').parquet(parquet_path_completa)
+                logger.info(f"Série completa Parquet salva em: {parquet_path_completa}")
+            except Exception as e:
+                logger.error(f"Erro ao salvar série completa Parquet: {e}")
+            
+            # Usar série completa para salvamento no Azure
+            predictions_final = serie_completa
+        else:
+            logger.warning("Dados de teste não encontrados. Salvando apenas previsões futuras.")
+            predictions_final = predictions
+    else:
+        logger.warning("Resultados de teste não fornecidos. Salvando apenas previsões futuras.")
+        predictions_final = predictions
+    
+    # Salva as previsões finais em CSV
     csv_path = pasta_data / f'previsoes_finais_{best_model[0]}.csv'
-    predictions.to_csv(csv_path, index=False)
+    predictions_final.to_csv(csv_path, index=False)
     logger.info(f"Previsões finais salvas com sucesso para marca {marca} e tipo {tipo_previsao}")
 
     # Salva as previsões em Parquet usando Spark (local)
@@ -455,7 +520,7 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
 
     # Salva as previsões em Parquet no Azure Blob Storage
     try:
-        salvar_em_parquet_azure(predictions, marca, tipo_previsao)
+        salvar_em_parquet_azure(predictions_final, marca, tipo_previsao)
         logger.info(f"Parquet salvo com sucesso no Azure Blob Storage para marca {marca} e tipo {tipo_previsao}")
     except Exception as e:
         logger.error(f"Erro ao salvar Parquet no Azure: {e}")
@@ -534,7 +599,7 @@ def process_marca_tipo(marca: str, tipo_previsao: str):
         best_model = find_best_model(results, marca, tipo_previsao)
         
         # Executa o melhor modelo
-        run_best_model(best_model, data_neural, marca, tipo_previsao)
+        run_best_model(best_model, data_neural, marca, tipo_previsao, results)
         
         logger.info(f"Processamento concluído com sucesso para marca {marca} e tipo {tipo_previsao}")
         

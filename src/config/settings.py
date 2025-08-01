@@ -74,7 +74,7 @@ TIPOS_PREVISAO = ['GERAL']  # Para processar apenas GERAL
 # =============================================================================
 # 🔧 MODELOS_A_EXECUTAR: Selecione quais modelos treinar
 # Opções disponíveis: ['LSTM', 'GRU', 'NHITS', 'NBEATSx']
-MODELOS_A_EXECUTAR = ['LSTM']  # Apenas LSTM
+MODELOS_A_EXECUTAR = ['LSTM', 'GRU']  # Apenas LSTM
 # MODELOS_A_EXECUTAR = ['LSTM', 'GRU']  # Apenas LSTM e GRU
 
 # =============================================================================
@@ -98,20 +98,20 @@ METRICS = ['MAPE', 'RMSE', 'MAE', 'MSE']  # Todas as métricas
 #                     'covid', 'dia_das_maes', 'dia_de_finados', 'dia_dos_namorados',
 #                     'dia_dos_pais']
 # Opções disponíveis para características temporais: ['dayofweek', 'monthofyear']
-VARIAVEIS_FUTURAS = ['black_friday'] # Black Friday + dia da semana
+#VARIAVEIS_FUTURAS = ['black_friday'] # Black Friday + dia da semana
 # VARIAVEIS_FUTURAS = ['black_friday', 'natal', 'dayofweek', 'monthofyear']  # Múltiplas variáveis
-# VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween', 
-#                      'dia_do_trabalhador', 'eleicoes', 'independencia_do_brasil',
-#                      'nossa_senhora_aparecida', 'pascoa', 'proclamacao_da_republica',
-#                      'sexta_feira_santa', 'confraternizacao_universal', 'copa_do_mundo',
-#                      'covid', 'dia_das_maes', 'dia_de_finados', 'dia_dos_namorados',
-#                      'dia_dos_pais', 'dayofweek', 'monthofyear']
+VARIAVEIS_FUTURAS = ['black_friday', 'carnaval', 'natal', 'halloween', 
+                      'dia_do_trabalhador', 'eleicoes', 'independencia_do_brasil',
+                      'nossa_senhora_aparecida', 'pascoa', 'proclamacao_da_republica',
+                      'sexta_feira_santa', 'confraternizacao_universal', 'copa_do_mundo',
+                      'covid', 'dia_das_maes', 'dia_de_finados', 'dia_dos_namorados',
+                      'dia_dos_pais', 'dayofweek', 'monthofyear']
 
 # 🔧 VARIAVEIS_HISTORICAS: Selecione variáveis históricas (dados de vendas)
 # Opções disponíveis: ['QLF', 'ROL', 'CPV']
-VARIAVEIS_HISTORICAS = ['QLF']  # Apenas quantidade vendida
+#VARIAVEIS_HISTORICAS = ['QLF']  # Apenas quantidade vendida
 # VARIAVEIS_HISTORICAS = ['QLF', 'ROL']  # Quantidade e receita
-# VARIAVEIS_HISTORICAS = ['QLF', 'ROL', 'CPV']  # Quantidade, receita e custo
+VARIAVEIS_HISTORICAS = ['QLF', 'ROL', 'CPV']  # Quantidade, receita e custo
 
 # =============================================================================
 # CONFIGURAÇÕES AVANÇADAS (não alterar a menos que necessário)

@@ -230,7 +230,26 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
             model = ModelClass(**params) if params else ModelClass()
             # Treinar e avaliar
             model.fit(data_neural)
-            predictions = model.predict(data_neural)
+            
+            # Fazer previsões apenas para o período futuro (não para todos os dados históricos)
+            future_start = pd.to_datetime(DATA_INICIO_FUTR)
+            future_end = pd.to_datetime(DATA_FINAL_FUTR)
+            
+            # Criar range de datas futuras
+            future_dates = pd.date_range(start=future_start, end=future_end, freq='D')
+            
+            # Obter unique_ids dos dados
+            unique_ids = data_neural['unique_id'].unique()
+            
+            # Criar DataFrame apenas com datas futuras para previsão
+            future_data = pd.DataFrame([
+                {'ds': date, 'unique_id': uid}
+                for date in future_dates
+                for uid in unique_ids
+            ])
+            
+            # Fazer previsões apenas para o período futuro
+            predictions = model.predict(future_data)
             
             # Verificar a estrutura das previsões e extrair y_pred
             logger.info(f"Estrutura das previsões: {predictions.columns.tolist()}")

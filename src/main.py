@@ -257,10 +257,29 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
             ]
             
             if len(data_test) > 0:
-                # Fazer previsões para o período de teste
-                test_predictions = model.predict(data_test)
+                # Para o período de teste, queremos as previsões do modelo treinado
+                # sobre os dados reais (não previsões de dados históricos)
+                # Criar DataFrame apenas com o período de teste para previsão
+                test_start = pd.to_datetime(DATA_TEST)
+                test_end = pd.to_datetime(DATA_ATUAL.strftime('%Y-%m-%d'))
                 
-                # Calcular métricas
+                # Criar range de datas de teste
+                test_dates = pd.date_range(start=test_start, end=test_end, freq='D')
+                
+                # Obter unique_ids dos dados
+                unique_ids = data_neural['unique_id'].unique()
+                
+                # Criar DataFrame apenas com datas de teste para previsão
+                test_data = pd.DataFrame([
+                    {'ds': date, 'unique_id': uid}
+                    for date in test_dates
+                    for uid in unique_ids
+                ])
+                
+                # Fazer previsões para o período de teste
+                test_predictions = model.predict(test_data)
+                
+                # Calcular métricas usando dados reais vs previsões
                 metrics = calculate_metrics(
                     data_test['y'],
                     test_predictions[y_pred_col]

@@ -462,8 +462,26 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     logger.info(f"Executando melhor modelo para previsões finais de marca {marca} e tipo {tipo_previsao}")
     logger.info(f"Gerando previsões para o período: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
     
-    # Faz previsões com o melhor modelo
-    predictions = best_model[1]['model'].predict(data_neural)
+    # Faz previsões apenas para o período futuro com o melhor modelo
+    # Criar dados apenas para o período futuro
+    future_start = pd.to_datetime(DATA_INICIO_FUTR)
+    future_end = pd.to_datetime(DATA_FINAL_FUTR)
+    
+    # Criar range de datas futuras
+    future_dates = pd.date_range(start=future_start, end=future_end, freq='D')
+    
+    # Obter unique_ids dos dados
+    unique_ids = data_neural['unique_id'].unique()
+    
+    # Criar DataFrame apenas com datas futuras para previsão
+    future_data = pd.DataFrame([
+        {'ds': date, 'unique_id': uid}
+        for date in future_dates
+        for uid in unique_ids
+    ])
+    
+    # Fazer previsões apenas para o período futuro
+    predictions = best_model[1]['model'].predict(future_data)
     
     # Criar pasta com data de referência para organizar os arquivos
     if reference_date:

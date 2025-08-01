@@ -7,6 +7,8 @@ from neuralforecast import NeuralForecast
 from neuralforecast.models import NBEATSx
 from typing import Dict, Any
 import logging
+from datetime import datetime, timedelta
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -63,8 +65,27 @@ class NBEATSxModel:
         if self.nf is None:
             raise ValueError("Modelo não foi treinado. Chame fit() primeiro.")
         
-        # Fazer previsões
-        predictions = self.nf.predict(df=data)
+        # Criar dataframe futuro para previsões
+        data_atual = datetime.now()
+        data_fim = data_atual + timedelta(days=365)
+        
+        # Criar range de datas futuras
+        future_dates = pd.date_range(
+            start=data_atual,
+            end=data_fim,
+            freq='D'
+        )
+        
+        # Criar futr_df com as datas futuras
+        futr_df = pd.DataFrame({
+            'ds': future_dates,
+            'unique_id': data['unique_id'].iloc[0] if len(data) > 0 else 'default'
+        })
+        
+        logger.info(f"Gerando previsões de {data_atual.strftime('%Y-%m-%d')} até {data_fim.strftime('%Y-%m-%d')}")
+        
+        # Fazer previsões usando futr_df
+        predictions = self.nf.predict(futr_df=futr_df)
         
         logger.info("Previsões NBEATSx geradas com sucesso")
         return predictions

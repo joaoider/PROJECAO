@@ -67,7 +67,7 @@ class GRUModel:
         
         # Usar o método make_future_dataframe do NeuralForecast
         # Isso garante que todas as combinações de unique_id e datas estejam presentes
-        futr_df = self.nf.make_future_dataframe(df=data, h=365)
+        futr_df = self.nf.make_future_dataframe(df=data)
         
         logger.info(f"Gerando previsões para {len(futr_df)} períodos futuros")
         logger.info(f"Período: {futr_df['ds'].min()} até {futr_df['ds'].max()}")

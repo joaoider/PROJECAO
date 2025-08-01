@@ -548,23 +548,23 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     dados_treino = dados_treino.rename(columns={'y': 'y_pred'})
     
     # Adicionar coluna do modelo vencedor aos dados de treino
-    dados_treino['modelo_vencedor'] = best_model[0]
+    dados_treino['forecast'] = best_model[0]
     
     # Manter apenas as colunas essenciais nos dados de treino
-    dados_treino = dados_treino[['ds', 'unique_id', 'y_pred', 'modelo_vencedor']]
+    dados_treino = dados_treino[['ds', 'unique_id', 'y_pred', 'forecast']]
     
     logger.info(f"Dados de treino obtidos: {len(dados_treino)} registros")
     logger.info(f"Período de treino: {dados_treino['ds'].min()} a {dados_treino['ds'].max()}")
     
     # Adicionar coluna do modelo vencedor às previsões futuras
-    predictions['modelo_vencedor'] = best_model[0]
+    predictions['forecast'] = best_model[0]
     
     # Juntar dados de treino reais com previsões futuras
     serie_completa = pd.concat([dados_treino, predictions], ignore_index=True)
     serie_completa = serie_completa.sort_values('ds').reset_index(drop=True)
     
     # Manter apenas as colunas essenciais na série completa
-    serie_completa = serie_completa[['ds', 'unique_id', 'y_pred', 'modelo_vencedor']]
+    serie_completa = serie_completa[['ds', 'unique_id', 'y_pred', 'forecast']]
     
     logger.info(f"Série completa criada: {len(serie_completa)} registros")
     logger.info(f"Período completo: {serie_completa['ds'].min()} a {serie_completa['ds'].max()}")

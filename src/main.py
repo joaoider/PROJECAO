@@ -9,7 +9,8 @@ from config.settings import (
     MARCAS, TIPOS_PREVISAO, DATA_INICIO_BASE, DATA_FINAL_BASE,
     DATA_TRAIN, DATA_TEST, DATA_INICIO_FUTR,
     DATA_FINAL_FUTR, FORECASTS_DIR, PROCESSED_DATA_DIR, MODELOS_A_EXECUTAR,
-    MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, MODEL_PARAM_GRID, METRICS
+    MARCA, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, MODEL_PARAM_GRID, METRICS,
+    DATA_ATUAL
 )
 from utils.data_processing import DataProcessor
 from utils.special_dates import SpecialDates, marcar_evento_range
@@ -68,6 +69,7 @@ def load_data(marca: str, tipo_previsao: str):
 def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
     """Processa os dados iniciais para uma marca e tipo específico."""
     logger.info(f"Iniciando processamento de dados para marca {marca} e tipo {tipo_previsao}")
+    logger.info(f"Período dos dados: {DATA_INICIO_BASE} até {DATA_FINAL_BASE}")
     
     # Inicializa o processador de dados
     processor = DataProcessor(
@@ -188,6 +190,9 @@ def process_data(data: pd.DataFrame, marca: str, tipo_previsao: str):
 def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previsao: str):
     """Treina e avalia todos os modelos para uma marca e tipo específico, realizando grid search."""
     logger.info(f"Iniciando treinamento e avaliação dos modelos para marca {marca} e tipo {tipo_previsao}")
+    logger.info(f"Período de treinamento: até {DATA_TRAIN}")
+    logger.info(f"Período de teste: {DATA_TEST} até {DATA_ATUAL.strftime('%Y-%m-%d')}")
+    logger.info(f"Período de previsões futuras: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
     
     from models.model_LSTM import LSTMModel
     from models.model_GRU import GRUModel
@@ -241,10 +246,10 @@ def train_and_evaluate_models(data_neural: pd.DataFrame, marca: str, tipo_previs
             logger.info(f"Usando coluna de previsão: {y_pred_col}")
             
             # Calcular métricas usando dados de teste (período de validação)
-            # Filtrar dados para o período de teste
+            # Filtrar dados para o período de teste (último ano até hoje)
             data_test = data_neural[
                 (data_neural['ds'] >= pd.to_datetime(DATA_TEST)) & 
-                (data_neural['ds'] <= pd.to_datetime(DATA_FINAL_BASE))
+                (data_neural['ds'] <= pd.to_datetime(DATA_ATUAL.strftime('%Y-%m-%d')))
             ]
             
             if len(data_test) > 0:
@@ -451,6 +456,7 @@ def print_evaluation_summary(results: dict, model_scores: dict, marca: str, tipo
 def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tipo_previsao: str, results: dict = None):
     """Executa o melhor modelo para fazer previsões finais para uma marca e tipo específico."""
     logger.info(f"Executando melhor modelo para previsões finais de marca {marca} e tipo {tipo_previsao}")
+    logger.info(f"Gerando previsões para o período: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
     
     # Faz previsões com o melhor modelo
     predictions = best_model[1]['model'].predict(data_neural)

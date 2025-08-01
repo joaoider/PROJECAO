@@ -2,6 +2,16 @@
 
 Este projeto implementa um **sistema avançado de previsão de vendas** utilizando modelos de deep learning com avaliação completa e seleção automática do melhor modelo.
 
+## 🕐 **Períodos Dinâmicos**
+
+O sistema agora utiliza **períodos dinâmicos** baseados na data atual:
+
+- **📚 Treinamento**: Dados históricos até 1 ano atrás da data atual
+- **🧪 Teste**: Último ano de dados (para calcular MAPE, RMSE, etc.)
+- **🔮 Previsões**: Próximo ano (salvo no Parquet final)
+
+**Resultado**: Arquivo Parquet com 2 anos de dados (1 ano de teste + 1 ano de previsões)
+
 ## 🎯 **Funcionalidades Principais**
 
 - ✅ **Grid Search Completo**: Testa todas as combinações de parâmetros
@@ -172,12 +182,23 @@ MODEL_PARAM_GRID = {
 }
 ```
 
-### **Datas de Treinamento/Teste**
+### **Datas Dinâmicas (Baseadas na Data Atual)**
 ```python
-DATA_TRAIN = '2024-06-30'    # Fim do treinamento
-DATA_TEST = '2024-07-01'      # Início do teste
-DATA_INICIO_FUTR = '2024-10-01'  # Início das previsões
+# Período de treinamento: até 1 ano atrás da data atual
+DATA_TRAIN = (DATA_ATUAL - timedelta(days=365)).strftime('%Y-%m-%d')
+
+# Período de teste: último ano (desde 1 ano atrás até hoje)
+DATA_TEST = (DATA_ATUAL - timedelta(days=365)).strftime('%Y-%m-%d')
+
+# Período de previsões futuras: próximo ano (desde hoje até 1 ano à frente)
+DATA_INICIO_FUTR = DATA_ATUAL.strftime('%Y-%m-%d')
+DATA_FINAL_FUTR = (DATA_ATUAL + timedelta(days=365)).strftime('%Y-%m-%d')
 ```
+
+**Exemplo**: Se executado em 15/01/2025:
+- **Treinamento**: 2020-01-01 até 2024-01-15
+- **Teste**: 2024-01-15 até 2025-01-15  
+- **Previsões**: 2025-01-15 até 2026-01-15
 
 ## 📈 **Exemplo de Resultado**
 

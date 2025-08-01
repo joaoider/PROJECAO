@@ -33,14 +33,28 @@ FORECASTS_DIR = DATA_DIR / 'forecasts'
 # =============================================================================
 # CONFIGURAÇÕES DE DATAS
 # =============================================================================
-DATA_INICIO_BASE = '2020-01-01'
-DATA_FINAL_BASE = '2024-09-30'
-DATA_TRAIN = '2024-06-30'
-DATA_TEST = '2024-07-01'
-DATA_INICIO_FUTR = '2024-10-01'
-DATA_FINAL_FUTR = '2024-12-31'
-DATA_INICIO_FUTR_TEST = '2024-10-01'
-DATA_FINAL_FUTR_TEST = '2024-12-31'
+from datetime import datetime, timedelta
+
+# Data atual para cálculos dinâmicos
+DATA_ATUAL = datetime.now()
+
+# Configurações dinâmicas baseadas na data atual
+DATA_INICIO_BASE = '2020-01-01'  # Data inicial fixa para dados históricos
+DATA_FINAL_BASE = DATA_ATUAL.strftime('%Y-%m-%d')  # Data atual como fim dos dados
+
+# Período de treinamento: até 1 ano atrás da data atual
+DATA_TRAIN = (DATA_ATUAL - timedelta(days=365)).strftime('%Y-%m-%d')
+
+# Período de teste: último ano (desde 1 ano atrás até hoje)
+DATA_TEST = (DATA_ATUAL - timedelta(days=365)).strftime('%Y-%m-%d')
+
+# Período de previsões futuras: próximo ano (desde hoje até 1 ano à frente)
+DATA_INICIO_FUTR = DATA_ATUAL.strftime('%Y-%m-%d')
+DATA_FINAL_FUTR = (DATA_ATUAL + timedelta(days=365)).strftime('%Y-%m-%d')
+
+# Configurações de teste futuro (mantidas para compatibilidade)
+DATA_INICIO_FUTR_TEST = DATA_INICIO_FUTR
+DATA_FINAL_FUTR_TEST = DATA_FINAL_FUTR
 
 # =============================================================================
 # CONFIGURAÇÕES DE MARCAS E TIPOS DE PREVISÃO

@@ -534,45 +534,46 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     pasta_data.mkdir(parents=True, exist_ok=True)
     logger.info(f"Pasta criada: {pasta_data}")
     
-    # Se temos resultados de teste, juntar com previsões futuras
-    if results and best_model[0] in results:
-        logger.info("Juntando dados de teste com previsões futuras...")
-        
-        # Obter dados de teste do melhor modelo
-        best_model_data = results[best_model[0]]
-        test_predictions = best_model_data.get('test_predictions')
-        
-        if test_predictions is not None:
-            # Juntar dados de teste com previsões futuras
-            serie_completa = pd.concat([test_predictions, predictions], ignore_index=True)
-            serie_completa = serie_completa.sort_values('ds').reset_index(drop=True)
-            
-            logger.info(f"Série completa criada: {len(serie_completa)} registros")
-            logger.info(f"Período: {serie_completa['ds'].min()} a {serie_completa['ds'].max()}")
-            
-            # Salvar série completa
-            csv_path_completa = pasta_data / f'serie_completa_{best_model[0]}.csv'
-            serie_completa.to_csv(csv_path_completa, index=False)
-            logger.info(f"Série completa salva em: {csv_path_completa}")
-            
-            # Salvar série completa em Parquet
-            try:
-                spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
-                sparkdf_completa = spark.createDataFrame(serie_completa)
-                parquet_path_completa = str(pasta_data / f'serie_completa_{best_model[0]}.parquet')
-                sparkdf_completa.coalesce(1).write.mode('overwrite').parquet(parquet_path_completa)
-                logger.info(f"Série completa Parquet salva em: {parquet_path_completa}")
-            except Exception as e:
-                logger.error(f"Erro ao salvar série completa Parquet: {e}")
-            
-            # Usar série completa para salvamento no Azure
-            predictions_final = serie_completa
-        else:
-            logger.warning("Dados de teste não encontrados. Salvando apenas previsões futuras.")
-            predictions_final = predictions
-    else:
-        logger.warning("Resultados de teste não fornecidos. Salvando apenas previsões futuras.")
-        predictions_final = predictions
+    # Obter dados reais de treino (1 ano antes da data de referência)
+    train_start = reference_date - timedelta(days=365) if reference_date else pd.to_datetime(DATA_TRAIN)
+    train_end = reference_date if reference_date else pd.to_datetime(DATA_ATUAL.strftime('%Y-%m-%d'))
+    
+    # Filtrar dados de treino reais
+    dados_treino = data_neural[
+        (data_neural['ds'] >= train_start) & 
+        (data_neural['ds'] < train_end)
+    ].copy()
+    
+    # Renomear coluna 'y' para 'y_pred' nos dados de treino para manter consistência
+    dados_treino = dados_treino.rename(columns={'y': 'y_pred'})
+    
+    logger.info(f"Dados de treino obtidos: {len(dados_treino)} registros")
+    logger.info(f"Período de treino: {dados_treino['ds'].min()} a {dados_treino['ds'].max()}")
+    
+    # Juntar dados de treino reais com previsões futuras
+    serie_completa = pd.concat([dados_treino, predictions], ignore_index=True)
+    serie_completa = serie_completa.sort_values('ds').reset_index(drop=True)
+    
+    logger.info(f"Série completa criada: {len(serie_completa)} registros")
+    logger.info(f"Período completo: {serie_completa['ds'].min()} a {serie_completa['ds'].max()}")
+    
+    # Salvar série completa
+    csv_path_completa = pasta_data / f'serie_completa_{best_model[0]}.csv'
+    serie_completa.to_csv(csv_path_completa, index=False)
+    logger.info(f"Série completa salva em: {csv_path_completa}")
+    
+    # Salvar série completa em Parquet
+    try:
+        spark = SparkSession.builder.appName("pandas_to_spark").getOrCreate()
+        sparkdf_completa = spark.createDataFrame(serie_completa)
+        parquet_path_completa = str(pasta_data / f'serie_completa_{best_model[0]}.parquet')
+        sparkdf_completa.coalesce(1).write.mode('overwrite').parquet(parquet_path_completa)
+        logger.info(f"Série completa Parquet salva em: {parquet_path_completa}")
+    except Exception as e:
+        logger.error(f"Erro ao salvar série completa Parquet: {e}")
+    
+    # Usar série completa para salvamento final
+    predictions_final = serie_completa
     
     # Salva as previsões finais em CSV
     csv_path = pasta_data / f'previsoes_finais_{best_model[0]}.csv'

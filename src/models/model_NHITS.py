@@ -65,24 +65,12 @@ class NHITSModel:
         if self.nf is None:
             raise ValueError("Modelo não foi treinado. Chame fit() primeiro.")
         
-        # Criar dataframe futuro para previsões
-        data_atual = datetime.now()
-        data_fim = data_atual + timedelta(days=365)
+        # Usar o método make_future_dataframe do NeuralForecast
+        # Isso garante que todas as combinações de unique_id e datas estejam presentes
+        futr_df = self.nf.make_future_dataframe(df=data, h=365)
         
-        # Criar range de datas futuras
-        future_dates = pd.date_range(
-            start=data_atual,
-            end=data_fim,
-            freq='D'
-        )
-        
-        # Criar futr_df com as datas futuras
-        futr_df = pd.DataFrame({
-            'ds': future_dates,
-            'unique_id': data['unique_id'].iloc[0] if len(data) > 0 else 'default'
-        })
-        
-        logger.info(f"Gerando previsões de {data_atual.strftime('%Y-%m-%d')} até {data_fim.strftime('%Y-%m-%d')}")
+        logger.info(f"Gerando previsões para {len(futr_df)} períodos futuros")
+        logger.info(f"Período: {futr_df['ds'].min()} até {futr_df['ds'].max()}")
         
         # Fazer previsões usando futr_df
         predictions = self.nf.predict(futr_df=futr_df)

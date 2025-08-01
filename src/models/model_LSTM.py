@@ -65,12 +65,32 @@ class LSTMModel:
         if self.nf is None:
             raise ValueError("Modelo não foi treinado. Chame fit() primeiro.")
         
-        # Usar o método make_future_dataframe do NeuralForecast
-        # Isso garante que todas as combinações de unique_id e datas estejam presentes
-        futr_df = self.nf.make_future_dataframe(df=data)
+        # Obter datas de referência das configurações globais
+        from config.settings import DATA_ATUAL, DATA_INICIO_FUTR, DATA_FINAL_FUTR
+        
+        # Criar range de datas futuras baseado nas configurações
+        start_date = pd.to_datetime(DATA_INICIO_FUTR)
+        end_date = pd.to_datetime(DATA_FINAL_FUTR)
+        
+        future_dates = pd.date_range(
+            start=start_date,
+            end=end_date,
+            freq='D'
+        )
+        
+        # Obter todos os unique_ids dos dados
+        unique_ids = data['unique_id'].unique()
+        
+        # Criar todas as combinações de unique_id e datas futuras
+        futr_df = pd.DataFrame([
+            {'ds': date, 'unique_id': uid}
+            for date in future_dates
+            for uid in unique_ids
+        ])
         
         logger.info(f"Gerando previsões para {len(futr_df)} períodos futuros")
         logger.info(f"Período: {futr_df['ds'].min()} até {futr_df['ds'].max()}")
+        logger.info(f"Unique IDs: {unique_ids}")
         
         # Fazer previsões usando futr_df
         predictions = self.nf.predict(futr_df=futr_df)

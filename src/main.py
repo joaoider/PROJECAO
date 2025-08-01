@@ -4,7 +4,8 @@ Arquivo principal que orquestra todo o fluxo de execução do projeto.
 import logging
 from pathlib import Path
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
+import calendar
 from config.settings import (
     MARCAS, TIPOS_PREVISAO, DATA_INICIO_BASE, DATA_FINAL_BASE,
     DATA_TRAIN, DATA_TEST, DATA_INICIO_FUTR,
@@ -453,7 +454,7 @@ def print_evaluation_summary(results: dict, model_scores: dict, marca: str, tipo
     
     logger.info("=" * 80)
 
-def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tipo_previsao: str, results: dict = None):
+def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tipo_previsao: str, results: dict = None, reference_date: datetime = None):
     """Executa o melhor modelo para fazer previsões finais para uma marca e tipo específico."""
     logger.info(f"Executando melhor modelo para previsões finais de marca {marca} e tipo {tipo_previsao}")
     logger.info(f"Gerando previsões para o período: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
@@ -461,9 +462,14 @@ def run_best_model(best_model: tuple, data_neural: pd.DataFrame, marca: str, tip
     # Faz previsões com o melhor modelo
     predictions = best_model[1]['model'].predict(data_neural)
     
-    # Criar pasta com data atual para organizar os arquivos
-    data_atual = datetime.now().strftime('%Y%m')
-    pasta_data = FORECASTS_DIR / marca / tipo_previsao / data_atual
+    # Criar pasta com data de referência para organizar os arquivos
+    if reference_date:
+        data_ref = reference_date.strftime('%Y%m')
+        pasta_data = FORECASTS_DIR / marca / tipo_previsao / data_ref
+    else:
+        data_atual = datetime.now().strftime('%Y%m')
+        pasta_data = FORECASTS_DIR / marca / tipo_previsao / data_atual
+    
     pasta_data.mkdir(parents=True, exist_ok=True)
     logger.info(f"Pasta criada: {pasta_data}")
     
@@ -587,30 +593,93 @@ def salvar_em_parquet_azure(df_pandas, marca: str, tipo_previsao: str,
         logger.error(f"Erro ao salvar parquet no Azure: {e}")
         raise
 
-def process_marca_tipo(marca: str, tipo_previsao: str):
-    """Processa uma combinação específica de marca e tipo."""
+def generate_reference_dates():
+    """
+    Gera lista de datas de referência desde 2024-01-01 até a data atual.
+    Cada data representa o último dia do mês anterior.
+    """
+    
+    start_date = datetime(2024, 1, 1)
+    end_date = datetime.now()
+    
+    reference_dates = []
+    current_date = start_date
+    
+    while current_date <= end_date:
+        # Calcular o último dia do mês anterior
+        if current_date.month == 1:
+            # Janeiro: usar último dia de dezembro do ano anterior
+            last_month = datetime(current_date.year - 1, 12, 31)
+        else:
+            # Outros meses: usar último dia do mês anterior
+            last_day_prev_month = calendar.monthrange(current_date.year, current_date.month - 1)[1]
+            last_month = datetime(current_date.year, current_date.month - 1, last_day_prev_month)
+        
+        reference_dates.append(last_month)
+        
+        # Avançar para o próximo mês
+        if current_date.month == 12:
+            current_date = datetime(current_date.year + 1, 1, 1)
+        else:
+            current_date = datetime(current_date.year, current_date.month + 1, 1)
+    
+    return reference_dates
+
+def process_marca_tipo_with_date(marca: str, tipo_previsao: str, reference_date: datetime):
+    """Processa uma combinação específica de marca e tipo para uma data de referência."""
     try:
-        logger.info(f"Iniciando processamento para marca {marca} e tipo {tipo_previsao}")
+        logger.info(f"Iniciando processamento para marca {marca}, tipo {tipo_previsao} e data de referência {reference_date.strftime('%Y-%m-%d')}")
         
-        # Carrega os dados
-        data = load_data(marca, tipo_previsao)
+        # Atualizar configurações de data para esta execução
+        global DATA_ATUAL, DATA_TRAIN, DATA_TEST, DATA_INICIO_FUTR, DATA_FINAL_FUTR
         
-        # Processa os dados
-        data_neural = process_data(data, marca, tipo_previsao)
+        # Salvar configurações originais
+        original_data_atual = DATA_ATUAL
+        original_data_train = DATA_TRAIN
+        original_data_test = DATA_TEST
+        original_data_inicio_futr = DATA_INICIO_FUTR
+        original_data_final_futr = DATA_FINAL_FUTR
         
-        # Treina e avalia os modelos
-        results = train_and_evaluate_models(data_neural, marca, tipo_previsao)
-        
-        # Encontra o melhor modelo
-        best_model = find_best_model(results, marca, tipo_previsao)
-        
-        # Executa o melhor modelo
-        run_best_model(best_model, data_neural, marca, tipo_previsao, results)
-        
-        logger.info(f"Processamento concluído com sucesso para marca {marca} e tipo {tipo_previsao}")
+        try:
+            # Atualizar configurações para a data de referência
+            DATA_ATUAL = reference_date
+            DATA_TRAIN = (reference_date - timedelta(days=365)).strftime('%Y-%m-%d')
+            DATA_TEST = (reference_date - timedelta(days=365)).strftime('%Y-%m-%d')
+            DATA_INICIO_FUTR = reference_date.strftime('%Y-%m-%d')
+            DATA_FINAL_FUTR = (reference_date + timedelta(days=365)).strftime('%Y-%m-%d')
+            
+            logger.info(f"Configurações atualizadas para data de referência {reference_date.strftime('%Y-%m-%d')}")
+            logger.info(f"Período de treinamento: até {DATA_TRAIN}")
+            logger.info(f"Período de teste: {DATA_TEST} até {DATA_ATUAL.strftime('%Y-%m-%d')}")
+            logger.info(f"Período de previsões: {DATA_INICIO_FUTR} até {DATA_FINAL_FUTR}")
+            
+            # Carrega os dados
+            data = load_data(marca, tipo_previsao)
+            
+            # Processa os dados
+            data_neural = process_data(data, marca, tipo_previsao)
+            
+            # Treina e avalia os modelos
+            results = train_and_evaluate_models(data_neural, marca, tipo_previsao)
+            
+            # Encontra o melhor modelo
+            best_model = find_best_model(results, marca, tipo_previsao)
+            
+            # Executa o melhor modelo
+            run_best_model(best_model, data_neural, marca, tipo_previsao, results, reference_date)
+            
+            logger.info(f"Processamento concluído com sucesso para marca {marca}, tipo {tipo_previsao} e data {reference_date.strftime('%Y-%m-%d')}")
+            
+        finally:
+            # Restaurar configurações originais
+            DATA_ATUAL = original_data_atual
+            DATA_TRAIN = original_data_train
+            DATA_TEST = original_data_test
+            DATA_INICIO_FUTR = original_data_inicio_futr
+            DATA_FINAL_FUTR = original_data_final_futr
         
     except Exception as e:
-        logger.error(f"Erro durante o processamento de marca {marca} e tipo {tipo_previsao}: {e}")
+        logger.error(f"Erro durante o processamento de marca {marca}, tipo {tipo_previsao} e data {reference_date.strftime('%Y-%m-%d')}: {e}")
         raise
 
 def main():
@@ -623,12 +692,19 @@ def main():
         marca_para_salvar = MARCAS[0] if MARCAS else 'default'
         salvar_variaveis_csv(marca_para_salvar, FREQ, HORIZON, VARIAVEIS_FUTURAS, VARIAVEIS_HISTORICAS, DATA_INICIO_BASE)
         
-        # Processa cada combinação de marca e tipo
+        # Gerar datas de referência
+        reference_dates = generate_reference_dates()
+        logger.info(f"Executando para {len(reference_dates)} datas de referência:")
+        for i, date in enumerate(reference_dates, 1):
+            logger.info(f"  {i}. {date.strftime('%Y-%m-%d')} (último dia do mês anterior)")
+
+        # Processa cada combinação de marca e tipo para cada data de referência
         for marca in MARCAS:
             for tipo_previsao in TIPOS_PREVISAO:
-                process_marca_tipo(marca, tipo_previsao)
+                for reference_date in reference_dates:
+                    process_marca_tipo_with_date(marca, tipo_previsao, reference_date)
         
-        logger.info("Pipeline executado com sucesso para todas as marcas e tipos")
+        logger.info("Pipeline executado com sucesso para todas as marcas, tipos e datas de referência")
         
     except Exception as e:
         logger.error(f"Erro durante a execução do pipeline: {e}")
